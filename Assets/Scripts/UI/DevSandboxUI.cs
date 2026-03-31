@@ -96,9 +96,10 @@ public class DevSandboxUI : MonoBehaviour
             return;
         }
 
-        seedInventory.AddSeeds(selectedStrain, 1);
+        SeedInstance newSeed = SeedGenerator.GenerateSeed(selectedStrain);
+        seedInventory.AddSeed(newSeed);
 
-        harvestText.text = $"Bought 1 seed of {selectedStrain.strainName}";
+        harvestText.text = $"Bought seed: {newSeed.DisplayName}";
 
         RefreshUI();
     }
@@ -114,21 +115,32 @@ public class DevSandboxUI : MonoBehaviour
             return;
         }
 
-        bool consumed = seedInventory.ConsumeSeed(selectedStrain);
+        SeedInstance seed = seedInventory.ConsumeSeed(selectedStrain);
 
-        if (!consumed)
+        if (seed == null)
         {
             harvestText.text = "No seeds owned for that strain.";
             return;
         }
 
-        plantManager.SpawnPlant(selectedStrain);
+        plantManager.SpawnPlantFromSeed(seed);
 
-        harvestText.text = $"Planted {selectedStrain.strainName} seed.";
+        harvestText.text = $"Planted: {seed.DisplayName}";
 
         RefreshUI();
     }
 
+    public void AddMoneyButton()
+    {
+        economyManager.AddMoney(5000);
+        RefreshUI();
+    }
+
+    public void SpendMoneyButton()
+    {
+        economyManager.SpendMoney(25);
+        RefreshUI();
+    }
     public void AdvanceDayButton()
     {
         timeManager.AdvanceDay();
@@ -155,7 +167,9 @@ public class DevSandboxUI : MonoBehaviour
         int score = HarvestGrader.CalculateScore(plant);
         string grade = HarvestGrader.GetGradeLetter(score);
 
-        float multiplier = plant.strainData.payoutMultiplier;
+        float rarityMult = SeedGenerator.GetPayoutMultiplierBonus(plant.seed.rarity, plant.seed.isShiny);
+        float multiplier = plant.strainData.payoutMultiplier * rarityMult;
+
         int payout = Mathf.RoundToInt(score * 0.5f * multiplier);
 
         economyManager.AddMoney(payout);
@@ -180,8 +194,12 @@ public class DevSandboxUI : MonoBehaviour
         }
         else
         {
+            string shinyText = plant.seed.isShiny ? "YES" : "No";
+
             plantText.text =
                 $"Strain: {plant.strainData.strainName}\n" +
+                $"Rarity: {plant.seed.rarity}\n" +
+                $"Shiny: {shinyText}\n" +
                 $"Stage: {plant.stage}\n" +
                 $"Growth: {plant.growthPercent:0}%\n" +
                 $"Ripeness: {plant.ripenessPercent:0}%";

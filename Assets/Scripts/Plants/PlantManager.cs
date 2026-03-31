@@ -7,10 +7,9 @@ public class PlantManager : MonoBehaviour
     private PlantInstance currentPlant;
 
     public PlantInstance CurrentPlant => currentPlant;
-
     public bool HasPlant => currentPlant != null;
 
-    public void SpawnPlant(PlantStrainData strain)
+    public void SpawnPlantFromSeed(SeedInstance seed)
     {
         if (spawnPoint == null)
         {
@@ -18,26 +17,26 @@ public class PlantManager : MonoBehaviour
             return;
         }
 
-        if (strain == null)
+        if (seed == null || seed.strain == null)
         {
-            Debug.LogError("SpawnPlant failed: strain is null!");
+            Debug.LogError("SpawnPlantFromSeed failed: seed is null!");
             return;
         }
 
         if (currentPlant != null)
         {
-            Debug.LogWarning("A plant already exists. Cannot spawn another yet.");
+            Debug.LogWarning("A plant already exists.");
             return;
         }
 
         GameObject plant = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        plant.name = strain.strainName;
+        plant.name = seed.DisplayName;
         plant.transform.position = spawnPoint.position;
 
         currentPlant = plant.AddComponent<PlantInstance>();
-        currentPlant.strainData = strain;
+        currentPlant.seed = seed;
 
-        Debug.Log($"Spawned plant strain: {strain.strainName}");
+        Debug.Log($"Spawned plant from seed: {seed.DisplayName}");
     }
 
     public void AdvanceDayForPlant()

@@ -3,39 +3,45 @@ using UnityEngine;
 
 public class SeedInventory : MonoBehaviour
 {
-    private Dictionary<PlantStrainData, int> seeds = new Dictionary<PlantStrainData, int>();
+    private List<SeedInstance> ownedSeeds = new List<SeedInstance>();
+
+    public void AddSeed(SeedInstance seed)
+    {
+        if (seed == null || seed.strain == null)
+            return;
+
+        ownedSeeds.Add(seed);
+        Debug.Log($"Added seed: {seed.DisplayName}");
+    }
 
     public int GetSeedCount(PlantStrainData strain)
     {
-        if (strain == null) return 0;
-        return seeds.ContainsKey(strain) ? seeds[strain] : 0;
-    }
+        int count = 0;
 
-    public void AddSeeds(PlantStrainData strain, int amount)
-    {
-        if (strain == null || amount <= 0) return;
-
-        if (!seeds.ContainsKey(strain))
-            seeds[strain] = 0;
-
-        seeds[strain] += amount;
-
-        Debug.Log($"Added {amount} seeds of {strain.strainName}. Total: {seeds[strain]}");
-    }
-
-    public bool ConsumeSeed(PlantStrainData strain)
-    {
-        if (strain == null) return false;
-
-        int count = GetSeedCount(strain);
-        if (count <= 0)
+        foreach (var seed in ownedSeeds)
         {
-            Debug.Log($"No seeds available for {strain.strainName}");
-            return false;
+            if (seed.strain == strain)
+                count++;
         }
 
-        seeds[strain] -= 1;
-        Debug.Log($"Consumed 1 seed of {strain.strainName}. Remaining: {seeds[strain]}");
-        return true;
+        return count;
+    }
+
+    public SeedInstance ConsumeSeed(PlantStrainData strain)
+    {
+        for (int i = 0; i < ownedSeeds.Count; i++)
+        {
+            if (ownedSeeds[i].strain == strain)
+            {
+                SeedInstance seed = ownedSeeds[i];
+                ownedSeeds.RemoveAt(i);
+
+                Debug.Log($"Consumed seed: {seed.DisplayName}");
+                return seed;
+            }
+        }
+
+        Debug.Log($"No seeds available for {strain.strainName}");
+        return null;
     }
 }

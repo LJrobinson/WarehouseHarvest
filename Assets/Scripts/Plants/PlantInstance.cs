@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class PlantInstance : MonoBehaviour
 {
-    [Header("Strain Data")]
-    public PlantStrainData strainData;
+    [Header("Seed Info")]
+    public SeedInstance seed;
+
+    public PlantStrainData strainData => seed != null ? seed.strain : null;
 
     [Header("Progress")]
     [Range(0f, 100f)]
@@ -17,6 +19,39 @@ public class PlantInstance : MonoBehaviour
 
     public bool IsHarvestable => stage == PlantStage.Harvestable;
     public bool IsOverripe => stage == PlantStage.Overripe;
+
+    private void Start()
+    {
+        ApplyVisuals();
+    }
+
+    private void ApplyVisuals()
+    {
+        if (seed == null)
+            return;
+
+        Renderer r = GetComponent<Renderer>();
+        if (r == null)
+            return;
+
+        if (seed.isShiny)
+        {
+            r.material.color = Color.magenta; // Shiny plants look wild
+        }
+        else
+        {
+            // Normal rarity coloring
+            r.material.color = seed.rarity switch
+            {
+                SeedRarity.Common => Color.green,
+                SeedRarity.Uncommon => new Color(0.3f, 0.8f, 0.3f),
+                SeedRarity.Rare => Color.cyan,
+                SeedRarity.Epic => new Color(0.7f, 0.2f, 1f),
+                SeedRarity.Legendary => Color.yellow,
+                _ => Color.green
+            };
+        }
+    }
 
     public void AdvanceDay()
     {
@@ -32,7 +67,7 @@ public class PlantInstance : MonoBehaviour
             growthPercent = Mathf.Clamp(growthPercent + strainData.growthPerDay, 0f, 100f);
         }
 
-        // Stage based on growth %
+        // Stage logic
         if (growthPercent < 25f)
             stage = PlantStage.Seed;
         else if (growthPercent < 60f)
@@ -40,24 +75,19 @@ public class PlantInstance : MonoBehaviour
         else
             stage = PlantStage.Flower;
 
-        // Ripeness only builds in flower
+        // Ripeness in flower
         if (stage == PlantStage.Flower)
         {
             ripenessPercent += strainData.ripenessPerDayInFlower;
         }
 
-        // Harvestable logic
+        // Harvestable / Overripe
         if (ripenessPercent >= strainData.harvestWindowStart && ripenessPercent <= strainData.harvestWindowEnd)
-        {
             stage = PlantStage.Harvestable;
-        }
 
-        // Overripe logic
         if (ripenessPercent >= strainData.overripeThreshold)
-        {
             stage = PlantStage.Overripe;
-        }
 
-        Debug.Log($"[{strainData.strainName}] Stage: {stage}, Growth: {growthPercent}%, Ripeness: {ripenessPercent}%");
+        Debug.Log($"[{strainData.strainName}] ({seed.rarity}) Shiny:{seed.isShiny} Stage:{stage} Growth:{growthPercent}% Ripeness:{ripenessPercent}%");
     }
 }

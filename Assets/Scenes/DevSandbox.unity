@@ -2854,7 +2854,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1108317522
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2921,7 +2921,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1776905803}
         m_TargetAssemblyTypeName: DevSandboxUI, Assembly-CSharp
-        m_MethodName: SpawnPlantButton
+        m_MethodName: PlantSeedButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3209,6 +3209,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1187459606}
   - {fileID: 644674984}
   - {fileID: 1754523833}
   - {fileID: 1313827074}
@@ -3220,7 +3221,6 @@ RectTransform:
   - {fileID: 249052494}
   - {fileID: 1108317522}
   - {fileID: 1490424761}
-  - {fileID: 1187459606}
   - {fileID: 185007056}
   - {fileID: 1225318399}
   m_Father: {fileID: 1508937877}

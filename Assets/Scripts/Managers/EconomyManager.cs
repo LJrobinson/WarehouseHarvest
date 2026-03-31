@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EconomyManager : MonoBehaviour
 {
-    public int Money { get; private set; } = 100;
+    public int Money { get; private set; } = 1000;
 
     public void AddMoney(int amount)
     {

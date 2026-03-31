@@ -15,3 +15,5 @@ MonoBehaviour:
   strains:
   - {fileID: 11400000, guid: 5167475c25f644343b6ea988832a39be, type: 2}
   - {fileID: 11400000, guid: e90a822be0daa1947a7828f2e33945f9, type: 2}
+  - {fileID: 11400000, guid: 115e63d9e7d3cd041be52ebd638a6ef0, type: 2}
+  - {fileID: 11400000, guid: 9b1772182716f304cab8e57f6d92b6aa, type: 2}

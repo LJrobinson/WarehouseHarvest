@@ -28,4 +28,8 @@ public class PlantStrainData : ScriptableObject
 
     [Range(0, 250)]
     public int geneticsScore = 250;
+
+    [Header("Rarity / Phenotype")]
+    [Range(0f, 0.2f)]
+    public float shinyChance = 0.01f;
 }
