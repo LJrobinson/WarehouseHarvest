@@ -7,19 +7,47 @@ public static class HarvestGrader
         if (plant == null)
             return 0;
 
-        // Basic placeholder grading:
-        // If fully grown, it gets a decent score.
-        // Later we'll add ripeness window, watering, nutrients, etc.
-        float growth = plant.growthPercent;
+        int score = 0;
 
-        int baseScore = Mathf.RoundToInt(growth * 10f); // 0-1000
+        // Genetics placeholder (later will come from ScriptableObject)
+        int geneticsScore = 250;
 
-        // Add slight randomness to make it feel like "real grading"
-        int randomBonus = Random.Range(-25, 25);
+        // Growth score (0-250)
+        int growthScore = Mathf.RoundToInt((plant.growthPercent / 100f) * 250f);
 
-        int finalScore = Mathf.Clamp(baseScore + randomBonus, 0, 1000);
+        // Ripeness timing score (0-300)
+        int ripenessScore = CalculateRipenessScore(plant.ripenessPercent);
 
-        return finalScore;
+        // Health score placeholder (later will use pests/mold)
+        int healthScore = 200;
+
+        score = geneticsScore + growthScore + ripenessScore + healthScore;
+
+        // Small randomness to simulate real-world variation
+        score += Random.Range(-20, 20);
+
+        return Mathf.Clamp(score, 0, 1000);
+    }
+
+    private static int CalculateRipenessScore(float ripenessPercent)
+    {
+        // Perfect harvest window: 100% - 110%
+        // Early: <100
+        // Late: >110
+
+        if (ripenessPercent < 80f)
+            return 50; // way too early
+
+        if (ripenessPercent < 100f)
+            return 150; // early but close
+
+        if (ripenessPercent <= 110f)
+            return 300; // PERFECT WINDOW
+
+        if (ripenessPercent <= 120f)
+            return 200; // late
+
+        return 80; // overripe
     }
 
     public static string GetGradeLetter(int score)

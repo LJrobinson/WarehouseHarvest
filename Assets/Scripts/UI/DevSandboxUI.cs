@@ -34,10 +34,7 @@ public class DevSandboxUI : MonoBehaviour
     public void AdvanceDayButton()
     {
         timeManager.AdvanceDay();
-
-        // Grow plant daily
-        plantManager.GrowCurrentPlant(15f);
-
+        plantManager.AdvanceDayForPlant();
         RefreshUI();
     }
 
@@ -55,6 +52,12 @@ public class DevSandboxUI : MonoBehaviour
         if (plant == null)
         {
             harvestText.text = "No plant to harvest.";
+            return;
+        }
+
+        if (!plant.IsHarvestable && !plant.IsOverripe)
+        {
+            harvestText.text = $"Not ready! Stage: {plant.stage}";
             return;
         }
 
@@ -77,13 +80,18 @@ public class DevSandboxUI : MonoBehaviour
         moneyText.text = $"Money: ${economyManager.Money}";
         dayText.text = $"Day: {timeManager.CurrentDay}";
 
-        if (plantManager.CurrentPlant == null)
+        PlantInstance plant = plantManager.CurrentPlant;
+
+        if (plant == null)
         {
             plantText.text = "Plant: NONE";
         }
         else
         {
-            plantText.text = $"Plant Growth: {plantManager.CurrentPlant.growthPercent}%";
+            plantText.text =
+                $"Stage: {plant.stage}\n" +
+                $"Growth: {plant.growthPercent:0}%\n" +
+                $"Ripeness: {plant.ripenessPercent:0}%";
         }
     }
 }

@@ -28,18 +28,18 @@ public class PlantManager : MonoBehaviour
 
         currentPlant = plant.AddComponent<PlantInstance>();
 
-        Debug.Log("Spawned PlaceholderPlant cube with PlantInstance script.");
+        Debug.Log("Spawned PlaceholderPlant cube with PlantInstance.");
     }
 
-    public void GrowCurrentPlant(float amount)
+    public void AdvanceDayForPlant()
     {
         if (currentPlant == null)
         {
-            Debug.LogWarning("No plant exists to grow.");
+            Debug.LogWarning("No plant exists to advance.");
             return;
         }
 
-        currentPlant.Grow(amount);
+        currentPlant.AdvanceDay();
     }
 
     public void DestroyCurrentPlant()
