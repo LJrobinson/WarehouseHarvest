@@ -2668,6 +2668,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlantManager
   spawnPoint: {fileID: 550618947}
+  defaultStrain: {fileID: 11400000, guid: e90a822be0daa1947a7828f2e33945f9, type: 2}
 --- !u!1 &1754523830
 GameObject:
   m_ObjectHideFlags: 0

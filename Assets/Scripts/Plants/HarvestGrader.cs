@@ -4,50 +4,55 @@ public static class HarvestGrader
 {
     public static int CalculateScore(PlantInstance plant)
     {
-        if (plant == null)
+        if (plant == null || plant.strainData == null)
             return 0;
 
         int score = 0;
 
-        // Genetics placeholder (later will come from ScriptableObject)
-        int geneticsScore = 250;
+        // Genetics (0-250)
+        int geneticsScore = Mathf.Clamp(plant.strainData.geneticsScore, 0, 250);
 
         // Growth score (0-250)
         int growthScore = Mathf.RoundToInt((plant.growthPercent / 100f) * 250f);
 
-        // Ripeness timing score (0-300)
-        int ripenessScore = CalculateRipenessScore(plant.ripenessPercent);
+        // Ripeness score (0-300)
+        int ripenessScore = CalculateRipenessScore(
+            plant.ripenessPercent,
+            plant.strainData.harvestWindowStart,
+            plant.strainData.harvestWindowEnd,
+            plant.strainData.overripeThreshold
+        );
 
-        // Health score placeholder (later will use pests/mold)
+        // Health score placeholder (0-200)
         int healthScore = 200;
 
         score = geneticsScore + growthScore + ripenessScore + healthScore;
 
-        // Small randomness to simulate real-world variation
+        // Randomness
         score += Random.Range(-20, 20);
 
         return Mathf.Clamp(score, 0, 1000);
     }
 
-    private static int CalculateRipenessScore(float ripenessPercent)
+    private static int CalculateRipenessScore(float ripeness, float windowStart, float windowEnd, float overripeThreshold)
     {
-        // Perfect harvest window: 100% - 110%
-        // Early: <100
-        // Late: >110
+        // Perfect window = 300 points
+        if (ripeness >= windowStart && ripeness <= windowEnd)
+            return 300;
 
-        if (ripenessPercent < 80f)
-            return 50; // way too early
+        // Too early
+        if (ripeness < windowStart)
+        {
+            float percent = ripeness / windowStart; // 0-1
+            return Mathf.RoundToInt(percent * 250f);
+        }
 
-        if (ripenessPercent < 100f)
-            return 150; // early but close
+        // Late but not dead
+        if (ripeness > windowEnd && ripeness < overripeThreshold)
+            return 200;
 
-        if (ripenessPercent <= 110f)
-            return 300; // PERFECT WINDOW
-
-        if (ripenessPercent <= 120f)
-            return 200; // late
-
-        return 80; // overripe
+        // Overripe penalty
+        return 80;
     }
 
     public static string GetGradeLetter(int score)

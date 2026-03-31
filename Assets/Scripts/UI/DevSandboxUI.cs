@@ -64,7 +64,8 @@ public class DevSandboxUI : MonoBehaviour
         int score = HarvestGrader.CalculateScore(plant);
         string grade = HarvestGrader.GetGradeLetter(score);
 
-        int payout = Mathf.RoundToInt(score * 0.5f);
+        float multiplier = plant.strainData.payoutMultiplier;
+        int payout = Mathf.RoundToInt(score * 0.5f * multiplier);
 
         economyManager.AddMoney(payout);
 
@@ -89,6 +90,7 @@ public class DevSandboxUI : MonoBehaviour
         else
         {
             plantText.text =
+                $"Strain: {plant.strainData.strainName}\n" +
                 $"Stage: {plant.stage}\n" +
                 $"Growth: {plant.growthPercent:0}%\n" +
                 $"Ripeness: {plant.ripenessPercent:0}%";

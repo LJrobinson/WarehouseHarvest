@@ -4,6 +4,9 @@ public class PlantManager : MonoBehaviour
 {
     [SerializeField] private Transform spawnPoint;
 
+    [Header("Default Strain")]
+    [SerializeField] private PlantStrainData defaultStrain;
+
     private PlantInstance currentPlant;
 
     public PlantInstance CurrentPlant => currentPlant;
@@ -16,6 +19,12 @@ public class PlantManager : MonoBehaviour
             return;
         }
 
+        if (defaultStrain == null)
+        {
+            Debug.LogError("PlantManager defaultStrain is not assigned!");
+            return;
+        }
+
         if (currentPlant != null)
         {
             Debug.LogWarning("A plant already exists. Cannot spawn another yet.");
@@ -23,12 +32,13 @@ public class PlantManager : MonoBehaviour
         }
 
         GameObject plant = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        plant.name = "PlaceholderPlant";
+        plant.name = defaultStrain.strainName;
         plant.transform.position = spawnPoint.position;
 
         currentPlant = plant.AddComponent<PlantInstance>();
+        currentPlant.strainData = defaultStrain;
 
-        Debug.Log("Spawned PlaceholderPlant cube with PlantInstance.");
+        Debug.Log($"Spawned plant strain: {defaultStrain.strainName}");
     }
 
     public void AdvanceDayForPlant()

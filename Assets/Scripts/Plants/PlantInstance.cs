@@ -2,6 +2,9 @@ using UnityEngine;
 
 public class PlantInstance : MonoBehaviour
 {
+    [Header("Strain Data")]
+    public PlantStrainData strainData;
+
     [Header("Progress")]
     [Range(0f, 100f)]
     public float growthPercent = 0f;
@@ -17,13 +20,19 @@ public class PlantInstance : MonoBehaviour
 
     public void AdvanceDay()
     {
-        // Growth always increases until 100%
-        if (growthPercent < 100f)
+        if (strainData == null)
         {
-            growthPercent = Mathf.Clamp(growthPercent + 12f, 0f, 100f);
+            Debug.LogError("PlantInstance has no strainData assigned!");
+            return;
         }
 
-        // Stage logic based on growth
+        // Growth
+        if (growthPercent < 100f)
+        {
+            growthPercent = Mathf.Clamp(growthPercent + strainData.growthPerDay, 0f, 100f);
+        }
+
+        // Stage based on growth %
         if (growthPercent < 25f)
             stage = PlantStage.Seed;
         else if (growthPercent < 60f)
@@ -31,19 +40,24 @@ public class PlantInstance : MonoBehaviour
         else
             stage = PlantStage.Flower;
 
-        // Ripeness only starts in Flower
+        // Ripeness only builds in flower
         if (stage == PlantStage.Flower)
         {
-            ripenessPercent += 10f;
+            ripenessPercent += strainData.ripenessPerDayInFlower;
         }
 
-        // Harvestable / Overripe thresholds
-        if (ripenessPercent >= 100f && ripenessPercent < 120f)
+        // Harvestable logic
+        if (ripenessPercent >= strainData.harvestWindowStart && ripenessPercent <= strainData.harvestWindowEnd)
+        {
             stage = PlantStage.Harvestable;
+        }
 
-        if (ripenessPercent >= 120f)
+        // Overripe logic
+        if (ripenessPercent >= strainData.overripeThreshold)
+        {
             stage = PlantStage.Overripe;
+        }
 
-        Debug.Log($"Plant advanced day. Stage: {stage}, Growth: {growthPercent}%, Ripeness: {ripenessPercent}%");
+        Debug.Log($"[{strainData.strainName}] Stage: {stage}, Growth: {growthPercent}%, Ripeness: {ripenessPercent}%");
     }
 }
