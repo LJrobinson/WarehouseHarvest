@@ -4,6 +4,10 @@ public class PlantManager : MonoBehaviour
 {
     [SerializeField] private Transform spawnPoint;
 
+    private PlantInstance currentPlant;
+
+    public PlantInstance CurrentPlant => currentPlant;
+
     public void SpawnPlaceholderPlant()
     {
         if (spawnPoint == null)
@@ -12,11 +16,38 @@ public class PlantManager : MonoBehaviour
             return;
         }
 
+        if (currentPlant != null)
+        {
+            Debug.LogWarning("A plant already exists. Cannot spawn another yet.");
+            return;
+        }
+
         GameObject plant = GameObject.CreatePrimitive(PrimitiveType.Cube);
         plant.name = "PlaceholderPlant";
-
         plant.transform.position = spawnPoint.position;
 
-        Debug.Log("Spawned PlaceholderPlant cube.");
+        currentPlant = plant.AddComponent<PlantInstance>();
+
+        Debug.Log("Spawned PlaceholderPlant cube with PlantInstance script.");
+    }
+
+    public void GrowCurrentPlant(float amount)
+    {
+        if (currentPlant == null)
+        {
+            Debug.LogWarning("No plant exists to grow.");
+            return;
+        }
+
+        currentPlant.Grow(amount);
+    }
+
+    public void DestroyCurrentPlant()
+    {
+        if (currentPlant == null)
+            return;
+
+        Destroy(currentPlant.gameObject);
+        currentPlant = null;
     }
 }

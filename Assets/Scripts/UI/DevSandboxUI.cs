@@ -11,6 +11,8 @@ public class DevSandboxUI : MonoBehaviour
     [Header("UI Text")]
     [SerializeField] private TMP_Text moneyText;
     [SerializeField] private TMP_Text dayText;
+    [SerializeField] private TMP_Text plantText;
+    [SerializeField] private TMP_Text harvestText;
 
     private void Start()
     {
@@ -32,17 +34,56 @@ public class DevSandboxUI : MonoBehaviour
     public void AdvanceDayButton()
     {
         timeManager.AdvanceDay();
+
+        // Grow plant daily
+        plantManager.GrowCurrentPlant(15f);
+
         RefreshUI();
     }
 
     public void SpawnPlantButton()
     {
         plantManager.SpawnPlaceholderPlant();
+        harvestText.text = "";
+        RefreshUI();
+    }
+
+    public void HarvestButton()
+    {
+        PlantInstance plant = plantManager.CurrentPlant;
+
+        if (plant == null)
+        {
+            harvestText.text = "No plant to harvest.";
+            return;
+        }
+
+        int score = HarvestGrader.CalculateScore(plant);
+        string grade = HarvestGrader.GetGradeLetter(score);
+
+        int payout = Mathf.RoundToInt(score * 0.5f);
+
+        economyManager.AddMoney(payout);
+
+        harvestText.text = $"Harvested! Grade {grade} ({score}/1000) +${payout}";
+
+        plantManager.DestroyCurrentPlant();
+
+        RefreshUI();
     }
 
     private void RefreshUI()
     {
         moneyText.text = $"Money: ${economyManager.Money}";
         dayText.text = $"Day: {timeManager.CurrentDay}";
+
+        if (plantManager.CurrentPlant == null)
+        {
+            plantText.text = "Plant: NONE";
+        }
+        else
+        {
+            plantText.text = $"Plant Growth: {plantManager.CurrentPlant.growthPercent}%";
+        }
     }
 }
