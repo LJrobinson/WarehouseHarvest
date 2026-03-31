@@ -21,6 +21,8 @@ public class PlantStrainData : ScriptableObject
     public float overripeThreshold = 120f;
 
     [Header("Grading / Economy")]
+    public int seedCost = 25;
+
     [Range(0f, 2f)]
     public float payoutMultiplier = 1.0f;
 

@@ -4,14 +4,13 @@ public class PlantManager : MonoBehaviour
 {
     [SerializeField] private Transform spawnPoint;
 
-    [Header("Default Strain")]
-    [SerializeField] private PlantStrainData defaultStrain;
-
     private PlantInstance currentPlant;
 
     public PlantInstance CurrentPlant => currentPlant;
 
-    public void SpawnPlaceholderPlant()
+    public bool HasPlant => currentPlant != null;
+
+    public void SpawnPlant(PlantStrainData strain)
     {
         if (spawnPoint == null)
         {
@@ -19,9 +18,9 @@ public class PlantManager : MonoBehaviour
             return;
         }
 
-        if (defaultStrain == null)
+        if (strain == null)
         {
-            Debug.LogError("PlantManager defaultStrain is not assigned!");
+            Debug.LogError("SpawnPlant failed: strain is null!");
             return;
         }
 
@@ -32,22 +31,19 @@ public class PlantManager : MonoBehaviour
         }
 
         GameObject plant = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        plant.name = defaultStrain.strainName;
+        plant.name = strain.strainName;
         plant.transform.position = spawnPoint.position;
 
         currentPlant = plant.AddComponent<PlantInstance>();
-        currentPlant.strainData = defaultStrain;
+        currentPlant.strainData = strain;
 
-        Debug.Log($"Spawned plant strain: {defaultStrain.strainName}");
+        Debug.Log($"Spawned plant strain: {strain.strainName}");
     }
 
     public void AdvanceDayForPlant()
     {
         if (currentPlant == null)
-        {
-            Debug.LogWarning("No plant exists to advance.");
             return;
-        }
 
         currentPlant.AdvanceDay();
     }
