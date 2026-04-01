@@ -68,4 +68,16 @@ public static class SeedGenerator
 
         return mult;
     }
+
+    public static SeedInstance GenerateSeedWithMinimumRarity(PlantStrainData strain, SeedRarity minimumRarity, float rarityBoost)
+    {
+        SeedInstance seed = GenerateSeed(strain, rarityBoost);
+
+        if (seed.rarity < minimumRarity)
+            seed.rarity = minimumRarity;
+
+        seed.geneticsBonus = GetGeneticsBonus(seed.rarity, seed.isShiny);
+
+        return seed;
+    }
 }

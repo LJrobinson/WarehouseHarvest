@@ -6,9 +6,10 @@ public class DevSandboxUI : MonoBehaviour
 {
     [Header("Managers")]
     [SerializeField] private EconomyManager economyManager;
-    [SerializeField] private TimeManager timeManager;
+    [SerializeField] private PackLoyaltyManager loyaltyManager;
     [SerializeField] private PlantManager plantManager;
     [SerializeField] private SeedInventory seedInventory;
+    [SerializeField] private TimeManager timeManager;
 
     [Header("Database")]
     [SerializeField] private StrainDatabase strainDatabase;
@@ -114,6 +115,16 @@ public class DevSandboxUI : MonoBehaviour
     public void Buy20PackButton()
     {
         BuySeedPack(20, selectedStrain.pack20Cost, 0.06f);
+
+        loyaltyManager.RegisterTwentyPackPurchase();
+
+        if (loyaltyManager.HasEarnedBonus())
+        {
+            loyaltyManager.ResetStreak();
+
+            // reward: free 5-pack mystery strain (or same strain)
+            GrantBonusPack();
+        }
     }
 
     private void BuySeedPack(int amount, int packCost, float rarityBoost)
@@ -134,7 +145,17 @@ public class DevSandboxUI : MonoBehaviour
 
         for (int i = 0; i < amount; i++)
         {
-            SeedInstance seed = SeedGenerator.GenerateSeed(selectedStrain, rarityBoost);
+            SeedInstance seed;
+
+            if (amount == 20 && i == amount - 1)
+            {
+                seed = SeedGenerator.GenerateSeedWithMinimumRarity(selectedStrain, SeedRarity.Rare, rarityBoost);
+            }
+            else
+            {
+                seed = SeedGenerator.GenerateSeed(selectedStrain, rarityBoost);
+            }
+
             seedInventory.AddSeed(seed);
 
             if (seed.isShiny)
@@ -147,6 +168,31 @@ public class DevSandboxUI : MonoBehaviour
         harvestText.text = $"Bought {amount}-Pack: {rarePlusCount} Rare+ / {shinyCount} Shiny";
 
         RefreshUI();
+    }
+
+    private void GrantBonusPack()
+    {
+        if (strainDatabase == null || strainDatabase.strains.Count == 0)
+            return;
+
+        PlantStrainData randomStrain = strainDatabase.strains[Random.Range(0, strainDatabase.strains.Count)];
+
+        int shinyCount = 0;
+        int rarePlusCount = 0;
+
+        for (int i = 0; i < 5; i++)
+        {
+            SeedInstance seed = SeedGenerator.GenerateSeed(randomStrain, 0.05f);
+            seedInventory.AddSeed(seed);
+
+            if (seed.isShiny)
+                shinyCount++;
+
+            if (seed.rarity >= SeedRarity.Rare)
+                rarePlusCount++;
+        }
+
+        harvestText.text = $"BONUS PACK! Free Mystery 5-Pack: {randomStrain.strainName} ({rarePlusCount} Rare+ / {shinyCount} Shiny)";
     }
 
     public void PlantSeedButton()
