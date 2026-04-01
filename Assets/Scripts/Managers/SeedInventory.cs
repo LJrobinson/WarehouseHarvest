@@ -44,4 +44,14 @@ public class SeedInventory : MonoBehaviour
         Debug.Log($"No seeds available for {strain.strainName}");
         return null;
     }
+
+    public List<SeedInstance> GetAllSeeds()
+    {
+        return ownedSeeds;
+    }
+
+    public bool RemoveSpecificSeed(SeedInstance seed)
+    {
+        return ownedSeeds.Remove(seed);
+    }
 }

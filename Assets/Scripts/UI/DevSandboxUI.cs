@@ -25,6 +25,7 @@ public class DevSandboxUI : MonoBehaviour
     [SerializeField] private TMP_Dropdown strainDropdown;
     [SerializeField] private TMP_Text strainInfoText;
     [SerializeField] private TMP_Text seedCountText;
+    [SerializeField] private SeedInventoryUI seedInventoryUI;
 
     private PlantStrainData selectedStrain;
     private List<PlantStrainData> dropdownStrains = new List<PlantStrainData>();
@@ -32,6 +33,18 @@ public class DevSandboxUI : MonoBehaviour
     private void Start()
     {
         SetupDropdown();
+        RefreshUI();
+    }
+
+    public void AddMoneyButton()
+    {
+        economyManager.AddMoney(50);
+        RefreshUI();
+    }
+
+    public void SpendMoneyButton()
+    {
+        economyManager.SpendMoney(25);
         RefreshUI();
     }
 
@@ -144,6 +157,7 @@ public class DevSandboxUI : MonoBehaviour
         harvestText.text = $"Bought seed: {newSeed.DisplayName}";
 
         RefreshUI();
+        RefreshSeedListUI();
     }
 
     public void Buy5PackButton()
@@ -211,6 +225,7 @@ public class DevSandboxUI : MonoBehaviour
         harvestText.text = $"Bought {amount}-Pack: {rarePlusCount} Rare+ / {shinyCount} Shiny";
 
         RefreshUI();
+        RefreshSeedListUI();
         return true;
     }
 
@@ -287,6 +302,7 @@ public class DevSandboxUI : MonoBehaviour
         harvestText.text = $"Bought Bagseed {amount}-Pack: {rarePlusCount} Rare+ / {shinyCount} Shiny";
 
         RefreshUI();
+        RefreshSeedListUI();
     }
 
     // ==========================
@@ -317,6 +333,7 @@ public class DevSandboxUI : MonoBehaviour
         harvestText.text = $"Planted: {seed.DisplayName}";
 
         RefreshUI();
+        RefreshSeedListUI();
     }
 
     public void AdvanceDayButton()
@@ -400,6 +417,7 @@ public class DevSandboxUI : MonoBehaviour
 
         SetupDropdown();
         RefreshUI();
+        RefreshSeedListUI();
     }
 
     // ==========================
@@ -432,5 +450,39 @@ public class DevSandboxUI : MonoBehaviour
         }
 
         UpdateSelectedStrainUI();
+    }
+
+    public void PlantSpecificSeed(SeedInstance seed)
+    {
+        if (seed == null)
+            return;
+
+        if (plantManager.HasPlant)
+        {
+            harvestText.text = "A plant is already growing.";
+            return;
+        }
+
+        // Remove the seed from inventory manually
+        // We'll implement this cleanly next
+        bool removed = seedInventory.RemoveSpecificSeed(seed);
+
+        if (!removed)
+        {
+            harvestText.text = "Seed not found in inventory.";
+            return;
+        }
+
+        plantManager.SpawnPlantFromSeed(seed);
+        harvestText.text = $"Planted: {seed.DisplayName}";
+
+        RefreshUI();
+        RefreshSeedListUI();
+    }
+
+    private void RefreshSeedListUI()
+    {
+        if (seedInventoryUI != null)
+            seedInventoryUI.Refresh();
     }
 }
