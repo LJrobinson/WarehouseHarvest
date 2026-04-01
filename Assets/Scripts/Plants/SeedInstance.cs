@@ -7,6 +7,7 @@ public class SeedInstance
     public PlantStrainData strain;
     public SeedRarity rarity;
     public bool isShiny;
+    public bool isMysterySeed;
 
     public int geneticsBonus;
 
@@ -14,8 +15,9 @@ public class SeedInstance
     {
         get
         {
-            string shinyText = isShiny ? "Shiny" : "";
-            return $"{shinyText}{strain.strainName} ({rarity})";
+            string shinyText = isShiny ? " Shiny " : "";
+            string strainName = isMysterySeed ? "???" : strain.strainName;
+            return $"{shinyText}{strainName} ({rarity})";
         }
     }
 }

@@ -387,6 +387,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 185007055}
   m_CullTransparentMesh: 1
+--- !u!1 &188970234
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 188970235}
+  - component: {fileID: 188970236}
+  m_Layer: 0
+  m_Name: UnlockManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &188970235
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188970234}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 943534518}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &188970236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 188970234}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 305d92484b1fc2f4dad1f95f90114ee7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StrainUnlockManager
 --- !u!1 &249052493
 GameObject:
   m_ObjectHideFlags: 0
@@ -3071,6 +3115,7 @@ Transform:
   - {fileID: 262489313}
   - {fileID: 2145428968}
   - {fileID: 1593988684}
+  - {fileID: 188970235}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1013735444
@@ -5287,6 +5332,8 @@ MonoBehaviour:
   timeManager: {fileID: 2145428969}
   plantManager: {fileID: 1658357457}
   seedInventory: {fileID: 262489314}
+  unlockManager: {fileID: 188970236}
+  loyaltyManager: {fileID: 66757301}
   strainDatabase: {fileID: 11400000, guid: 18bfd18d769761540add7f460aba006d, type: 2}
   moneyText: {fileID: 1313827075}
   dayText: {fileID: 644674985}
