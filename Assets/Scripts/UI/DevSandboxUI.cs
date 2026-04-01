@@ -38,7 +38,7 @@ public class DevSandboxUI : MonoBehaviour
 
     public void AddMoneyButton()
     {
-        economyManager.AddMoney(50);
+        economyManager.AddMoney(5000);
         RefreshUI();
     }
 
@@ -332,7 +332,6 @@ public class DevSandboxUI : MonoBehaviour
 
         harvestText.text = $"Planted: {seed.DisplayName}";
 
-        RefreshUI();
         RefreshSeedListUI();
     }
 
@@ -476,13 +475,12 @@ public class DevSandboxUI : MonoBehaviour
         plantManager.SpawnPlantFromSeed(seed);
         harvestText.text = $"Planted: {seed.DisplayName}";
 
-        RefreshUI();
         RefreshSeedListUI();
     }
 
     private void RefreshSeedListUI()
     {
         if (seedInventoryUI != null)
-            seedInventoryUI.Refresh();
+            seedInventoryUI.RefreshSafe();
     }
 }

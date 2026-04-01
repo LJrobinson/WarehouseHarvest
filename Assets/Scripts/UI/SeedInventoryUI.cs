@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -39,5 +40,17 @@ public class SeedInventoryUI : MonoBehaviour
 
             spawnedRows.Add(rowObj);
         }
+    }
+
+    private IEnumerator RefreshNextFrame()
+    {
+        yield return null;
+        Refresh();
+    }
+
+    public void RefreshSafe()
+    {
+        StopAllCoroutines();
+        StartCoroutine(RefreshNextFrame());
     }
 }
