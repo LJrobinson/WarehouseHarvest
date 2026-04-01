@@ -23,6 +23,10 @@ public class PlantStrainData : ScriptableObject
     [Header("Grading / Economy")]
     public int seedCost = 25;
 
+    [Header("Seed Packs")]
+    public int pack5Cost = 100;
+    public int pack20Cost = 350;
+
     [Range(0f, 2f)]
     public float payoutMultiplier = 1.0f;
 

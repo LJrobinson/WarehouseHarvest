@@ -74,6 +74,8 @@ public class DevSandboxUI : MonoBehaviour
         strainInfoText.text =
             $"{selectedStrain.strainName}\n" +
             $"Cost: ${selectedStrain.seedCost}\n" +
+            $"5-Pack: ${selectedStrain.pack5Cost}\n" +
+            $"20-Pack: ${selectedStrain.pack20Cost}\n" +
             $"Growth/Day: {selectedStrain.growthPerDay}\n" +
             $"Ripeness/Day: {selectedStrain.ripenessPerDayInFlower}\n" +
             $"Harvest Window: {selectedStrain.harvestWindowStart}-{selectedStrain.harvestWindowEnd}\n" +
@@ -100,6 +102,49 @@ public class DevSandboxUI : MonoBehaviour
         seedInventory.AddSeed(newSeed);
 
         harvestText.text = $"Bought seed: {newSeed.DisplayName}";
+
+        RefreshUI();
+    }
+
+    public void Buy5PackButton()
+    {
+        BuySeedPack(5, selectedStrain.pack5Cost, 0.03f);
+    }
+
+    public void Buy20PackButton()
+    {
+        BuySeedPack(20, selectedStrain.pack20Cost, 0.06f);
+    }
+
+    private void BuySeedPack(int amount, int packCost, float rarityBoost)
+    {
+        if (selectedStrain == null)
+            return;
+
+        bool success = economyManager.SpendMoney(packCost);
+
+        if (!success)
+        {
+            harvestText.text = "Not enough money to buy pack.";
+            return;
+        }
+
+        int shinyCount = 0;
+        int rarePlusCount = 0;
+
+        for (int i = 0; i < amount; i++)
+        {
+            SeedInstance seed = SeedGenerator.GenerateSeed(selectedStrain, rarityBoost);
+            seedInventory.AddSeed(seed);
+
+            if (seed.isShiny)
+                shinyCount++;
+
+            if (seed.rarity == SeedRarity.Rare || seed.rarity == SeedRarity.Epic || seed.rarity == SeedRarity.Legendary)
+                rarePlusCount++;
+        }
+
+        harvestText.text = $"Bought {amount}-Pack: {rarePlusCount} Rare+ / {shinyCount} Shiny";
 
         RefreshUI();
     }

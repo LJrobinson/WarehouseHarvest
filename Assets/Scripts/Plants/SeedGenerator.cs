@@ -2,12 +2,12 @@ using UnityEngine;
 
 public static class SeedGenerator
 {
-    public static SeedInstance GenerateSeed(PlantStrainData strain)
+    public static SeedInstance GenerateSeed(PlantStrainData strain, float rarityBoost)
     {
         SeedInstance seed = new SeedInstance();
         seed.strain = strain;
 
-        seed.rarity = RollRarity();
+        seed.rarity = RollRarity(rarityBoost);
         seed.isShiny = Random.value < strain.shinyChance;
 
         seed.geneticsBonus = GetGeneticsBonus(seed.rarity, seed.isShiny);
@@ -15,11 +15,17 @@ public static class SeedGenerator
         return seed;
     }
 
-    private static SeedRarity RollRarity()
+    public static SeedInstance GenerateSeed(PlantStrainData strain)
     {
-        float roll = Random.value;
+        return GenerateSeed(strain, 0f);
+    }
 
-        // You can tune these odds later
+    private static SeedRarity RollRarity(float rarityBoost)
+    {
+        // rarityBoost shifts odds slightly toward higher tiers
+        float roll = Random.value - rarityBoost;
+        roll = Mathf.Clamp01(roll);
+
         if (roll < 0.50f) return SeedRarity.Common;
         if (roll < 0.75f) return SeedRarity.Uncommon;
         if (roll < 0.90f) return SeedRarity.Rare;

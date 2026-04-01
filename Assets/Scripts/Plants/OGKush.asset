@@ -19,5 +19,9 @@ MonoBehaviour:
   harvestWindowStart: 100
   harvestWindowEnd: 105
   overripeThreshold: 120
+  seedCost: 25
+  pack5Cost: 115
+  pack20Cost: 375
   payoutMultiplier: 1.4
   geneticsScore: 250
+  shinyChance: 0.01
