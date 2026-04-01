@@ -11,6 +11,7 @@ public class DevSandboxUI : MonoBehaviour
     [SerializeField] private SeedInventory seedInventory;
     [SerializeField] private StrainUnlockManager unlockManager;
     [SerializeField] private PackLoyaltyManager loyaltyManager;
+    [SerializeField] private GrowEquipmentManager equipmentManager;
 
     [Header("Database")]
     [SerializeField] private StrainDatabase strainDatabase;
@@ -333,6 +334,54 @@ public class DevSandboxUI : MonoBehaviour
         harvestText.text = $"Planted: {seed.DisplayName}";
 
         RefreshSeedListUI();
+    }
+
+    public void WaterPlantButton()
+    {
+        PlantInstance plant = plantManager.CurrentPlant;
+        if (plant == null) return;
+
+        float stressReduction = equipmentManager != null ? equipmentManager.GetWaterStressReduction() : 0f;
+
+        plant.WaterPlant(40f, stressReduction);
+        harvestText.text = "Watered plant.";
+        RefreshUI();
+    }
+
+    public void FeedNutrientsButton()
+    {
+        PlantInstance plant = plantManager.CurrentPlant;
+        if (plant == null) return;
+
+        plant.FeedNutrients(35f);
+        harvestText.text = "Fed nutrients.";
+        RefreshUI();
+    }
+
+    public void TreatMoldButton()
+    {
+        PlantInstance plant = plantManager.CurrentPlant;
+        if (plant == null) return;
+
+        if (plant.TreatMold())
+            harvestText.text = "Applied fungicide (mold treated).";
+        else
+            harvestText.text = "No mold to treat.";
+
+        RefreshUI();
+    }
+
+    public void TreatPestsButton()
+    {
+        PlantInstance plant = plantManager.CurrentPlant;
+        if (plant == null) return;
+
+        if (plant.TreatPests())
+            harvestText.text = "Applied pesticide (pests treated).";
+        else
+            harvestText.text = "No pests to treat.";
+
+        RefreshUI();
     }
 
     public void AdvanceDayButton()

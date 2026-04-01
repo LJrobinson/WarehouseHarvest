@@ -3,6 +3,7 @@ using UnityEngine;
 public class PlantManager : MonoBehaviour
 {
     [SerializeField] private Transform spawnPoint;
+    [SerializeField] private GrowEquipmentManager equipmentManager;
 
     private PlantInstance currentPlant;
 
@@ -44,7 +45,9 @@ public class PlantManager : MonoBehaviour
         if (currentPlant == null)
             return;
 
-        currentPlant.AdvanceDay();
+
+        float lightMultiplier = equipmentManager != null ? equipmentManager.GetLightGrowthBonus() : 1f;
+        currentPlant.AdvanceDay(lightMultiplier);
     }
 
     public void DestroyCurrentPlant()

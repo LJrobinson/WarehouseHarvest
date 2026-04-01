@@ -4,10 +4,23 @@ public static class HarvestGrader
 {
     public static int CalculateScore(PlantInstance plant)
     {
+        
         if (plant == null || plant.strainData == null || plant.seed == null)
             return 0;
 
         int score = 0;
+
+        int carePenalty = Mathf.RoundToInt((plant.stress / 100f) * 250f);
+        int healthPenalty = Mathf.RoundToInt(((100f - plant.health) / 100f) * 250f);
+
+        score -= carePenalty;
+        score -= healthPenalty;
+
+        if (plant.hasMold)
+            score -= 200;
+
+        if (plant.hasPests)
+            score -= 120;
 
         // Genetics base from strain + rarity bonus
         int geneticsScore = plant.strainData.geneticsScore + plant.seed.geneticsBonus;

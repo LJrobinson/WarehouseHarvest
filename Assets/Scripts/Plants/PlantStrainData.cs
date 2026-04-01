@@ -9,6 +9,19 @@ public class PlantStrainData : ScriptableObject
     [TextArea]
     public string description;
 
+    [Header("Care Preferences")]
+    public float idealWaterMin = 40f;
+    public float idealWaterMax = 70f;
+
+    public float idealNutrientsMin = 40f;
+    public float idealNutrientsMax = 75f;
+
+    [Range(0f, 1f)]
+    public float moldSusceptibility = 0.25f;
+
+    [Range(0f, 1f)]
+    public float pestSusceptibility = 0.20f;
+
     [Header("Growth Settings")]
     public float growthPerDay = 12f;
 
