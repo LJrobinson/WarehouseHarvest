@@ -39,7 +39,7 @@ public class DevSandboxUI : MonoBehaviour
 
     public void AddMoneyButton()
     {
-        economyManager.AddMoney(5000);
+        economyManager.AddMoney(1000000);
         RefreshUI();
     }
 
