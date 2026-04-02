@@ -62,7 +62,7 @@ public class PlantInstance : MonoBehaviour
         }
     }
 
-    public void AdvanceDay(float lightMultiplier)
+    public void AdvanceDay(float lightMultiplier, float waterQualityBonus)
     {
         if (strainData == null)
         {
@@ -71,100 +71,39 @@ public class PlantInstance : MonoBehaviour
         }
 
         // Growth
-        if (growthPercent < 100f)
-        {
-            growthPercent = Mathf.Clamp(growthPercent + (strainData.growthPerDay * lightMultiplier), 0f, 100f);
-        }
+        growthPercent = Mathf.Clamp(growthPercent + (strainData.growthPerDay * lightMultiplier), 0f, 100f);
 
-        // Stage logic
-        if (growthPercent < 25f)
-            stage = PlantStage.Seed;
-        else if (growthPercent < 60f)
-            stage = PlantStage.Veg;
-        else
-            stage = PlantStage.Flower;
-
-        // Drain daily resources
+        // Drain resources
         waterLevel = Mathf.Clamp(waterLevel - 12f, 0f, 100f);
+        nutrientsLevel = Mathf.Clamp(nutrientsLevel - 8f, 0f, 100f);
 
-        if (stage == PlantStage.Veg || stage == PlantStage.Flower)
-            nutrientsLevel = Mathf.Clamp(nutrientsLevel - 8f, 0f, 100f);
-
-        // Stress calculation based on ideal ranges
+        // Stress
         bool waterOk = waterLevel >= strainData.idealWaterMin && waterLevel <= strainData.idealWaterMax;
         bool nutrientsOk = nutrientsLevel >= strainData.idealNutrientsMin && nutrientsLevel <= strainData.idealNutrientsMax;
 
-        if (!waterOk)
-            stress += 6f;
-        else
-            stress -= 2f;
-
-        if (stage == PlantStage.Veg || stage == PlantStage.Flower)
-        {
-            if (!nutrientsOk)
-                stress += 4f;
-            else
-                stress -= 1f;
-        }
-
+        stress += !waterOk ? 6f - waterQualityBonus : -2f;
+        stress += !nutrientsOk ? 4f : -1f;
         stress = Mathf.Clamp(stress, 0f, 100f);
 
-        // Health damage if stress is high
-        if (stress > 70f)
-            health -= 4f;
-
-        if (waterLevel <= 5f)
-            health -= 6f;
-
+        // Health penalties
+        if (stress > 70f) health -= 4f;
+        if (waterLevel <= 5f) health -= 6f;
         health = Mathf.Clamp(health, 0f, 100f);
 
-        // Ripeness in flower
-        if (stage == PlantStage.Flower)
-        {
-            ripenessPercent += strainData.ripenessPerDayInFlower;
-        }
-
-        // Harvestable / Overripe
-        if (ripenessPercent >= strainData.harvestWindowStart && ripenessPercent <= strainData.harvestWindowEnd)
-            stage = PlantStage.Harvestable;
-
-        if (ripenessPercent >= strainData.overripeThreshold)
-            stage = PlantStage.Overripe;
-
+        // Mold / Pest random events
         float baseMoldChance = 0.01f + (stress / 100f) * 0.05f;
         float basePestChance = 0.01f + (stress / 100f) * 0.04f;
 
-        // Overwatering increases mold chance
-        if (waterLevel > strainData.idealWaterMax)
-            baseMoldChance += 0.05f;
+        if (waterLevel > strainData.idealWaterMax) baseMoldChance += 0.05f;
 
         baseMoldChance *= strainData.moldSusceptibility;
         basePestChance *= strainData.pestSusceptibility;
 
-        if (!hasMold && Random.value < baseMoldChance)
-        {
-            hasMold = true;
-            Debug.Log($"MOLD EVENT on {strainData.strainName}!");
-        }
+        if (!hasMold && Random.value < baseMoldChance) hasMold = true;
+        if (!hasPests && Random.value < basePestChance) hasPests = true;
 
-        if (!hasPests && Random.value < basePestChance)
-        {
-            hasPests = true;
-            Debug.Log($"PEST EVENT on {strainData.strainName}!");
-        }
-
-        // Ongoing damage if infected
-        if (hasMold)
-        {
-            health -= 5f;
-            stress += 5f;
-        }
-
-        if (hasPests)
-        {
-            health -= 3f;
-            stress += 3f;
-        }
+        if (hasMold) { health -= 5f; stress += 5f; }
+        if (hasPests) { health -= 3f; stress += 3f; }
 
         health = Mathf.Clamp(health, 0f, 100f);
         stress = Mathf.Clamp(stress, 0f, 100f);
@@ -197,5 +136,25 @@ public class PlantInstance : MonoBehaviour
         hasPests = false;
         stress = Mathf.Clamp(stress - 8f, 0f, 100f);
         return true;
+    }
+
+    public void InitializeFromSeed(SeedInstance newSeed)
+    {
+        seed = newSeed;
+
+        growthPercent = 0f;
+        ripenessPercent = 0f;
+
+        waterLevel = 60f;
+        nutrientsLevel = 60f;
+        stress = 0f;
+        health = 100f;
+
+        hasMold = false;
+        hasPests = false;
+
+        stage = PlantStage.Seed;
+
+        ApplyVisuals();
     }
 }
