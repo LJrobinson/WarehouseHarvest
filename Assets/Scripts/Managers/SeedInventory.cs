@@ -7,7 +7,7 @@ public class SeedInventory : MonoBehaviour
 
     public void AddSeed(SeedInstance seed)
     {
-        if (seed == null || seed.strain == null)
+        if (seed == null)
             return;
 
         ownedSeeds.Add(seed);

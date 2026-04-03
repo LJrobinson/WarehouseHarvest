@@ -308,7 +308,7 @@ public class DevSandboxControllerUI : MonoBehaviour
     private void BuildWarehouseDropdown()
     {
         foundWarehouses.Clear();
-        foundWarehouses.AddRange(FindObjectsByType<Warehouse>(FindObjectsSortMode.None));
+        foundWarehouses.AddRange(FindObjectsByType<Warehouse>());
 
         if (warehouseDropdown == null)
             return;
