@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: Critical47
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Critical 47
+  description: 
+  idealWaterMin: 65
+  idealWaterMax: 77
+  idealNutrientsMin: 31
+  idealNutrientsMax: 86
+  moldSusceptibility: 0.052
+  pestSusceptibility: 0.375
+  growthPerDay: 6
+  ripenessPerDayInFlower: 2
+  harvestWindowStart: 119
+  harvestWindowEnd: 136
+  overripeThreshold: 146
+  seedCost: 89
+  pack5Cost: 117
+  pack20Cost: 4476
+  payoutMultiplier: 1.68
+  geneticsScore: 155
+  shinyChance: 0.0737

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: LondonPoundCake
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: London Pound Cake
+  description: 
+  idealWaterMin: 20
+  idealWaterMax: 67
+  idealNutrientsMin: 63
+  idealNutrientsMax: 79
+  moldSusceptibility: 0.987
+  pestSusceptibility: 0.172
+  growthPerDay: 27
+  ripenessPerDayInFlower: 10
+  harvestWindowStart: 102
+  harvestWindowEnd: 117
+  overripeThreshold: 113
+  seedCost: 46
+  pack5Cost: 492
+  pack20Cost: 1215
+  payoutMultiplier: 0.261
+  geneticsScore: 113
+  shinyChance: 0.0787

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: CosmicCharlie
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Cosmic Charlie
+  description: 
+  idealWaterMin: 33
+  idealWaterMax: 72
+  idealNutrientsMin: 26
+  idealNutrientsMax: 78
+  moldSusceptibility: 0.081
+  pestSusceptibility: 0.59
+  growthPerDay: 24
+  ripenessPerDayInFlower: 21
+  harvestWindowStart: 83
+  harvestWindowEnd: 108
+  overripeThreshold: 194
+  seedCost: 203
+  pack5Cost: 29
+  pack20Cost: 1572
+  payoutMultiplier: 0.603
+  geneticsScore: 225
+  shinyChance: 0.0315

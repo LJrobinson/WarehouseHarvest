@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: SynthwaveSour
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Synthwave Sour
+  description: 
+  idealWaterMin: 57
+  idealWaterMax: 87
+  idealNutrientsMin: 68
+  idealNutrientsMax: 52
+  moldSusceptibility: 0.596
+  pestSusceptibility: 0.143
+  growthPerDay: 1
+  ripenessPerDayInFlower: 3
+  harvestWindowStart: 100
+  harvestWindowEnd: 95
+  overripeThreshold: 153
+  seedCost: 39
+  pack5Cost: 483
+  pack20Cost: 1271
+  payoutMultiplier: 0.261
+  geneticsScore: 246
+  shinyChance: 0.0435

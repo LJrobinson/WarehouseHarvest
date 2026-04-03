@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: P91
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: P-91
+  description: 
+  idealWaterMin: 59
+  idealWaterMax: 65
+  idealNutrientsMin: 62
+  idealNutrientsMax: 84
+  moldSusceptibility: 0.165
+  pestSusceptibility: 0.733
+  growthPerDay: 29
+  ripenessPerDayInFlower: 24
+  harvestWindowStart: 118
+  harvestWindowEnd: 141
+  overripeThreshold: 118
+  seedCost: 199
+  pack5Cost: 391
+  pack20Cost: 2196
+  payoutMultiplier: 1.801
+  geneticsScore: 79
+  shinyChance: 0.0086

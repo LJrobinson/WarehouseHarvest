@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: LambsBread
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Lamb's Bread
+  description: 
+  idealWaterMin: 30
+  idealWaterMax: 56
+  idealNutrientsMin: 46
+  idealNutrientsMax: 81
+  moldSusceptibility: 0.478
+  pestSusceptibility: 0.494
+  growthPerDay: 10
+  ripenessPerDayInFlower: 19
+  harvestWindowStart: 112
+  harvestWindowEnd: 129
+  overripeThreshold: 139
+  seedCost: 232
+  pack5Cost: 191
+  pack20Cost: 833
+  payoutMultiplier: 1.131
+  geneticsScore: 152
+  shinyChance: 0.0046

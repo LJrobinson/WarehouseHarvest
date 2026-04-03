@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: JackFlash
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Jack Flash
+  description: 
+  idealWaterMin: 36
+  idealWaterMax: 54
+  idealNutrientsMin: 26
+  idealNutrientsMax: 71
+  moldSusceptibility: 0.126
+  pestSusceptibility: 0.109
+  growthPerDay: 6
+  ripenessPerDayInFlower: 2
+  harvestWindowStart: 91
+  harvestWindowEnd: 125
+  overripeThreshold: 147
+  seedCost: 96
+  pack5Cost: 172
+  pack20Cost: 2596
+  payoutMultiplier: 1.758
+  geneticsScore: 246
+  shinyChance: 0.0704

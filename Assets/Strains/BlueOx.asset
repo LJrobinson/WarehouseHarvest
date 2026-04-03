@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: BlueOx
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Blue Ox
+  description: 
+  idealWaterMin: 51
+  idealWaterMax: 91
+  idealNutrientsMin: 20
+  idealNutrientsMax: 73
+  moldSusceptibility: 0.057
+  pestSusceptibility: 0.233
+  growthPerDay: 25
+  ripenessPerDayInFlower: 6
+  harvestWindowStart: 120
+  harvestWindowEnd: 144
+  overripeThreshold: 191
+  seedCost: 16
+  pack5Cost: 65
+  pack20Cost: 4326
+  payoutMultiplier: 1.871
+  geneticsScore: 92
+  shinyChance: 0.1155

@@ -54,4 +54,64 @@ public class SeedInventory : MonoBehaviour
     {
         return ownedSeeds.Remove(seed);
     }
+
+    public List<SeedInventorySummary> GetSummaries()
+    {
+        Dictionary<string, SeedInventorySummary> map = new Dictionary<string, SeedInventorySummary>();
+
+        foreach (SeedInstance seed in ownedSeeds)
+        {
+            bool mystery = seed.isMysterySeed;
+            string key = mystery ? "MYSTERY" : seed.strain.strainName;
+
+            if (!map.ContainsKey(key))
+            {
+                map[key] = new SeedInventorySummary()
+                {
+                    strain = seed.strain,
+                    isMystery = mystery,
+                    totalCount = 0,
+                    shinyCount = 0,
+                    rarityCounts = new Dictionary<SeedRarity, int>()
+                };
+
+                foreach (SeedRarity r in System.Enum.GetValues(typeof(SeedRarity)))
+                    map[key].rarityCounts[r] = 0;
+            }
+
+            map[key].totalCount++;
+
+            map[key].rarityCounts[seed.rarity]++;
+
+            if (seed.isShiny)
+                map[key].shinyCount++;
+        }
+
+        return new List<SeedInventorySummary>(map.Values);
+    }
+
+    public List<SeedStack> GetSeedStacks()
+    {
+        Dictionary<string, SeedStack> map = new Dictionary<string, SeedStack>();
+
+        foreach (SeedInstance seed in ownedSeeds)
+        {
+            string key = $"{seed.strain?.strainName}_{seed.rarity}_{seed.isMysterySeed}";
+
+            if (!map.ContainsKey(key))
+            {
+                map[key] = new SeedStack()
+                {
+                    strain = seed.strain,
+                    rarity = seed.rarity,
+                    isMystery = seed.isMysterySeed,
+                    count = 0
+                };
+            }
+
+            map[key].count++;
+        }
+
+        return new List<SeedStack>(map.Values);
+    }
 }

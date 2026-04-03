@@ -2,81 +2,44 @@ using UnityEngine;
 
 public static class SeedGenerator
 {
-    public static SeedInstance GenerateSeed(PlantStrainData strain, float rarityBoost)
+    public static SeedInstance GenerateSeed(PlantStrainData strain)
     {
         SeedInstance seed = new SeedInstance();
         seed.strain = strain;
 
-        seed.rarity = RollRarity(rarityBoost);
-        seed.isShiny = Random.value < strain.shinyChance;
+        seed.isMysterySeed = false;
 
-        seed.geneticsBonus = GetGeneticsBonus(seed.rarity, seed.isShiny);
+        // Rarity roll (simple default for now)
+        float roll = Random.value;
+
+        if (roll < 0.60f) seed.rarity = SeedRarity.Common;
+        else if (roll < 0.85f) seed.rarity = SeedRarity.Uncommon;
+        else if (roll < 0.95f) seed.rarity = SeedRarity.Rare;
+        else if (roll < 0.99f) seed.rarity = SeedRarity.Epic;
+        else seed.rarity = SeedRarity.Legendary;
+
+        // Shiny roll (strain based)
+        seed.isShiny = Random.value < strain.shinyChance;
 
         return seed;
     }
 
-    public static SeedInstance GenerateSeed(PlantStrainData strain)
+    public static SeedInstance GenerateMysterySeed()
     {
-        return GenerateSeed(strain, 0f);
-    }
+        SeedInstance seed = new SeedInstance();
+        seed.strain = null;
+        seed.isMysterySeed = true;
 
-    private static SeedRarity RollRarity(float rarityBoost)
-    {
-        // rarityBoost shifts odds slightly toward higher tiers
-        float roll = Random.value - rarityBoost;
-        roll = Mathf.Clamp01(roll);
+        // Mystery seeds can still have rarity/shiny
+        float roll = Random.value;
 
-        if (roll < 0.50f) return SeedRarity.Common;
-        if (roll < 0.75f) return SeedRarity.Uncommon;
-        if (roll < 0.90f) return SeedRarity.Rare;
-        if (roll < 0.98f) return SeedRarity.Epic;
-        return SeedRarity.Legendary;
-    }
+        if (roll < 0.70f) seed.rarity = SeedRarity.Common;
+        else if (roll < 0.90f) seed.rarity = SeedRarity.Uncommon;
+        else if (roll < 0.97f) seed.rarity = SeedRarity.Rare;
+        else if (roll < 0.995f) seed.rarity = SeedRarity.Epic;
+        else seed.rarity = SeedRarity.Legendary;
 
-    private static int GetGeneticsBonus(SeedRarity rarity, bool shiny)
-    {
-        int bonus = rarity switch
-        {
-            SeedRarity.Common => 0,
-            SeedRarity.Uncommon => 15,
-            SeedRarity.Rare => 35,
-            SeedRarity.Epic => 60,
-            SeedRarity.Legendary => 90,
-            _ => 0
-        };
-
-        if (shiny)
-            bonus += 50;
-
-        return bonus;
-    }
-
-    public static float GetPayoutMultiplierBonus(SeedRarity rarity, bool shiny)
-    {
-        float mult = rarity switch
-        {
-            SeedRarity.Common => 1.0f,
-            SeedRarity.Uncommon => 1.05f,
-            SeedRarity.Rare => 1.15f,
-            SeedRarity.Epic => 1.30f,
-            SeedRarity.Legendary => 1.50f,
-            _ => 1.0f
-        };
-
-        if (shiny)
-            mult *= 1.25f;
-
-        return mult;
-    }
-
-    public static SeedInstance GenerateSeedWithMinimumRarity(PlantStrainData strain, SeedRarity minimumRarity, float rarityBoost)
-    {
-        SeedInstance seed = GenerateSeed(strain, rarityBoost);
-
-        if (seed.rarity < minimumRarity)
-            seed.rarity = minimumRarity;
-
-        seed.geneticsBonus = GetGeneticsBonus(seed.rarity, seed.isShiny);
+        seed.isShiny = Random.value < 0.01f;
 
         return seed;
     }

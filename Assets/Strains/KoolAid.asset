@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: KoolAid
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Kool-Aid
+  description: 
+  idealWaterMin: 30
+  idealWaterMax: 55
+  idealNutrientsMin: 49
+  idealNutrientsMax: 82
+  moldSusceptibility: 0.825
+  pestSusceptibility: 0.408
+  growthPerDay: 15
+  ripenessPerDayInFlower: 24
+  harvestWindowStart: 97
+  harvestWindowEnd: 141
+  overripeThreshold: 153
+  seedCost: 204
+  pack5Cost: 172
+  pack20Cost: 3216
+  payoutMultiplier: 1.469
+  geneticsScore: 76
+  shinyChance: 0.1523

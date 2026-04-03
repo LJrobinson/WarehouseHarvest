@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: LootboxLemon
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Lootbox Lemon
+  description: 
+  idealWaterMin: 61
+  idealWaterMax: 77
+  idealNutrientsMin: 54
+  idealNutrientsMax: 69
+  moldSusceptibility: 0.075
+  pestSusceptibility: 0.674
+  growthPerDay: 15
+  ripenessPerDayInFlower: 10
+  harvestWindowStart: 110
+  harvestWindowEnd: 134
+  overripeThreshold: 194
+  seedCost: 227
+  pack5Cost: 330
+  pack20Cost: 2525
+  payoutMultiplier: 0.71
+  geneticsScore: 131
+  shinyChance: 0.1312

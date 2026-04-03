@@ -34,7 +34,7 @@ public class PlantInstance : MonoBehaviour
         ApplyVisuals();
     }
 
-    private void ApplyVisuals()
+    public void ApplyVisuals()
     {
         if (seed == null)
             return;
@@ -72,6 +72,51 @@ public class PlantInstance : MonoBehaviour
 
         // Growth
         growthPercent = Mathf.Clamp(growthPercent + (strainData.growthPerDay * lightMultiplier), 0f, 100f);
+
+        // ============================
+        // STAGE PROGRESSION
+        // ============================
+
+        // Seed -> Veg -> Flower progression based on growthPercent
+        if (growthPercent < 20f)
+        {
+            stage = PlantStage.Seed;
+        }
+        else if (growthPercent < 70f)
+        {
+            stage = PlantStage.Veg;
+        }
+        else if (growthPercent < 100f)
+        {
+            stage = PlantStage.Flower;
+        }
+        else
+        {
+            // Growth is complete, plant is in flower stage fully
+            stage = PlantStage.Flower;
+        }
+
+        // ============================
+        // RIPENESS PROGRESSION
+        // ============================
+
+        // Only build ripeness once fully grown
+        if (growthPercent >= 100f)
+        {
+            ripenessPercent += strainData.ripenessPerDayInFlower * lightMultiplier;
+            ripenessPercent = Mathf.Clamp(ripenessPercent, 0f, 150f);
+        }
+
+        // Harvest window logic
+        if (ripenessPercent >= strainData.harvestWindowStart &&
+            ripenessPercent <= strainData.harvestWindowEnd)
+        {
+            stage = PlantStage.Harvestable;
+        }
+        else if (ripenessPercent > strainData.overripeThreshold)
+        {
+            stage = PlantStage.Overripe;
+        }
 
         // Drain resources
         waterLevel = Mathf.Clamp(waterLevel - 12f, 0f, 100f);

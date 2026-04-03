@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: AtomicNorthernLights
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Atomic Northern Lights
+  description: 
+  idealWaterMin: 59
+  idealWaterMax: 86
+  idealNutrientsMin: 64
+  idealNutrientsMax: 56
+  moldSusceptibility: 0.323
+  pestSusceptibility: 0.854
+  growthPerDay: 16
+  ripenessPerDayInFlower: 20
+  harvestWindowStart: 129
+  harvestWindowEnd: 113
+  overripeThreshold: 196
+  seedCost: 207
+  pack5Cost: 213
+  pack20Cost: 3214
+  payoutMultiplier: 1.569
+  geneticsScore: 240
+  shinyChance: 0.0357

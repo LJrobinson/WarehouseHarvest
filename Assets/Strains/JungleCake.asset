@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: JungleCake
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Jungle Cake
+  description: 
+  idealWaterMin: 63
+  idealWaterMax: 57
+  idealNutrientsMin: 39
+  idealNutrientsMax: 52
+  moldSusceptibility: 0.191
+  pestSusceptibility: 0.816
+  growthPerDay: 6
+  ripenessPerDayInFlower: 16
+  harvestWindowStart: 88
+  harvestWindowEnd: 122
+  overripeThreshold: 189
+  seedCost: 139
+  pack5Cost: 403
+  pack20Cost: 3103
+  payoutMultiplier: 0.951
+  geneticsScore: 126
+  shinyChance: 0.1033

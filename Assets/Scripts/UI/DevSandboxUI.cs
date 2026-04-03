@@ -9,6 +9,8 @@ public class DevSandboxUI : MonoBehaviour
     public SeedInventory seedInventory;
     public Transform seedPanelParent;
     public GameObject seedButtonPrefab;
+    public StrainDatabase strainDatabase;
+    public EconomyManager economyManager;
 
     [Header("Tables")]
     public PlantManager plantManager;
@@ -21,14 +23,61 @@ public class DevSandboxUI : MonoBehaviour
     public TMP_Text selectedSeedText;
     public TMP_Text selectedTableText;
     public TMP_Text plantStatsText;
+    public TMP_InputField strainSearchInput;
+    public TMP_Dropdown strainDropdown;
 
     private SeedInstance selectedSeed;
 
     private void Start()
     {
+        
+        strainDropdown.ClearOptions();
+
+        List<string> names = new List<string>();
+        foreach (var strain in strainDatabase.strains)
+            names.Add(strain.strainName);
+
+        strainDropdown.AddOptions(names);
         RefreshSeedInventoryUI();
         RefreshSelectedTableUI();
     }
+
+    private List<PlantStrainData> filteredStrains = new();
+
+    private void OnSearchChanged(string text)
+    {
+        filteredStrains.Clear();
+
+        foreach (var strain in strainDatabase.strains)
+        {
+            if (string.IsNullOrEmpty(text) || strain.strainName.ToLower().Contains(text.ToLower()))
+                filteredStrains.Add(strain);
+        }
+
+        strainDropdown.ClearOptions();
+
+        List<string> names = new List<string>();
+        foreach (var strain in filteredStrains)
+            names.Add(strain.strainName);
+
+        strainDropdown.AddOptions(names);
+    }
+
+    // ==============================
+    // DEBUG UI
+    // ==============================
+
+    public void AddMoneyButton()
+    {
+        return;
+    }
+
+    public void SpendMoneyButton()
+    {
+        return;
+    }
+
+
 
     // ==============================
     // INVENTORY UI
@@ -46,7 +95,7 @@ public class DevSandboxUI : MonoBehaviour
             GameObject btnObj = Instantiate(seedButtonPrefab, seedPanelParent);
 
             Button btn = btnObj.GetComponent<Button>();
-            Text btnText = btnObj.GetComponentInChildren<Text>();
+            TMP_Text btnText = btnObj.GetComponentInChildren<TMP_Text>();
 
             btnText.text = seed.DisplayName;
 
@@ -124,6 +173,30 @@ public class DevSandboxUI : MonoBehaviour
                     $"Health: {p.health:0}% | Stress: {p.stress:0}%{moldText}{pestText}\n\n";
             }
         }
+    }
+
+    public void ShowSelectedStrainInfo()
+    {
+        int index = strainDropdown.value;
+        PlantStrainData strain = strainDatabase.strains[index];
+
+        plantStatsText.text =
+            $"STRAIN: {strain.strainName}\n\n" +
+            $"Water: {strain.idealWaterMin} - {strain.idealWaterMax}\n" +
+            $"Nutrients: {strain.idealNutrientsMin} - {strain.idealNutrientsMax}\n" +
+            $"Mold Susc: {strain.moldSusceptibility}\n" +
+            $"Pest Susc: {strain.pestSusceptibility}\n\n" +
+            $"Growth/Day: {strain.growthPerDay}\n" +
+            $"Ripeness/Day: {strain.ripenessPerDayInFlower}\n\n" +
+            $"Harvest Window: {strain.harvestWindowStart} - {strain.harvestWindowEnd}\n" +
+            $"Overripe: {strain.overripeThreshold}\n\n" +
+            $"Seed Cost: ${strain.seedCost}\n" +
+            $"Pack5 Cost: ${strain.pack5Cost}\n" +
+            $"Pack20 Cost: ${strain.pack20Cost}\n\n" +
+            $"Payout Mult: {strain.payoutMultiplier}\n" +
+            $"Genetics Score: {strain.geneticsScore}\n" +
+            $"Shiny Chance: {strain.shinyChance}\n\n" +
+            $"Description:\n{strain.description}";
     }
 
     // ==============================

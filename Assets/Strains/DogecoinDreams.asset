@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: DogecoinDreams
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Dogecoin Dreams
+  description: 
+  idealWaterMin: 67
+  idealWaterMax: 71
+  idealNutrientsMin: 36
+  idealNutrientsMax: 53
+  moldSusceptibility: 0.478
+  pestSusceptibility: 0.201
+  growthPerDay: 2
+  ripenessPerDayInFlower: 6
+  harvestWindowStart: 117
+  harvestWindowEnd: 134
+  overripeThreshold: 131
+  seedCost: 88
+  pack5Cost: 45
+  pack20Cost: 4663
+  payoutMultiplier: 1.817
+  geneticsScore: 208
+  shinyChance: 0.173

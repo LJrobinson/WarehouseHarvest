@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: JackFrost
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Jack Frost
+  description: 
+  idealWaterMin: 50
+  idealWaterMax: 80
+  idealNutrientsMin: 61
+  idealNutrientsMax: 76
+  moldSusceptibility: 0.034
+  pestSusceptibility: 0.121
+  growthPerDay: 14
+  ripenessPerDayInFlower: 11
+  harvestWindowStart: 92
+  harvestWindowEnd: 126
+  overripeThreshold: 111
+  seedCost: 120
+  pack5Cost: 355
+  pack20Cost: 4660
+  payoutMultiplier: 1.503
+  geneticsScore: 124
+  shinyChance: 0.1893

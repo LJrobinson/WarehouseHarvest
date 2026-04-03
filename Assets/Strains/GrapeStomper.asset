@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: GrapeStomper
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Grape Stomper
+  description: 
+  idealWaterMin: 23
+  idealWaterMax: 90
+  idealNutrientsMin: 43
+  idealNutrientsMax: 74
+  moldSusceptibility: 0.322
+  pestSusceptibility: 0.737
+  growthPerDay: 21
+  ripenessPerDayInFlower: 30
+  harvestWindowStart: 94
+  harvestWindowEnd: 115
+  overripeThreshold: 190
+  seedCost: 120
+  pack5Cost: 371
+  pack20Cost: 2597
+  payoutMultiplier: 1.264
+  geneticsScore: 152
+  shinyChance: 0.191

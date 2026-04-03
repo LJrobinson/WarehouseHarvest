@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: BiddyEarly
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Biddy Early
+  description: 
+  idealWaterMin: 57
+  idealWaterMax: 87
+  idealNutrientsMin: 26
+  idealNutrientsMax: 75
+  moldSusceptibility: 0.398
+  pestSusceptibility: 0.943
+  growthPerDay: 8
+  ripenessPerDayInFlower: 28
+  harvestWindowStart: 124
+  harvestWindowEnd: 105
+  overripeThreshold: 189
+  seedCost: 23
+  pack5Cost: 478
+  pack20Cost: 3217
+  payoutMultiplier: 0.434
+  geneticsScore: 242
+  shinyChance: 0.1035

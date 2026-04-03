@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: GorrillaGlue4
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Gorrilla Glue #4
+  description: 
+  idealWaterMin: 20
+  idealWaterMax: 88
+  idealNutrientsMin: 21
+  idealNutrientsMax: 69
+  moldSusceptibility: 0.387
+  pestSusceptibility: 0.48
+  growthPerDay: 14
+  ripenessPerDayInFlower: 7
+  harvestWindowStart: 99
+  harvestWindowEnd: 101
+  overripeThreshold: 152
+  seedCost: 2
+  pack5Cost: 325
+  pack20Cost: 4088
+  payoutMultiplier: 0.802
+  geneticsScore: 100
+  shinyChance: 0.1292

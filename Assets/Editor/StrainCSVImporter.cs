@@ -1,66 +1,86 @@
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using System.Text.RegularExpressions;
 
 public class StrainCSVImporter : EditorWindow
 {
     [MenuItem("Tools/Import Cannabis Strains")]
     public static void ImportStrains()
     {
-        // 1. Path to your CSV file (Ensure it's in your Assets folder or use a file picker)
         string filePath = EditorUtility.OpenFilePanel("Select Strain CSV", "Assets", "csv");
-
         if (string.IsNullOrEmpty(filePath)) return;
 
-        string[] lines = File.ReadAllLines(filePath);
+        string[] lines;
 
-        // 2. Loop through lines (Starting at 1 to skip headers)
-        for (int i = 1; i < lines.Length; i++)
+        // Open with ReadWrite sharing to prevent the IOException if Excel is open
+        using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var sr = new StreamReader(fs))
         {
-            string[] data = lines[i].Split(',');
+            string content = sr.ReadToEnd();
+            lines = content.Split(new[] { "\r\n", "\r", "\n" }, System.StringSplitOptions.RemoveEmptyEntries);
+        }
 
-            // Ensure we have enough data columns
-            if (data.Length < 19) continue;
+        string folderPath = "Assets/Strains";
+        if (!AssetDatabase.IsValidFolder(folderPath))
+        {
+            AssetDatabase.CreateFolder("Assets", "Strains");
+        }
 
-            // 3. Create the ScriptableObject instance
-            PlantStrainData asset = ScriptableObject.CreateInstance<PlantStrainData>();
+        // Start a batch to stop Unity from refreshing 1000 times (Performance Boost)
+        AssetDatabase.StartAssetEditing();
 
-            // 4. Map CSV columns to your ScriptableObject variables
-            asset.strainName = data[0];
-            asset.description = data[1];
-            asset.idealWaterMin = float.Parse(data[2]);
-            asset.idealWaterMax = float.Parse(data[3]);
-            asset.idealNutrientsMin = float.Parse(data[4]);
-            asset.idealNutrientsMax = float.Parse(data[5]);
-            asset.moldSusceptibility = float.Parse(data[6]);
-            asset.pestSusceptibility = float.Parse(data[7]);
-            asset.growthPerDay = float.Parse(data[8]);
-            asset.ripenessPerDayInFlower = float.Parse(data[9]);
-            asset.harvestWindowStart = float.Parse(data[10]);
-            asset.harvestWindowEnd = float.Parse(data[11]);
-            asset.overripeThreshold = float.Parse(data[12]);
-            asset.seedCost = int.Parse(data[13]);
-            asset.pack5Cost = int.Parse(data[14]);
-            asset.pack20Cost = int.Parse(data[15]);
-            asset.payoutMultiplier = float.Parse(data[16]);
-            asset.geneticsScore = int.Parse(data[17]);
-            asset.shinyChance = float.Parse(data[18]);
-
-            // 5. Save the asset to a specific folder
-            // Make sure this folder "Assets/Strains" exists first!
-            string folderPath = "Assets/Strains";
-            if (!AssetDatabase.IsValidFolder(folderPath))
+        try
+        {
+            for (int i = 1; i < lines.Length; i++)
             {
-                AssetDatabase.CreateFolder("Assets", "Strains");
-            }
+                string[] data = lines[i].Split(',');
+                if (data.Length < 19) continue;
 
-            // Clean the name so Windows doesn't get mad at weird characters
-            string fileName = data[0].Replace(" ", "_").Replace("/", "_");
-            AssetDatabase.CreateAsset(asset, $"{folderPath}/{fileName}.asset");
+                PlantStrainData asset = ScriptableObject.CreateInstance<PlantStrainData>();
+
+                // 1. Data Mapping
+                asset.strainName = data[0]; // The "Pretty Name" remains unchanged
+                asset.description = data[1];
+                asset.idealWaterMin = ParseFloat(data[2]);
+                asset.idealWaterMax = ParseFloat(data[3]);
+                asset.idealNutrientsMin = ParseFloat(data[4]);
+                asset.idealNutrientsMax = ParseFloat(data[5]);
+                asset.moldSusceptibility = ParseFloat(data[6]);
+                asset.pestSusceptibility = ParseFloat(data[7]);
+                asset.growthPerDay = ParseFloat(data[8]);
+                asset.ripenessPerDayInFlower = ParseFloat(data[9]);
+                asset.harvestWindowStart = ParseFloat(data[10]);
+                asset.harvestWindowEnd = ParseFloat(data[11]);
+                asset.overripeThreshold = ParseFloat(data[12]);
+                asset.seedCost = ParseInt(data[13]);
+                asset.pack5Cost = ParseInt(data[14]);
+                asset.pack20Cost = ParseInt(data[15]);
+                asset.payoutMultiplier = ParseFloat(data[16]);
+                asset.geneticsScore = ParseInt(data[17]);
+                asset.shinyChance = ParseFloat(data[18]);
+
+                // 2. Clean Filename: Remove all non-alphanumeric characters and spaces
+                // Example: "AK-47" -> "AK47", "Elphaba's Bliss" -> "ElphabasBliss"
+                string cleanFileName = Regex.Replace(data[0], @"[^a-zA-Z0-9]", "");
+
+                // 3. Save Asset
+                string fullPath = $"{folderPath}/{cleanFileName}.asset";
+                AssetDatabase.CreateAsset(asset, fullPath);
+            }
+        }
+        finally
+        {
+            // End the batch so Unity imports everything at once
+            AssetDatabase.StopAssetEditing();
         }
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        EditorUtility.DisplayDialog("Success", "1000 Strains Imported!", "Dope");
+        EditorUtility.DisplayDialog("Success", "Clean Import Complete!", "Dope");
     }
+
+    // Helper methods to prevent crashing on empty cells
+    private static float ParseFloat(string value) => float.TryParse(value, out float result) ? result : 0f;
+    private static int ParseInt(string value) => int.TryParse(value, out int result) ? result : 0;
 }

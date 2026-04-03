@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: EarlyGirl
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Early Girl
+  description: 
+  idealWaterMin: 20
+  idealWaterMax: 84
+  idealNutrientsMin: 52
+  idealNutrientsMax: 83
+  moldSusceptibility: 0.622
+  pestSusceptibility: 0.858
+  growthPerDay: 4
+  ripenessPerDayInFlower: 11
+  harvestWindowStart: 95
+  harvestWindowEnd: 92
+  overripeThreshold: 162
+  seedCost: 151
+  pack5Cost: 264
+  pack20Cost: 2978
+  payoutMultiplier: 1.655
+  geneticsScore: 202
+  shinyChance: 0.0428
