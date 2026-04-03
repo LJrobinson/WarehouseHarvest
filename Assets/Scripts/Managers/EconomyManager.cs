@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class EconomyManager : MonoBehaviour
 {
-    public int Money { get; private set; } = 1000000;
+    public int Money { get; private set; } = 1000;
 
     public void AddMoney(int amount)
     {
@@ -21,5 +21,10 @@ public class EconomyManager : MonoBehaviour
         Money -= amount;
         Debug.Log($"Money spent: {amount}. New total: {Money}");
         return true;
+    }
+
+    public void SetMoney(int amount)
+    {
+        Money = amount;
     }
 }

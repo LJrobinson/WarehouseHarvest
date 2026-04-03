@@ -4,6 +4,7 @@ public class SeedShop : MonoBehaviour
 {
     public EconomyManager economy;
     public SeedInventory seedInventory;
+    public StrainDatabase strainDatabase;
 
     [Header("Bagseed Settings")]
     public int bagseedSingleCost = 15;
@@ -57,7 +58,7 @@ public class SeedShop : MonoBehaviour
         if (!economy.SpendMoney(bagseedSingleCost))
             return false;
 
-        SeedInstance seed = SeedGenerator.GenerateMysterySeed();
+        SeedInstance seed = SeedGenerator.GenerateMysterySeed(strainDatabase);
         seedInventory.AddSeed(seed);
 
         Debug.Log($"Bought 1 bagseed for ${bagseedSingleCost}");
@@ -78,7 +79,7 @@ public class SeedShop : MonoBehaviour
 
         for (int i = 0; i < amount; i++)
         {
-            SeedInstance seed = SeedGenerator.GenerateMysterySeed();
+            SeedInstance seed = SeedGenerator.GenerateMysterySeed(strainDatabase);
             seedInventory.AddSeed(seed);
         }
 

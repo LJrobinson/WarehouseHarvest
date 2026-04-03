@@ -49,4 +49,14 @@ public class StrainDatabase : ScriptableObject
 
         return strains[Random.Range(0, strains.Count)];
     }
+
+    public PlantStrainData GetStrainByName(string name)
+    {
+        foreach (var s in strains)
+        {
+            if (s != null && s.strainName == name)
+                return s;
+        }
+        return null;
+    }
 }

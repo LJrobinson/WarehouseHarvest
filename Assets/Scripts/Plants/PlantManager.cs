@@ -7,22 +7,25 @@ public class PlantManager : MonoBehaviour
 
     private void Awake()
     {
-        AutoRegisterTables();
+        AutoFindTables();
     }
 
-    [ContextMenu("Auto Register Tables")]
-    public void AutoRegisterTables()
+    [ContextMenu("Auto Find Tables")]
+    public void AutoFindTables()
     {
         allTables.Clear();
-        allTables.AddRange(FindObjectsByType<GrowTable>());
+        allTables.AddRange(FindObjectsByType<GrowTable>(FindObjectsInactive.Exclude));
 
-        Debug.Log($"PlantManager registered {allTables.Count} GrowTables.");
+        Debug.Log($"PlantManager found {allTables.Count} tables.");
     }
 
     public void AdvanceDayAll()
     {
         foreach (var table in allTables)
         {
+            if (table == null || !table.isUnlocked)
+                continue;
+
             float lightMult = table.GetLightMultiplier();
             float waterReduction = table.GetWaterStressReduction();
 

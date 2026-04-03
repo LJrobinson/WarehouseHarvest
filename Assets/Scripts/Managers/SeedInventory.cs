@@ -114,4 +114,9 @@ public class SeedInventory : MonoBehaviour
 
         return new List<SeedStack>(map.Values);
     }
+
+    public void ClearAllSeeds()
+    {
+        ownedSeeds.Clear();
+    }
 }

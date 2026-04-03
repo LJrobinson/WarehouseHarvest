@@ -17,9 +17,10 @@ public class DevSandboxControllerUI : MonoBehaviour
     [Header("References")]
     public SeedInventory seedInventory;
     public EconomyManager economy;
+    public PlantManager plantManager;
+    public SaveLoadManager saveLoadManager;
     public SeedShop seedShop;
     public StrainDatabase strainDatabase;
-    public PlantManager plantManager;
     public TimeManager timeManager;
 
     // ==============================
@@ -862,6 +863,87 @@ public class DevSandboxControllerUI : MonoBehaviour
         RefreshAllUI();
     }
 
+    public void PlantSelectedInventorySeedByRarity(int rarityInt)
+    {
+        if (selectedSlot == null || selectedTable == null)
+        {
+            Print("No table/slot selected.");
+            return;
+        }
+
+        int slotIndex = selectedTable.slots.IndexOf(selectedSlot);
+
+        if (slotIndex >= selectedTable.unlockedSlots)
+        {
+            Print("Slot is locked.");
+            return;
+        }
+
+        if (!selectedSlot.IsEmpty)
+        {
+            Print("Slot already occupied.");
+            return;
+        }
+
+        if (selectedInventorySummary == null)
+        {
+            Print("No inventory strain selected.");
+            return;
+        }
+
+        if (plantPrefab == null)
+        {
+            Print("Plant prefab missing.");
+            return;
+        }
+
+        SeedRarity rarity = (SeedRarity)rarityInt;
+
+        // Find matching seed in inventory
+        SeedInstance chosenSeed = null;
+
+        foreach (var seed in seedInventory.GetAllSeeds())
+        {
+            bool strainMatch =
+                (selectedInventorySummary.isMystery && seed.isMysterySeed) ||
+                (!selectedInventorySummary.isMystery && seed.strain == selectedInventorySummary.strain);
+
+            if (!strainMatch)
+                continue;
+
+            if (seed.rarity == rarity)
+            {
+                chosenSeed = seed;
+                break;
+            }
+        }
+
+        if (chosenSeed == null)
+        {
+            Print($"No {rarity} seed available.");
+            return;
+        }
+
+        // Remove from inventory
+        seedInventory.RemoveSpecificSeed(chosenSeed);
+
+        // Spawn plant
+        PlantInstance plant = Instantiate(plantPrefab, selectedSlot.transform.position, Quaternion.identity);
+        plant.transform.SetParent(selectedSlot.transform);
+
+        plant.InitializeFromSeed(chosenSeed);
+        selectedSlot.currentPlant = plant;
+
+        Print($"Planted {chosenSeed.DisplayName}");
+
+        RefreshSlotList();
+        RefreshInventoryList();
+        RefreshInventoryDetailPanel();
+        RefreshTablePanel();
+        RefreshWarehousePanel();
+        UpdateSelectedInfoText();
+    }
+
     // ==============================
     // TIME CONTROL
     // ==============================
@@ -899,7 +981,7 @@ public class DevSandboxControllerUI : MonoBehaviour
             return;
 
         bool success = selectedTable.UpgradeSlots(economy, 1);
-        Print(success ? "Slot upgraded!" : "Slot upgrade failed.");
+        Print(success ? "Slot upgraded!" : "Slot upgrade failed. All slots purchased.");
 
         RefreshAllUI();
     }
@@ -910,7 +992,7 @@ public class DevSandboxControllerUI : MonoBehaviour
             return;
 
         bool success = selectedTable.UpgradeLights(economy);
-        Print(success ? "Lights upgraded!" : "Light upgrade failed.");
+        Print(success ? "Lights upgraded!" : "Light upgrade failed. Max Upgrades.");
 
         RefreshAllUI();
     }
@@ -921,9 +1003,32 @@ public class DevSandboxControllerUI : MonoBehaviour
             return;
 
         bool success = selectedTable.UpgradeWater(economy);
-        Print(success ? "Water upgraded!" : "Water upgrade failed.");
+        Print(success ? "Water upgraded!" : "Water upgrade failed. Max Upgrades.");
 
         RefreshAllUI();
+    }
+
+    // ==============================
+    // SAVE / LOAD
+    // ==============================
+
+    public void SaveGameButton()
+    {
+        saveLoadManager.SaveGame();
+        Print("Game Saved.");
+    }
+
+    public void LoadGameButton()
+    {
+        saveLoadManager.LoadGame();
+        Print("Game Loaded.");
+
+        RefreshHUD();
+        RefreshSlotList();
+        RefreshTablePanel();
+        RefreshWarehousePanel();
+        RefreshInventoryList();
+        RefreshInventoryDetailPanel();
     }
 
     // ==============================

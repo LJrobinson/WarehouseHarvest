@@ -7,6 +7,11 @@ public class TimeManager : MonoBehaviour
     public void AdvanceDay()
     {
         CurrentDay++;
-        Debug.Log($"Day advanced. Current day: {CurrentDay}");
+        Debug.Log($"Day advanced to {CurrentDay}");
+    }
+
+    public void SetDay(int day)
+    {
+        CurrentDay = day;
     }
 }
