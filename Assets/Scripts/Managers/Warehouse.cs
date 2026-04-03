@@ -7,17 +7,16 @@ public class Warehouse : MonoBehaviour
 
     private void Awake()
     {
-        AutoRegisterTables();
-    }
+        // Auto-fill tables if not assigned
+        if (tables.Count == 0)
+        {
+            tables.AddRange(GetComponentsInChildren<GrowTable>());
+        }
 
-    [ContextMenu("Auto Register Tables")]
-    public void AutoRegisterTables()
-    {
-        tables.Clear();
-
-        GrowTable[] found = GetComponentsInChildren<GrowTable>(true);
-        tables.AddRange(found);
-
-        Debug.Log($"[{name}] Registered {tables.Count} tables.");
+        // Default: first table unlocked
+        if (tables.Count > 0)
+        {
+            tables[0].isUnlocked = true;
+        }
     }
 }

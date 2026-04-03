@@ -1,3 +1,8 @@
+// =================================================
+// | WAREHOUSE HARVEST |
+// |  @WASH3D x @MOBY  |
+// =================================================
+
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -5,6 +10,10 @@ using UnityEngine.UI;
 
 public class DevSandboxControllerUI : MonoBehaviour
 {
+    // ==============================
+    // REFERENCES (MANAGERS / DATABASES)
+    // ==============================
+
     [Header("References")]
     public SeedInventory seedInventory;
     public EconomyManager economy;
@@ -13,12 +22,19 @@ public class DevSandboxControllerUI : MonoBehaviour
     public PlantManager plantManager;
     public TimeManager timeManager;
 
-    [Header ("Game HUD")]
+    // ==============================
+    // HUD UI (TOP BAR)
+    // ==============================
+
+    [Header("Game HUD")]
     public TMP_Text dayText;
     public TMP_Text moneyText;
-    
+
+    // ==============================
+    // DROPDOWNS (WAREHOUSE / TABLE / STRAIN)
+    // ==============================
+
     [Header("Warehouse Selection")]
-    public List<Warehouse> warehouses = new List<Warehouse>();
     public TMP_Dropdown warehouseDropdown;
     public TMP_Dropdown tableDropdown;
 
@@ -26,62 +42,175 @@ public class DevSandboxControllerUI : MonoBehaviour
     public TMP_InputField strainSearchInput;
     public TMP_Dropdown strainDropdown;
 
+    // ==============================
+    // TABLE SLOT LIST UI
+    // ==============================
+
     [Header("Slot List UI")]
     public Transform slotListParent;
     public GameObject slotRowButtonPrefab;
 
-    [Header("Text Output")]
-    public TMP_Text debugOutputText;
-    public TMP_Text selectedInfoText;
+    // ==============================
+    // TABLE LIST UI (WAREHOUSE PANEL)
+    // ==============================
 
-    [Header("Plant Prefab")]
-    public PlantInstance plantPrefab;
+    [Header("Table List UI")]
+    public Transform tableListParent;
+    public GameObject tableRowButtonPrefab;
 
-    [Header("Table Info")]
-    public TMP_Text tablePanelText;
+    // ==============================
+    // INVENTORY LIST UI
+    // ==============================
 
     [Header("Seed Inventory UI")]
     public Transform inventoryListParent;
     public GameObject inventoryRowButtonPrefab;
 
+    // ==============================
+    // OUTPUT TEXT PANELS
+    // ==============================
+
+    [Header("Text Output")]
+    public TMP_Text debugOutputText;
+    public TMP_Text selectedInfoText;
+
+    [Header("Table Info Panel")]
+    public TMP_Text tablePanelText;
+
+    [Header("Warehouse Detail Panel")]
+    public TMP_Text warehousePanelText;
+
     [Header("Inventory Detail Panel")]
     public TMP_Text inventoryDetailText;
 
-    private SeedInventorySummary selectedInventorySummary;
+    // ==============================
+    // PREFABS
+    // ==============================
 
-    private SeedStack selectedSeedStack;
+    [Header("Plant Prefab")]
+    public PlantInstance plantPrefab;
+
+    // ==============================
+    // SELECTED STATE
+    // ==============================
 
     private Warehouse selectedWarehouse;
     private GrowTable selectedTable;
     private TableSlot selectedSlot;
 
+    private SeedInventorySummary selectedInventorySummary;
+
+    // ==============================
+    // INTERNAL CACHED LISTS
+    // ==============================
 
     private List<Warehouse> foundWarehouses = new List<Warehouse>();
     private List<GrowTable> currentTables = new List<GrowTable>();
     private List<PlantStrainData> filteredStrains = new List<PlantStrainData>();
 
+    // ==============================
+    // UNITY START
+    // ==============================
+
     private void Start()
     {
+        // Hook search input event
+        if (strainSearchInput != null)
+            strainSearchInput.onValueChanged.AddListener(OnSearchChanged);
+
+        // Build initial UI dropdowns
         BuildWarehouseDropdown();
         BuildStrainDropdown();
 
-        strainSearchInput.onValueChanged.AddListener(OnSearchChanged);
-        RefreshHUD();
+        // Refresh everything once at boot
+        RefreshAllUI();
+
         Print("DevSandbox Controller Ready.");
     }
 
     // ==============================
-    // REFRESH DEVSANDBOX UI / HUD
+    // MASTER UI REFRESH
+    // ==============================
+
+    /// <summary>
+    /// The single "source of truth" refresh call.
+    /// Anytime game state changes (buy, plant, upgrade, advance day),
+    /// call this instead of manually calling 6 refresh methods.
+    /// </summary>
+    private void RefreshAllUI()
+    {
+        RefreshHUD();
+        RefreshWarehousePanel();
+        RefreshTableList();
+        RefreshTablePanel();
+        RefreshSlotList();
+        RefreshInventoryList();
+        RefreshInventoryDetailPanel();
+        UpdateSelectedInfoText();
+    }
+
+    // ==============================
+    // HUD
     // ==============================
 
     private void RefreshHUD()
     {
-        if (moneyText != null)
+        if (economy != null && moneyText != null)
             moneyText.text = $"Money: ${economy.Money}";
 
-        if (dayText != null)
+        if (timeManager != null && dayText != null)
             dayText.text = $"Day: {timeManager.CurrentDay}";
     }
+
+    // ==============================
+    // WAREHOUSE PANEL
+    // ==============================
+
+    private void RefreshWarehousePanel()
+    {
+        if (warehousePanelText == null)
+            return;
+
+        if (selectedWarehouse == null)
+        {
+            warehousePanelText.text = "No warehouse selected.";
+            return;
+        }
+
+        int totalPlants = 0;
+        int emptySlots = 0;
+        int unlockedTables = 0;
+
+        foreach (GrowTable table in selectedWarehouse.tables)
+        {
+            if (table == null)
+                continue;
+
+            if (table.isUnlocked)
+                unlockedTables++;
+
+            for (int i = 0; i < table.unlockedSlots; i++)
+            {
+                if (i >= table.slots.Count)
+                    continue;
+
+                if (table.slots[i].IsEmpty)
+                    emptySlots++;
+                else
+                    totalPlants++;
+            }
+        }
+
+        warehousePanelText.text =
+            $"WAREHOUSE: {selectedWarehouse.name}\n" +
+            $"Tables Unlocked: {unlockedTables}/{selectedWarehouse.tables.Count}\n" +
+            $"Plants Growing: {totalPlants}\n" +
+            $"Empty Slots: {emptySlots}";
+    }
+
+    // ==============================
+    // TABLE PANEL
+    // ==============================
 
     private void RefreshTablePanel()
     {
@@ -100,11 +229,16 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         tablePanelText.text =
             $"TABLE: {selectedTable.name}\n" +
+            $"Unlocked: {(selectedTable.isUnlocked ? "YES" : "NO")}\n" +
             $"Slots: {selectedTable.unlockedSlots}/{selectedTable.slots.Count}\n" +
             $"Plants: {plantCount}\n" +
             $"Lights: {selectedTable.lightQuality}\n" +
             $"Water: {selectedTable.waterQuality}";
     }
+
+    // ==============================
+    // INVENTORY PANEL
+    // ==============================
 
     public void RefreshInventoryList()
     {
@@ -114,9 +248,10 @@ public class DevSandboxControllerUI : MonoBehaviour
         foreach (Transform child in inventoryListParent)
             Destroy(child.gameObject);
 
-        List<SeedInventorySummary> summaries = seedInventory.GetSummaries();
+        if (seedInventory == null)
+            return;
 
-        // Sort biggest stacks first
+        List<SeedInventorySummary> summaries = seedInventory.GetSummaries();
         summaries.Sort((a, b) => b.totalCount.CompareTo(a.totalCount));
 
         foreach (var summary in summaries)
@@ -125,6 +260,9 @@ public class DevSandboxControllerUI : MonoBehaviour
 
             Button btn = rowObj.GetComponent<Button>();
             TMP_Text txt = rowObj.GetComponentInChildren<TMP_Text>();
+
+            if (btn == null || txt == null)
+                continue;
 
             txt.text = summary.DisplayName;
 
@@ -148,7 +286,6 @@ public class DevSandboxControllerUI : MonoBehaviour
         }
 
         var s = selectedInventorySummary;
-
         string name = s.isMystery ? "??? Bagseed" : s.strain.strainName;
 
         inventoryDetailText.text =
@@ -165,13 +302,16 @@ public class DevSandboxControllerUI : MonoBehaviour
     }
 
     // ==============================
-    // WAREHOUSE / TABLE SELECTION
+    // WAREHOUSE + TABLE DROPDOWNS
     // ==============================
 
     private void BuildWarehouseDropdown()
     {
         foundWarehouses.Clear();
-        foundWarehouses.AddRange(FindObjectsByType<Warehouse>());
+        foundWarehouses.AddRange(FindObjectsByType<Warehouse>(FindObjectsSortMode.None));
+
+        if (warehouseDropdown == null)
+            return;
 
         warehouseDropdown.ClearOptions();
 
@@ -180,15 +320,16 @@ public class DevSandboxControllerUI : MonoBehaviour
             names.Add(w.name);
 
         warehouseDropdown.AddOptions(names);
+
         warehouseDropdown.onValueChanged.RemoveAllListeners();
         warehouseDropdown.onValueChanged.AddListener(OnWarehouseDropdownChanged);
 
         if (foundWarehouses.Count > 0)
+        {
             warehouseDropdown.value = 0;
-
-        OnWarehouseDropdownChanged(warehouseDropdown.value);
+            OnWarehouseDropdownChanged(0);
+        }
     }
-
 
     private void OnWarehouseDropdownChanged(int index)
     {
@@ -199,23 +340,14 @@ public class DevSandboxControllerUI : MonoBehaviour
         Print($"Selected Warehouse: {selectedWarehouse.name}");
 
         BuildTableDropdown();
-        RefreshTablePanel();
-    }
-  
-    private void SetWarehouse(int index)
-    {
-        if (index < 0 || index >= warehouses.Count)
-            return;
 
-        selectedWarehouse = warehouses[index];
-        Print($"Selected Warehouse: {selectedWarehouse.name}");
-
-        BuildTableDropdown();
+        // IMPORTANT: Refresh everything after selection change
+        RefreshAllUI();
     }
 
     private void BuildTableDropdown()
     {
-        if (selectedWarehouse == null)
+        if (selectedWarehouse == null || tableDropdown == null)
             return;
 
         currentTables.Clear();
@@ -231,13 +363,15 @@ public class DevSandboxControllerUI : MonoBehaviour
         }
 
         tableDropdown.AddOptions(tableNames);
+
         tableDropdown.onValueChanged.RemoveAllListeners();
         tableDropdown.onValueChanged.AddListener(OnTableDropdownChanged);
 
         if (currentTables.Count > 0)
+        {
             tableDropdown.value = 0;
-
-        OnTableDropdownChanged(tableDropdown.value);
+            OnTableDropdownChanged(0);
+        }
     }
 
     private void OnTableDropdownChanged(int index)
@@ -250,31 +384,68 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         Print($"Selected Table: {selectedTable.name}");
 
-        RefreshSlotList();
-        UpdateSelectedInfoText();
-        RefreshTablePanel();
+        RefreshAllUI();
     }
 
-    private void OnTableChanged(int index)
-    {
-        SetTable(index);
-    }
+    // ==============================
+    // TABLE LIST PANEL (CLICKABLE TABLE ROWS)
+    // ==============================
 
-    private void SetTable(int index)
+    public void RefreshTableList()
     {
+        if (tableListParent == null || tableRowButtonPrefab == null)
+            return;
+
+        foreach (Transform child in tableListParent)
+            Destroy(child.gameObject);
+
         if (selectedWarehouse == null)
             return;
 
-        if (index < 0 || index >= selectedWarehouse.tables.Count)
-            return;
+        for (int i = 0; i < selectedWarehouse.tables.Count; i++)
+        {
+            GrowTable table = selectedWarehouse.tables[i];
+            if (table == null)
+                continue;
 
-        selectedTable = selectedWarehouse.tables[index];
-        selectedSlot = null;
+            GameObject rowObj = Instantiate(tableRowButtonPrefab, tableListParent);
 
-        Print($"Selected Table: {selectedTable.name}");
-        RefreshSlotList();
-        UpdateSelectedInfoText();
-        RefreshTablePanel();
+            Button btn = rowObj.GetComponent<Button>();
+            TMP_Text txt = rowObj.GetComponentInChildren<TMP_Text>();
+
+            if (btn == null || txt == null)
+                continue;
+
+            int plantsGrowing = 0;
+            for (int s = 0; s < table.unlockedSlots; s++)
+            {
+                if (s < table.slots.Count && !table.slots[s].IsEmpty)
+                    plantsGrowing++;
+            }
+
+            bool isLocked = !table.isUnlocked;
+
+            if (isLocked)
+            {
+                txt.text = $"{table.name}: LOCKED";
+                btn.interactable = false;
+            }
+            else
+            {
+                txt.text = $"{table.name} ({table.unlockedSlots}/{table.slots.Count}) | Plants: {plantsGrowing}";
+                btn.interactable = true;
+
+                int capturedIndex = i;
+                btn.onClick.AddListener(() =>
+                {
+                    selectedTable = selectedWarehouse.tables[capturedIndex];
+                    selectedSlot = null;
+
+                    Print($"Selected Table: {selectedTable.name}");
+                    RefreshAllUI();
+                });
+            }
+        }
     }
 
     // ==============================
@@ -283,6 +454,9 @@ public class DevSandboxControllerUI : MonoBehaviour
 
     private void BuildStrainDropdown()
     {
+        if (strainDatabase == null || strainDropdown == null)
+            return;
+
         filteredStrains.Clear();
         filteredStrains.AddRange(strainDatabase.strains);
 
@@ -297,6 +471,9 @@ public class DevSandboxControllerUI : MonoBehaviour
 
     private void OnSearchChanged(string searchText)
     {
+        if (strainDatabase == null || strainDropdown == null)
+            return;
+
         filteredStrains.Clear();
 
         foreach (var strain in strainDatabase.strains)
@@ -337,17 +514,8 @@ public class DevSandboxControllerUI : MonoBehaviour
 
     public void RefreshSlotList()
     {
-        if (slotListParent == null)
-        {
-            Debug.LogError("slotListParent is not assigned in DevSandboxControllerUI!");
+        if (slotListParent == null || slotRowButtonPrefab == null)
             return;
-        }
-
-        if (slotRowButtonPrefab == null)
-        {
-            Debug.LogError("slotRowButtonPrefab is not assigned in DevSandboxControllerUI!");
-            return;
-        }
 
         foreach (Transform child in slotListParent)
             Destroy(child.gameObject);
@@ -362,18 +530,10 @@ public class DevSandboxControllerUI : MonoBehaviour
             GameObject rowObj = Instantiate(slotRowButtonPrefab, slotListParent);
 
             Button btn = rowObj.GetComponent<Button>();
-            if (btn == null)
-            {
-                Debug.LogError("SlotRowButtonPrefab is missing a Button component!");
-                return;
-            }
-
             TMP_Text txt = rowObj.GetComponentInChildren<TMP_Text>();
-            if (txt == null)
-            {
-                Debug.LogError("SlotRowButtonPrefab is missing TMP_Text component!");
-                return;
-            }
+
+            if (btn == null || txt == null)
+                continue;
 
             string label;
 
@@ -404,9 +564,8 @@ public class DevSandboxControllerUI : MonoBehaviour
             int capturedIndex = i;
             btn.onClick.AddListener(() => SelectSlot(capturedIndex));
         }
-
-        RefreshTablePanel();
     }
+
     private void SelectSlot(int index)
     {
         if (selectedTable == null)
@@ -424,10 +583,7 @@ public class DevSandboxControllerUI : MonoBehaviour
     private void UpdateSelectedInfoText()
     {
         if (selectedInfoText == null)
-        {
-            Debug.LogError("selectedInfoText is not assigned in DevSandboxControllerUI!");
             return;
-        }
 
         if (selectedSlot == null)
         {
@@ -497,157 +653,9 @@ public class DevSandboxControllerUI : MonoBehaviour
             $"Pests: {(plant.hasPests ? "YES" : "No")}";
     }
 
-    public void PlantSelectedStrainToSelectedSlot()
-    {
-        if (selectedTable == null || selectedSlot == null)
-        {
-            Print("No table/slot selected.");
-            return;
-        }
-
-        if (!selectedSlot.IsEmpty)
-        {
-            Print("Slot already occupied.");
-            return;
-        }
-
-        PlantStrainData strain = GetSelectedStrainFromDropdown();
-        if (strain == null)
-        {
-            Print("No strain selected.");
-            return;
-        }
-
-        // Create seed instance
-        SeedInstance seed = new SeedInstance();
-        seed.strain = strain;
-        seed.rarity = SeedRarity.Common;
-        seed.isMysterySeed = false;
-        seed.isShiny = Random.value < strain.shinyChance;
-
-        // Spawn plant prefab into slot
-        PlantInstance plant = Instantiate(plantPrefab, selectedSlot.transform.position, Quaternion.identity);
-        plant.transform.SetParent(selectedSlot.transform);
-
-        plant.InitializeFromSeed(seed);
-
-        selectedSlot.currentPlant = plant;
-
-        Print($"Planted {strain.strainName} into slot.");
-
-        RefreshSlotList();
-        UpdateSelectedInfoText();
-        RefreshTablePanel();
-        RefreshInventoryList();
-    }
-
-    private PlantStrainData GetSelectedStrainFromDropdown()
-    {
-        if (strainDropdown == null || strainDatabase == null)
-            return null;
-
-        int index = strainDropdown.value;
-
-        if (index < 0 || index >= filteredStrains.Count)
-            return null;
-
-        return filteredStrains[index];
-    }
-
-    //public void PlantRandomSeedFromInventory()
-    //{
-    //    if (selectedSlot == null || selectedSlot.currentPlant != null)
-    //        return;
-
-    //    List<SeedInstance> seeds = seedInventory.GetAllSeeds();
-    //    if (seeds.Count == 0)
-    //    {
-    //        Print("No seeds in inventory.");
-    //        return;
-    //    }
-
-    //    SeedInstance seed = seeds[0]; // first one
-    //    seedInventory.RemoveSpecificSeed(seed);
-
-    //    PlantInstance plant = Instantiate(plantPrefab, selectedSlot.transform.position, Quaternion.identity);
-    //    plant.transform.SetParent(selectedSlot.transform);
-
-    //    plant.InitializeFromSeed(seed);
-    //    selectedSlot.currentPlant = plant;
-
-    //    Print($"Planted seed: {seed.DisplayName}");
-
-    //    RefreshSlotList();
-    //    UpdateSelectedInfoText();
-    //    RefreshTablePanel();
-    //    RefreshInventoryList();
-    //}
-
     // ==============================
-    // ECONOMY / SHOP
+    // PLANTING (INVENTORY > SLOT)
     // ==============================
-
-    public void AddMoney(int amount)
-    {
-        economy.AddMoney(amount);
-        Print($"Money added: +${amount}. Balance: ${economy.Money}");
-        RefreshSlotList();
-        RefreshHUD();
-    }
-
-    public void SpendMoney(int amount)
-    {
-        economy.SpendMoney(amount);
-        Print($"Money subtracted: -${amount}. Balance: ${economy.Money}");
-        RefreshSlotList();
-        RefreshHUD();
-    }
-
-    public void BuySeedSingle()
-    {
-        PlantStrainData strain = GetSelectedStrain();
-        if (strain == null) return;
-
-        seedShop.BuySingleSeed(strain);
-        Print($"Bought 1 seed: {strain.strainName}");
-
-        RefreshSlotList();
-        RefreshInventoryList();
-    }
-
-    public void BuyPack5()
-    {
-        PlantStrainData strain = GetSelectedStrain();
-        if (strain == null) return;
-
-        seedShop.BuyPack(strain, 5);
-        Print($"Bought 5-pack: {strain.strainName}");
-        RefreshInventoryList();
-    }
-
-    public void BuyPack20()
-    {
-        PlantStrainData strain = GetSelectedStrain();
-        if (strain == null) return;
-
-        seedShop.BuyPack(strain, 20);
-        Print($"Bought 20-pack: {strain.strainName}");
-        RefreshInventoryList();
-    }
-
-    public void BuyBagseedPack5()
-    {
-        seedShop.BuyBagseedPack(5);
-        Print("Bought Bagseed Pack (5).");
-        RefreshInventoryList();
-    }
-
-    public void BuyBagseedPack20()
-    {
-        seedShop.BuyBagseedPack(20);
-        Print("Bought Bagseed Pack (20).");
-        RefreshInventoryList();
-    }
 
     private SeedInstance GetSeedFromSummary(SeedInventorySummary summary)
     {
@@ -658,94 +666,14 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         foreach (SeedInstance seed in allSeeds)
         {
-            // Mystery bagseed selection
             if (summary.isMystery && seed.isMysterySeed)
                 return seed;
 
-            // Normal strain selection
             if (!summary.isMystery && seed.strain == summary.strain)
                 return seed;
         }
 
         return null;
-    }
-
-    // ==============================
-    // PLANT ACTIONS
-    // ==============================
-
-    public void PlantSelectedStrainIntoEmptySlot()
-    {
-        if (selectedTable == null)
-            return;
-
-        PlantStrainData strain = GetSelectedStrain();
-        if (strain == null)
-            return;
-
-        List<TableSlot> available = selectedTable.GetAvailableSlots();
-        if (available.Count == 0)
-        {
-            Print("No empty slots.");
-            return;
-        }
-
-        SeedInstance seed = seedInventory.ConsumeSeed(strain);
-        if (seed == null)
-        {
-            Print("No seed in inventory for that strain.");
-            return;
-        }
-
-        TableSlot slot = available[0];
-
-        PlantInstance plant = Instantiate(plantPrefab, slot.transform.position, Quaternion.identity);
-        plant.transform.SetParent(slot.transform);
-
-        plant.InitializeFromSeed(seed);
-        slot.currentPlant = plant;
-
-        Print($"Planted {seed.DisplayName}");
-        RefreshSlotList();
-        UpdateSelectedInfoText();
-        RefreshTablePanel();
-        RefreshInventoryList();
-    }
-
-    public void PlantAllEmptySlotsSelectedStrain()
-    {
-        if (selectedTable == null)
-            return;
-
-        PlantStrainData strain = GetSelectedStrain();
-        if (strain == null)
-            return;
-
-        List<TableSlot> available = selectedTable.GetAvailableSlots();
-        if (available.Count == 0)
-            return;
-
-        int planted = 0;
-
-        foreach (var slot in available)
-        {
-            SeedInstance seed = seedInventory.ConsumeSeed(strain);
-            if (seed == null)
-                break;
-
-            PlantInstance plant = Instantiate(plantPrefab, slot.transform.position, Quaternion.identity);
-            plant.transform.SetParent(slot.transform);
-
-            plant.InitializeFromSeed(seed);
-            slot.currentPlant = plant;
-
-            planted++;
-        }
-
-        Print($"Planted {planted} seeds of {strain.strainName}");
-        RefreshSlotList();
-        RefreshTablePanel();
-        RefreshInventoryList();
     }
 
     public void PlantSelectedInventorySeedToSelectedSlot()
@@ -757,6 +685,7 @@ public class DevSandboxControllerUI : MonoBehaviour
         }
 
         int slotIndex = selectedTable.slots.IndexOf(selectedSlot);
+
         if (slotIndex >= selectedTable.unlockedSlots)
         {
             Print("Slot is locked.");
@@ -775,7 +704,6 @@ public class DevSandboxControllerUI : MonoBehaviour
             return;
         }
 
-        // Get ONE real seed from inventory
         SeedInstance seedToPlant = GetSeedFromSummary(selectedInventorySummary);
 
         if (seedToPlant == null)
@@ -784,28 +712,92 @@ public class DevSandboxControllerUI : MonoBehaviour
             return;
         }
 
-        // Remove from inventory
         seedInventory.RemoveSpecificSeed(seedToPlant);
 
-        // Spawn plant
         PlantInstance plant = Instantiate(plantPrefab, selectedSlot.transform.position, Quaternion.identity);
         plant.transform.SetParent(selectedSlot.transform);
-
-        // Initialize plant
         plant.InitializeFromSeed(seedToPlant);
 
-        // Assign plant to slot
         selectedSlot.currentPlant = plant;
 
         Print($"Planted: {seedToPlant.DisplayName}");
 
-        // Refresh UI
-        RefreshSlotList();
-        UpdateSelectedInfoText();
-        RefreshTablePanel();
-        RefreshInventoryList();
-        RefreshInventoryDetailPanel();
+        RefreshAllUI();
     }
+
+    // ==============================
+    // ECONOMY / SHOP
+    // ==============================
+
+    public void AddMoney(int amount)
+    {
+        economy.AddMoney(amount);
+        Print($"Money added: +${amount}");
+        RefreshAllUI();
+    }
+
+    public void SpendMoney(int amount)
+    {
+        economy.SpendMoney(amount);
+        Print($"Money spent: -${amount}");
+        RefreshAllUI();
+    }
+
+    public void BuySeedSingle()
+    {
+        PlantStrainData strain = GetSelectedStrain();
+        if (strain == null)
+            return;
+
+        seedShop.BuySingleSeed(strain);
+        Print($"Bought 1 seed: {strain.strainName}");
+
+        RefreshAllUI();
+    }
+
+    public void BuyPack5()
+    {
+        PlantStrainData strain = GetSelectedStrain();
+        if (strain == null)
+            return;
+
+        seedShop.BuyPack(strain, 5);
+        Print($"Bought 5-pack: {strain.strainName}");
+
+        RefreshAllUI();
+    }
+
+    public void BuyPack20()
+    {
+        PlantStrainData strain = GetSelectedStrain();
+        if (strain == null)
+            return;
+
+        seedShop.BuyPack(strain, 20);
+        Print($"Bought 20-pack: {strain.strainName}");
+
+        RefreshAllUI();
+    }
+
+    public void BuyBagseedPack5()
+    {
+        seedShop.BuyBagseedPack(5);
+        Print("Bought Bagseed Pack (5).");
+
+        RefreshAllUI();
+    }
+
+    public void BuyBagseedPack20()
+    {
+        seedShop.BuyBagseedPack(20);
+        Print("Bought Bagseed Pack (20).");
+
+        RefreshAllUI();
+    }
+
+    // ==============================
+    // PLANT ACTIONS
+    // ==============================
 
     public void WaterSelectedPlant()
     {
@@ -813,10 +805,9 @@ public class DevSandboxControllerUI : MonoBehaviour
             return;
 
         selectedSlot.currentPlant.WaterPlant(40f, 5f);
-
         Print("Watered selected plant.");
-        RefreshSlotList();
-        UpdateSelectedInfoText();
+
+        RefreshAllUI();
     }
 
     public void FeedSelectedPlant()
@@ -825,10 +816,9 @@ public class DevSandboxControllerUI : MonoBehaviour
             return;
 
         selectedSlot.currentPlant.FeedNutrients(35f);
-
         Print("Fed selected plant.");
-        RefreshSlotList();
-        UpdateSelectedInfoText();
+
+        RefreshAllUI();
     }
 
     public void TreatSelectedMold()
@@ -838,8 +828,8 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         bool treated = selectedSlot.currentPlant.TreatMold();
         Print(treated ? "Mold treated." : "No mold present.");
-        RefreshSlotList();
-        UpdateSelectedInfoText();
+
+        RefreshAllUI();
     }
 
     public void TreatSelectedPests()
@@ -849,8 +839,8 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         bool treated = selectedSlot.currentPlant.TreatPests();
         Print(treated ? "Pests treated." : "No pests present.");
-        RefreshSlotList();
-        UpdateSelectedInfoText();
+
+        RefreshAllUI();
     }
 
     public void HarvestSelectedPlant()
@@ -869,9 +859,7 @@ public class DevSandboxControllerUI : MonoBehaviour
         selectedSlot.RemovePlant();
         Print("Harvested plant.");
 
-        RefreshSlotList();
-        UpdateSelectedInfoText();
-        RefreshInventoryList();
+        RefreshAllUI();
     }
 
     // ==============================
@@ -882,12 +870,60 @@ public class DevSandboxControllerUI : MonoBehaviour
     {
         timeManager.AdvanceDay();
         plantManager.AdvanceDayAll();
-        Print("Day advanced. > DevSandboxController > AdvanceDay");
 
-        RefreshHUD();
-        RefreshSlotList();
-        UpdateSelectedInfoText();
-        RefreshTablePanel();
+        Print("Day advanced.");
+        RefreshAllUI();
+    }
+
+    // ==============================
+    // UPGRADES / UNLOCKS
+    // ==============================
+
+    public void UnlockSelectedTable()
+    {
+        if (selectedTable == null)
+        {
+            Print("No table selected.");
+            return;
+        }
+
+        bool success = selectedTable.UnlockTable(economy);
+        Print(success ? "Table unlocked!" : "Failed to unlock table.");
+
+        RefreshAllUI();
+    }
+
+    public void UpgradeSelectedTableSlots()
+    {
+        if (selectedTable == null)
+            return;
+
+        bool success = selectedTable.UpgradeSlots(economy, 1);
+        Print(success ? "Slot upgraded!" : "Slot upgrade failed.");
+
+        RefreshAllUI();
+    }
+
+    public void UpgradeSelectedTableLights()
+    {
+        if (selectedTable == null)
+            return;
+
+        bool success = selectedTable.UpgradeLights(economy);
+        Print(success ? "Lights upgraded!" : "Light upgrade failed.");
+
+        RefreshAllUI();
+    }
+
+    public void UpgradeSelectedTableWater()
+    {
+        if (selectedTable == null)
+            return;
+
+        bool success = selectedTable.UpgradeWater(economy);
+        Print(success ? "Water upgraded!" : "Water upgrade failed.");
+
+        RefreshAllUI();
     }
 
     // ==============================
