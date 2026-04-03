@@ -22,6 +22,7 @@ public static class HarvestGrader
         if (plant.hasPests)
             score -= 120;
 
+
         // Genetics base from strain + rarity bonus
         int geneticsScore = plant.strainData.geneticsScore + plant.seed.geneticsBonus;
         geneticsScore = Mathf.Clamp(geneticsScore, 0, 300); // allow bonus to exceed normal cap slightly

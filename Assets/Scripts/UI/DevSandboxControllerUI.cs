@@ -15,13 +15,17 @@ public class DevSandboxControllerUI : MonoBehaviour
     // ==============================
 
     [Header("References")]
-    public SeedInventory seedInventory;
+    public DiscoveryManager discoveryManager;
     public EconomyManager economy;
     public PlantManager plantManager;
     public SaveLoadManager saveLoadManager;
+    public SeedInventory seedInventory;
     public SeedShop seedShop;
     public StrainDatabase strainDatabase;
     public TimeManager timeManager;
+
+    [Header("Panels")]
+    public GameObject shopPanel;
 
     // ==============================
     // HUD UI (TOP BAR)
@@ -39,7 +43,11 @@ public class DevSandboxControllerUI : MonoBehaviour
     public TMP_Dropdown warehouseDropdown;
     public TMP_Dropdown tableDropdown;
 
-    [Header("Strain Search")]
+    [Header("Top Bar Strain UI")]
+    public TMP_InputField topSearchInput;
+    public TMP_Dropdown topStrainDropdown;
+
+    [Header("Shop Strain UI")]
     public TMP_InputField strainSearchInput;
     public TMP_Dropdown strainDropdown;
 
@@ -115,15 +123,17 @@ public class DevSandboxControllerUI : MonoBehaviour
 
     private void Start()
     {
-        // Hook search input event
+        if (topSearchInput != null)
+            topSearchInput.onValueChanged.AddListener(OnTopSearchChanged);
+
         if (strainSearchInput != null)
-            strainSearchInput.onValueChanged.AddListener(OnSearchChanged);
+            strainSearchInput.onValueChanged.AddListener(OnShopSearchChanged);
 
-        // Build initial UI dropdowns
         BuildWarehouseDropdown();
-        BuildStrainDropdown();
 
-        // Refresh everything once at boot
+        BuildTopStrainDropdown();
+        BuildShopStrainDropdown();
+
         RefreshAllUI();
 
         Print("DevSandbox Controller Ready.");
@@ -161,6 +171,78 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         if (timeManager != null && dayText != null)
             dayText.text = $"Day: {timeManager.CurrentDay}";
+    }
+
+    private void OnTopSearchChanged(string text)
+    {
+        FilterStrains(text);
+        RefreshTopDropdown();
+    }
+
+    private void OnShopSearchChanged(string text)
+    {
+        FilterStrains(text);
+        RefreshShopDropdown();
+    }
+
+    private void FilterStrains(string searchText)
+    {
+        filteredStrains.Clear();
+
+        foreach (var strain in strainDatabase.strains)
+        {
+            if (string.IsNullOrEmpty(searchText) ||
+                strain.strainName.ToLower().Contains(searchText.ToLower()))
+            {
+                filteredStrains.Add(strain);
+            }
+        }
+    }
+
+    private void BuildTopStrainDropdown()
+    {
+        if (topStrainDropdown == null) return;
+
+        filteredStrains.Clear();
+        filteredStrains.AddRange(strainDatabase.strains);
+
+        RefreshTopDropdown();
+    }
+
+    private void BuildShopStrainDropdown()
+    {
+        if (strainDropdown == null) return;
+
+        filteredStrains.Clear();
+        filteredStrains.AddRange(strainDatabase.strains);
+
+        RefreshShopDropdown();
+    }
+
+    private void RefreshTopDropdown()
+    {
+        if (topStrainDropdown == null) return;
+
+        topStrainDropdown.ClearOptions();
+
+        List<string> names = new List<string>();
+        foreach (var s in filteredStrains)
+            names.Add(s.strainName);
+
+        topStrainDropdown.AddOptions(names);
+    }
+
+    private void RefreshShopDropdown()
+    {
+        if (strainDropdown == null) return;
+
+        strainDropdown.ClearOptions();
+
+        List<string> names = new List<string>();
+        foreach (var s in filteredStrains)
+            names.Add(s.strainName);
+
+        strainDropdown.AddOptions(names);
     }
 
     // ==============================
@@ -780,6 +862,13 @@ public class DevSandboxControllerUI : MonoBehaviour
         RefreshAllUI();
     }
 
+    public void BuyBagseedSingle()
+    {
+        seedShop.BuyBagseedPack(1);
+        Print("Bought Bagseed Single.");
+        RefreshInventoryList();
+    }
+
     public void BuyBagseedPack5()
     {
         seedShop.BuyBagseedPack(5);
@@ -855,6 +944,12 @@ public class DevSandboxControllerUI : MonoBehaviour
         {
             Print("Plant is not harvestable.");
             return;
+        }
+
+        if (plant.seed != null && plant.seed.isMysterySeed)
+        {
+            plant.seed.RevealMystery();
+            discoveryManager.DiscoverStrain(plant.seed.strain);
         }
 
         selectedSlot.RemovePlant();
@@ -1041,5 +1136,23 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         if (debugOutputText != null)
             debugOutputText.text = msg;
+    }
+
+    public void OpenShop()
+    {
+        if (shopPanel != null)
+            shopPanel.SetActive(true);
+
+        BuildShopStrainDropdown();
+
+        Print("Shop opened.");
+    }
+
+    public void CloseShop()
+    {
+        if (shopPanel != null)
+            shopPanel.SetActive(false);
+
+        Print("Shop closed.");
     }
 }

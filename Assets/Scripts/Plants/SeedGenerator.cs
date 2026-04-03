@@ -27,11 +27,14 @@ public static class SeedGenerator
     public static SeedInstance GenerateMysterySeed(StrainDatabase db)
     {
         SeedInstance seed = new SeedInstance();
+
+        seed.strain = null;
         seed.isMysterySeed = true;
 
-        // Assign a REAL strain so the plant can grow
-        seed.strain = db.GetRandomStrain();
+        // Assign hidden real strain
+        seed.hiddenStrain = db.GetRandomStrain();
 
+        // Rarity roll
         float roll = Random.value;
 
         if (roll < 0.70f) seed.rarity = SeedRarity.Common;
@@ -40,8 +43,8 @@ public static class SeedGenerator
         else if (roll < 0.995f) seed.rarity = SeedRarity.Epic;
         else seed.rarity = SeedRarity.Legendary;
 
-        // Shiny should still use strain shinyChance (better than flat 1%)
-        seed.isShiny = Random.value < seed.strain.shinyChance;
+        // Shiny roll
+        seed.isShiny = Random.value < 0.01f;
 
         return seed;
     }

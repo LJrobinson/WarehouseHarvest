@@ -2,20 +2,50 @@
 public class SeedInstance
 {
     public PlantStrainData strain;
+
+    // Mystery bagseed mechanic
+    public bool isMysterySeed = false;
+
+    // Hidden true strain for mystery seeds
+    public PlantStrainData hiddenStrain;
+
     public SeedRarity rarity;
     public bool isShiny;
-    public bool isMysterySeed;
-    public int geneticsBonus;
+
+    public int geneticsBonus = 0;
+
+    // This is what plants should actually grow from
+    public PlantStrainData EffectiveStrain
+    {
+        get
+        {
+            if (isMysterySeed && hiddenStrain != null)
+                return hiddenStrain;
+
+            return strain;
+        }
+    }
 
     public string DisplayName
     {
         get
         {
-            string strainName = isMysterySeed ? "??? Bagseed" : strain != null ? strain.strainName : "Unknown";
+            if (isMysterySeed)
+                return $"??? ({rarity})";
 
-            string shinyText = isShiny ? " Shiny " : "";
+            if (strain == null)
+                return $"Unknown ({rarity})";
 
-            return $"{strainName} ({rarity}){shinyText}";
+            return $"{strain.strainName} ({rarity})";
         }
+    }
+
+    public void RevealMystery()
+    {
+        if (!isMysterySeed) return;
+        if (hiddenStrain == null) return;
+
+        strain = hiddenStrain;
+        isMysterySeed = false;
     }
 }

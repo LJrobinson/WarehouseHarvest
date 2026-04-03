@@ -5,7 +5,7 @@ public class PlantInstance : MonoBehaviour
     [Header("Seed Info")]
     public SeedInstance seed;
 
-    public PlantStrainData strainData => seed != null ? seed.strain : null;
+    public PlantStrainData strainData => seed != null ? seed.EffectiveStrain : null;
 
     [Header("Care Stats")]
     [Range(0f, 100f)] public float waterLevel = 60f;

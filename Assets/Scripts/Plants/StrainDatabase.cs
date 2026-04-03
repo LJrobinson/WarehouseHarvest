@@ -42,10 +42,7 @@ public class StrainDatabase : ScriptableObject
     public PlantStrainData GetRandomStrain()
     {
         if (strains == null || strains.Count == 0)
-        {
-            Debug.LogError("StrainDatabase has no strains!");
             return null;
-        }
 
         return strains[Random.Range(0, strains.Count)];
     }
