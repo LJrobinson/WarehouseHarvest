@@ -3,22 +3,74 @@ using UnityEngine;
 
 public class DiscoveryManager : MonoBehaviour
 {
-    public HashSet<string> discoveredStrains = new HashSet<string>();
+    public static DiscoveryManager Instance;
+
+    [Header("Database")]
+    public StrainDatabase strainDatabase;
+
+    private HashSet<string> discoveredStrainIDs = new HashSet<string>();
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Debug.Log("DiscoveryManager Awake: " + gameObject.name);
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
 
     public bool IsDiscovered(PlantStrainData strain)
     {
         if (strain == null) return false;
-        return discoveredStrains.Contains(strain.strainName);
+        return discoveredStrainIDs.Contains(strain.name);
     }
 
     public void DiscoverStrain(PlantStrainData strain)
     {
         if (strain == null) return;
 
-        if (!discoveredStrains.Contains(strain.strainName))
+        if (!discoveredStrainIDs.Contains(strain.name))
         {
-            discoveredStrains.Add(strain.strainName);
+            discoveredStrainIDs.Add(strain.name);
             Debug.Log($"DISCOVERED STRAIN: {strain.strainName}");
         }
+    }
+
+    public int GetDiscoveredCount()
+    {
+        return discoveredStrainIDs.Count;
+    }
+
+    public int GetTotalCount()
+    {
+        if (strainDatabase == null) return 0;
+        return strainDatabase.strains.Count;
+    }
+
+    public List<PlantStrainData> GetAllStrains()
+    {
+        if (strainDatabase == null) return new List<PlantStrainData>();
+        return strainDatabase.strains;
+    }
+
+    public List<PlantStrainData> GetDiscoveredStrains()
+    {
+        List<PlantStrainData> result = new List<PlantStrainData>();
+
+        if (strainDatabase == null || strainDatabase.strains == null)
+            return result;
+
+        foreach (var strain in strainDatabase.strains)
+        {
+            if (strain == null) continue;
+
+            if (discoveredStrainIDs.Contains(strain.name))
+                result.Add(strain);
+        }
+
+        return result;
     }
 }

@@ -15,6 +15,7 @@ public class DevSandboxControllerUI : MonoBehaviour
     // ==============================
 
     [Header("References")]
+    public CollectionUIController collectionUIController;
     public DiscoveryManager discoveryManager;
     public EconomyManager economy;
     public PlantManager plantManager;
@@ -26,6 +27,7 @@ public class DevSandboxControllerUI : MonoBehaviour
 
     [Header("Panels")]
     public GameObject shopPanel;
+    public GameObject collectionPanel;
 
     // ==============================
     // HUD UI (TOP BAR)
@@ -133,6 +135,8 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         BuildTopStrainDropdown();
         BuildShopStrainDropdown();
+
+        
 
         RefreshAllUI();
 
@@ -806,6 +810,7 @@ public class DevSandboxControllerUI : MonoBehaviour
         Print($"Planted: {seedToPlant.DisplayName}");
 
         RefreshAllUI();
+        
     }
 
     // ==============================
@@ -946,16 +951,53 @@ public class DevSandboxControllerUI : MonoBehaviour
             return;
         }
 
+        // ============================
+        // GRADING + DISCOVERY CHECK
+        // ============================
+
+        int score = HarvestGrader.CalculateScore(plant);
+        string grade = HarvestGrader.GetGradeLetter(score);
+
+        bool qualifiesForDiscovery = (score >= 700); // B or higher
+
         if (plant.seed != null && plant.seed.isMysterySeed)
         {
-            plant.seed.RevealMystery();
-            discoveryManager.DiscoverStrain(plant.seed.strain);
+            if (qualifiesForDiscovery)
+            {
+                plant.seed.RevealMystery();
+                discoveryManager.DiscoverStrain(plant.seed.strain);
+
+                // NEW: Refresh the collection UI immediately
+                if (collectionUIController != null) {
+                    if (collectionUIController != null)
+                    {
+                        collectionUIController.RefreshList();
+                        Print($"DISCOVERED: {plant.seed.strain.strainName} ({grade}) Score:{score}");
+                    }
+                    else
+                    {
+                        Debug.LogError("Collection UI Controller is NOT assigned in DevSandboxControllerUI!");
+                    }
+                }
+                else
+                {
+                    Print("Mystery seed revealed but strain was null (bug).");
+                }
+            }
+            else
+            {
+                Print($"Bagseed harvested ({grade}) Score:{score} - Not good enough to discover.");
+            }
+        }
+        else
+        {
+            Print($"Harvested {plant.strainData.strainName} ({grade}) Score:{score}");
         }
 
         selectedSlot.RemovePlant();
-        Print("Harvested plant.");
 
         RefreshAllUI();
+        collectionUIController.RefreshList();
     }
 
     public void PlantSelectedInventorySeedByRarity(int rarityInt)
@@ -1155,4 +1197,12 @@ public class DevSandboxControllerUI : MonoBehaviour
 
         Print("Shop closed.");
     }
+
+    public void OpenCollection()
+    {
+        if (collectionPanel != null)
+            collectionPanel.SetActive(true);
+        collectionUIController.RefreshList();
+    }
+
 }

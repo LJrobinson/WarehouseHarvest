@@ -4,7 +4,6 @@ public static class HarvestGrader
 {
     public static int CalculateScore(PlantInstance plant)
     {
-        
         if (plant == null || plant.strainData == null || plant.seed == null)
             return 0;
 
@@ -22,10 +21,9 @@ public static class HarvestGrader
         if (plant.hasPests)
             score -= 120;
 
-
         // Genetics base from strain + rarity bonus
         int geneticsScore = plant.strainData.geneticsScore + plant.seed.geneticsBonus;
-        geneticsScore = Mathf.Clamp(geneticsScore, 0, 300); // allow bonus to exceed normal cap slightly
+        geneticsScore = Mathf.Clamp(geneticsScore, 0, 300);
 
         // Growth score (0-250)
         int growthScore = Mathf.RoundToInt((plant.growthPercent / 100f) * 250f);
