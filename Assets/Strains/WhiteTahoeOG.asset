@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: WhiteTahoeOG
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: White Tahoe OG
+  description: 
+  idealWaterMin: 45
+  idealWaterMax: 80
+  idealNutrientsMin: 24
+  idealNutrientsMax: 54
+  moldSusceptibility: 0.618
+  pestSusceptibility: 0.521
+  growthPerDay: 20
+  ripenessPerDayInFlower: 13
+  harvestWindowStart: 87
+  harvestWindowEnd: 147
+  overripeThreshold: 155
+  seedCost: 107
+  pack5Cost: 452
+  pack20Cost: 3348
+  payoutMultiplier: 0.434
+  geneticsScore: 199
+  shinyChance: 0.0166

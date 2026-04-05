@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: WhiteGold
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: White Gold
+  description: 
+  idealWaterMin: 31
+  idealWaterMax: 52
+  idealNutrientsMin: 29
+  idealNutrientsMax: 75
+  moldSusceptibility: 0.226
+  pestSusceptibility: 0.749
+  growthPerDay: 10
+  ripenessPerDayInFlower: 15
+  harvestWindowStart: 88
+  harvestWindowEnd: 113
+  overripeThreshold: 123
+  seedCost: 15
+  pack5Cost: 145
+  pack20Cost: 843
+  payoutMultiplier: 0.545
+  geneticsScore: 25
+  shinyChance: 0.124

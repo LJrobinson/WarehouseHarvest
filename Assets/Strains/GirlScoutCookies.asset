@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: GirlScoutCookies
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Girl Scout Cookies
+  description: 
+  idealWaterMin: 69
+  idealWaterMax: 86
+  idealNutrientsMin: 20
+  idealNutrientsMax: 90
+  moldSusceptibility: 0.634
+  pestSusceptibility: 0.411
+  growthPerDay: 18
+  ripenessPerDayInFlower: 23
+  harvestWindowStart: 120
+  harvestWindowEnd: 136
+  overripeThreshold: 119
+  seedCost: 112
+  pack5Cost: 63
+  pack20Cost: 3915
+  payoutMultiplier: 1.786
+  geneticsScore: 126
+  shinyChance: 0.0348

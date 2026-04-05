@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: IronManOG
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Iron Man OG
+  description: 
+  idealWaterMin: 57
+  idealWaterMax: 52
+  idealNutrientsMin: 20
+  idealNutrientsMax: 63
+  moldSusceptibility: 0.255
+  pestSusceptibility: 0.332
+  growthPerDay: 22
+  ripenessPerDayInFlower: 17
+  harvestWindowStart: 105
+  harvestWindowEnd: 126
+  overripeThreshold: 122
+  seedCost: 49
+  pack5Cost: 392
+  pack20Cost: 3364
+  payoutMultiplier: 0.298
+  geneticsScore: 236
+  shinyChance: 0.0368

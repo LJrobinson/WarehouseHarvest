@@ -24,6 +24,7 @@ public class DevSandboxControllerUI : MonoBehaviour
     public SeedShop seedShop;
     public StrainDatabase strainDatabase;
     public TimeManager timeManager;
+    public WarehouseOverviewUIController warehouseOverviewUI;
 
     [Header("Panels")]
     public GameObject shopPanel;
@@ -162,6 +163,8 @@ public class DevSandboxControllerUI : MonoBehaviour
         RefreshInventoryList();
         RefreshInventoryDetailPanel();
         UpdateSelectedInfoText();
+        if (warehouseOverviewUI != null)
+            warehouseOverviewUI.RefreshUI();
     }
 
     // ==============================
@@ -1203,6 +1206,66 @@ public class DevSandboxControllerUI : MonoBehaviour
         if (collectionPanel != null)
             collectionPanel.SetActive(true);
         collectionUIController.RefreshList();
+    }
+
+    public void Dev_DiscoverSelectedTopStrain()
+    {
+        if (discoveryManager == null)
+        {
+            Print("DiscoveryManager not assigned.");
+            return;
+        }
+
+        if (topStrainDropdown == null)
+        {
+            Print("topStrainDropdown not assigned.");
+            return;
+        }
+
+        int index = topStrainDropdown.value;
+
+        if (filteredStrains == null || filteredStrains.Count == 0)
+        {
+            Print("No strains loaded in filteredStrains.");
+            return;
+        }
+
+        if (index < 0 || index >= filteredStrains.Count)
+        {
+            Print("Invalid dropdown index.");
+            return;
+        }
+
+        PlantStrainData strain = filteredStrains[index];
+
+        if (strain == null)
+        {
+            Print("Selected strain is null.");
+            return;
+        }
+
+        discoveryManager.DiscoverStrain(strain);
+
+        Print($"DEV DISCOVERED: {strain.strainName}");
+
+        RefreshAllUI();
+
+        // If you have a Collection UI controller reference, refresh it too:
+        if (collectionUIController != null)
+            collectionUIController.RefreshList();
+    }
+
+    public void ForceSelectTable(GrowTable table)
+    {
+        if (table == null)
+            return;
+
+        selectedTable = table;
+        selectedSlot = null;
+
+        Print($"[WarehouseOverview] Selected Table: {selectedTable.name}");
+
+        RefreshAllUI();
     }
 
 }

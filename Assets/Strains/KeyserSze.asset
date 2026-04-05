@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: KeyserSze
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Keyser Soze
+  description: 
+  idealWaterMin: 36
+  idealWaterMax: 77
+  idealNutrientsMin: 56
+  idealNutrientsMax: 91
+  moldSusceptibility: 0.627
+  pestSusceptibility: 0.924
+  growthPerDay: 15
+  ripenessPerDayInFlower: 20
+  harvestWindowStart: 127
+  harvestWindowEnd: 123
+  overripeThreshold: 149
+  seedCost: 32
+  pack5Cost: 133
+  pack20Cost: 1643
+  payoutMultiplier: 0.805
+  geneticsScore: 185
+  shinyChance: 0.0166

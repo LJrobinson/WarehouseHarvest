@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: UncleAndy
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Uncle Andy
+  description: 
+  idealWaterMin: 24
+  idealWaterMax: 64
+  idealNutrientsMin: 32
+  idealNutrientsMax: 56
+  moldSusceptibility: 0.659
+  pestSusceptibility: 0.906
+  growthPerDay: 17
+  ripenessPerDayInFlower: 24
+  harvestWindowStart: 123
+  harvestWindowEnd: 146
+  overripeThreshold: 111
+  seedCost: 206
+  pack5Cost: 251
+  pack20Cost: 841
+  payoutMultiplier: 0.805
+  geneticsScore: 73
+  shinyChance: 0.1195

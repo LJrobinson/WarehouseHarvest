@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: AnimalCookies
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Animal Cookies
+  description: 
+  idealWaterMin: 68
+  idealWaterMax: 59
+  idealNutrientsMin: 31
+  idealNutrientsMax: 58
+  moldSusceptibility: 0.303
+  pestSusceptibility: 0.385
+  growthPerDay: 25
+  ripenessPerDayInFlower: 29
+  harvestWindowStart: 105
+  harvestWindowEnd: 119
+  overripeThreshold: 127
+  seedCost: 11
+  pack5Cost: 196
+  pack20Cost: 3075
+  payoutMultiplier: 0.335
+  geneticsScore: 27
+  shinyChance: 0.0493

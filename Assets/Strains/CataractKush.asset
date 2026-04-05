@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: CataractKush
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Cataract Kush
+  description: 
+  idealWaterMin: 63
+  idealWaterMax: 85
+  idealNutrientsMin: 38
+  idealNutrientsMax: 59
+  moldSusceptibility: 0.656
+  pestSusceptibility: 0.957
+  growthPerDay: 30
+  ripenessPerDayInFlower: 2
+  harvestWindowStart: 90
+  harvestWindowEnd: 129
+  overripeThreshold: 188
+  seedCost: 46
+  pack5Cost: 69
+  pack20Cost: 2780
+  payoutMultiplier: 0.002
+  geneticsScore: 40
+  shinyChance: 0.062

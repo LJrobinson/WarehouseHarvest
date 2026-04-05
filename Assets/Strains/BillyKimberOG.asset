@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: BillyKimberOG
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Billy Kimber OG
+  description: 
+  idealWaterMin: 32
+  idealWaterMax: 95
+  idealNutrientsMin: 29
+  idealNutrientsMax: 74
+  moldSusceptibility: 0.618
+  pestSusceptibility: 0.599
+  growthPerDay: 16
+  ripenessPerDayInFlower: 14
+  harvestWindowStart: 85
+  harvestWindowEnd: 126
+  overripeThreshold: 113
+  seedCost: 100
+  pack5Cost: 127
+  pack20Cost: 2220
+  payoutMultiplier: 1.264
+  geneticsScore: 11
+  shinyChance: 0.0785

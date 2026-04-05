@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: BoraBora
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Bora Bora
+  description: 
+  idealWaterMin: 28
+  idealWaterMax: 95
+  idealNutrientsMin: 29
+  idealNutrientsMax: 90
+  moldSusceptibility: 0.817
+  pestSusceptibility: 0.052
+  growthPerDay: 30
+  ripenessPerDayInFlower: 15
+  harvestWindowStart: 120
+  harvestWindowEnd: 95
+  overripeThreshold: 147
+  seedCost: 248
+  pack5Cost: 500
+  pack20Cost: 2848
+  payoutMultiplier: 1.55
+  geneticsScore: 94
+  shinyChance: 0.091

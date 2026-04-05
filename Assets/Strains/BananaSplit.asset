@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: BananaSplit
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Banana Split
+  description: 
+  idealWaterMin: 64
+  idealWaterMax: 80
+  idealNutrientsMin: 63
+  idealNutrientsMax: 51
+  moldSusceptibility: 0.594
+  pestSusceptibility: 0.438
+  growthPerDay: 23
+  ripenessPerDayInFlower: 7
+  harvestWindowStart: 124
+  harvestWindowEnd: 95
+  overripeThreshold: 118
+  seedCost: 141
+  pack5Cost: 115
+  pack20Cost: 2775
+  payoutMultiplier: 0.354
+  geneticsScore: 107
+  shinyChance: 0.0438

@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: Batgirl
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Batgirl
+  description: 
+  idealWaterMin: 49
+  idealWaterMax: 92
+  idealNutrientsMin: 34
+  idealNutrientsMax: 58
+  moldSusceptibility: 0.079
+  pestSusceptibility: 0.102
+  growthPerDay: 12
+  ripenessPerDayInFlower: 19
+  harvestWindowStart: 94
+  harvestWindowEnd: 126
+  overripeThreshold: 102
+  seedCost: 51
+  pack5Cost: 323
+  pack20Cost: 4554
+  payoutMultiplier: 0.364
+  geneticsScore: 165
+  shinyChance: 0.1495

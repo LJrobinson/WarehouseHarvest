@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: GorrillaGrapes
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Gorrilla Grapes
+  description: 
+  idealWaterMin: 60
+  idealWaterMax: 86
+  idealNutrientsMin: 32
+  idealNutrientsMax: 65
+  moldSusceptibility: 0.425
+  pestSusceptibility: 0.028
+  growthPerDay: 22
+  ripenessPerDayInFlower: 22
+  harvestWindowStart: 81
+  harvestWindowEnd: 139
+  overripeThreshold: 194
+  seedCost: 170
+  pack5Cost: 203
+  pack20Cost: 3507
+  payoutMultiplier: 1.042
+  geneticsScore: 235
+  shinyChance: 0.1463

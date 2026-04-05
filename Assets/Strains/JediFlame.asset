@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: JediFlame
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Jedi Flame
+  description: 
+  idealWaterMin: 36
+  idealWaterMax: 59
+  idealNutrientsMin: 45
+  idealNutrientsMax: 59
+  moldSusceptibility: 0.261
+  pestSusceptibility: 0.54
+  growthPerDay: 3
+  ripenessPerDayInFlower: 26
+  harvestWindowStart: 102
+  harvestWindowEnd: 147
+  overripeThreshold: 116
+  seedCost: 188
+  pack5Cost: 198
+  pack20Cost: 4173
+  payoutMultiplier: 0.708
+  geneticsScore: 129
+  shinyChance: 0.001

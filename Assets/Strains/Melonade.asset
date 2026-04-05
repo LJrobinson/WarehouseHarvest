@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: Melonade
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Melonade
+  description: 
+  idealWaterMin: 55
+  idealWaterMax: 92
+  idealNutrientsMin: 61
+  idealNutrientsMax: 90
+  moldSusceptibility: 0.316
+  pestSusceptibility: 0.221
+  growthPerDay: 15
+  ripenessPerDayInFlower: 15
+  harvestWindowStart: 123
+  harvestWindowEnd: 100
+  overripeThreshold: 150
+  seedCost: 223
+  pack5Cost: 170
+  pack20Cost: 2364
+  payoutMultiplier: 1.947
+  geneticsScore: 208
+  shinyChance: 0.1286

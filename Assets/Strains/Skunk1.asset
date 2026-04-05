@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: Skunk1
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Skunk #1
+  description: 
+  idealWaterMin: 22
+  idealWaterMax: 67
+  idealNutrientsMin: 37
+  idealNutrientsMax: 54
+  moldSusceptibility: 0.615
+  pestSusceptibility: 0.428
+  growthPerDay: 23
+  ripenessPerDayInFlower: 10
+  harvestWindowStart: 122
+  harvestWindowEnd: 111
+  overripeThreshold: 140
+  seedCost: 5
+  pack5Cost: 139
+  pack20Cost: 1959
+  payoutMultiplier: 0.223
+  geneticsScore: 170
+  shinyChance: 0.1463

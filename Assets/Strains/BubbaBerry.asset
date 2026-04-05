@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: BubbaBerry
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: Bubba Berry
+  description: 
+  idealWaterMin: 32
+  idealWaterMax: 81
+  idealNutrientsMin: 23
+  idealNutrientsMax: 87
+  moldSusceptibility: 0.665
+  pestSusceptibility: 0.906
+  growthPerDay: 22
+  ripenessPerDayInFlower: 22
+  harvestWindowStart: 129
+  harvestWindowEnd: 121
+  overripeThreshold: 195
+  seedCost: 14
+  pack5Cost: 459
+  pack20Cost: 1134
+  payoutMultiplier: 0.864
+  geneticsScore: 134
+  shinyChance: 0.1866

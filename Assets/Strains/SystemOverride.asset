@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0511c7e1dd0e38f44abd51be84fe8521, type: 3}
+  m_Name: SystemOverride
+  m_EditorClassIdentifier: Assembly-CSharp::PlantStrainData
+  strainName: System Override
+  description: 
+  idealWaterMin: 45
+  idealWaterMax: 50
+  idealNutrientsMin: 56
+  idealNutrientsMax: 85
+  moldSusceptibility: 0.244
+  pestSusceptibility: 0.019
+  growthPerDay: 11
+  ripenessPerDayInFlower: 2
+  harvestWindowStart: 118
+  harvestWindowEnd: 135
+  overripeThreshold: 136
+  seedCost: 99
+  pack5Cost: 383
+  pack20Cost: 4035
+  payoutMultiplier: 1.619
+  geneticsScore: 62
+  shinyChance: 0.0104
