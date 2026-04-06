@@ -148,11 +148,11 @@ public class DevSandboxControllerUI : MonoBehaviour
     // MASTER UI REFRESH
     // ==============================
 
-    /// <summary>
-    /// The single "source of truth" refresh call.
-    /// Anytime game state changes (buy, plant, upgrade, advance day),
-    /// call this instead of manually calling 6 refresh methods.
-    /// </summary>
+    // =============================
+    // The single "source of truth" refresh call.
+    // Anytime game state changes (buy, plant, upgrade, advance day),
+    // call this instead of manually calling 6 refresh methods.
+    // =============================
     private void RefreshAllUI()
     {
         RefreshHUD();

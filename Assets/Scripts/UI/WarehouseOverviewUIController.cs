@@ -21,12 +21,113 @@ public class WarehouseOverviewUIController : MonoBehaviour
     [Header("Selection UI")]
     public TMP_Text selectedTableText;
 
+    [Header("Utility UI")]
+    public TMP_Text utilitiesText;
+
+    [Header("Upgrade Buttons")]
+    public Button upgradePowerButton;
+    public Button upgradeWaterButton;
+    public Button upgradeDataButton;
+
+    public TMP_Dropdown allocationModeDropdown;
+
     private GrowTable selectedTable;
+
+    private bool buttonsHooked = false;
+
+    private void HookButtons()
+    {
+        if (buttonsHooked) return;
+
+        if (upgradeDataButton != null)
+            upgradeDataButton.onClick.AddListener(() =>
+            {
+                Debug.Log("Upgrade Data Clicked!");
+                if (warehouse == null) return;
+                warehouse.UpgradeData();
+                RefreshUI();
+            });
+
+        if (upgradePowerButton != null)
+            upgradePowerButton.onClick.AddListener(() =>
+            {
+                Debug.Log("Upgrade Power Clicked!");
+                if (warehouse == null) return;
+                warehouse.UpgradePower();
+                RefreshUI();
+            });
+
+        if (upgradeWaterButton != null)
+            upgradeWaterButton.onClick.AddListener(() =>
+            {
+                Debug.Log("Upgrade Water Clicked!");
+                if (warehouse == null) return;
+                warehouse.UpgradeWater();
+                RefreshUI();
+            });     
+
+        buttonsHooked = true;
+    }
 
     public void SetWarehouse(Warehouse newWarehouse)
     {
+        // Assign warehouse first
         warehouse = newWarehouse;
+
+        if (warehouse == null)
+        {
+            Debug.LogWarning("WarehouseOverviewUIController: SetWarehouse called with null warehouse!");
+            return;
+        }
+
         selectedTable = null;
+
+        // ---- Setup Dropdown ----
+        if (allocationModeDropdown != null)
+        {
+            // Clear old listeners/options
+            allocationModeDropdown.onValueChanged.RemoveAllListeners();
+            allocationModeDropdown.ClearOptions();
+
+            // Add options
+            List<string> options = new List<string>
+        {
+            "Manual Priority",
+            "Balanced",
+            "Plants First",
+            "Harvest First",
+            "High Value First"
+        };
+            allocationModeDropdown.AddOptions(options);
+
+            // Set value to current allocation mode
+            allocationModeDropdown.value = (int)warehouse.allocationMode;
+
+            // Add listener
+            allocationModeDropdown.onValueChanged.AddListener((val) =>
+            {
+                if (warehouse == null) return;
+
+                if (val < 0 || val >= options.Count)
+                {
+                    Debug.LogWarning("Invalid allocation mode index: " + val);
+                    return;
+                }
+
+                warehouse.allocationMode = (WarehouseAllocationMode)val;
+                warehouse.UpdateUtilityStatusForTables();
+                RefreshUI();
+            });
+        }
+        else
+        {
+            Debug.LogWarning("WarehouseOverviewUIController: allocationModeDropdown not assigned!");
+        }
+
+        // ---- Hook Upgrade Buttons ----
+        HookButtons();
+
+        // ---- Refresh UI ----
         RefreshUI();
     }
 
@@ -44,8 +145,23 @@ public class WarehouseOverviewUIController : MonoBehaviour
 
     private void RefreshHeader()
     {
+        float powerUse = warehouse.GetTotalPowerUsage();
+        float waterUse = warehouse.GetTotalWaterUsage();
+        float dataUse = warehouse.GetTotalDataUsage();
+
+        string utilityWarning = warehouse.HasEnoughUtilities() ? "" : "\n<color=red>UTILITIES OVER CAPACITY</color>";
+
+        if (utilitiesText != null)
+        {
+            utilitiesText.text =
+                $"Data: {dataUse}/{warehouse.maxData} (Lvl {warehouse.dataLevel})\n" +
+                $"Power: {powerUse}/{warehouse.maxPower} (Lvl {warehouse.powerLevel})\n" +
+                $"Water: {waterUse}/{warehouse.maxWater} (Lvl {warehouse.waterLevel})" +
+                utilityWarning;
+        }
+
         if (warehouseTitleText != null)
-            warehouseTitleText.text = $"WAREHOUSE: {warehouse.name}";
+            warehouseTitleText.text = $"WAREHOUSE: {warehouse.warehouseName}";
 
         int unlockedTables = 0;
         int totalPlants = 0;
@@ -153,12 +269,13 @@ public class WarehouseOverviewUIController : MonoBehaviour
             Button btn = rowObj.GetComponent<Button>();
 
             string lockedText = table.isUnlocked ? "" : "LOCKED | ";
+            string offlineText = (table.isUnlocked && !table.utilitiesOnline) ? "<color=red>OFFLINE</color> | " : "";
 
             if (txt != null)
             {
                 txt.text =
-                    $"{lockedText}{table.name} | Slots {table.unlockedSlots}/{table.slots.Count} | " +
-                    $"Plants {plantsGrowing} | Harvestable {harvestable} | Empty {empty}";
+                            $"{lockedText}{offlineText}{table.name} | Slots {table.unlockedSlots}/{table.slots.Count} | " +
+                            $"Plants {plantsGrowing} | Harvestable {harvestable} | Empty {empty}";
             }
 
             if (btn != null)
@@ -196,9 +313,11 @@ public class WarehouseOverviewUIController : MonoBehaviour
 
     public void TogglePanel()
     {
-        if (warehousePanel != null)
-            warehousePanel.SetActive(!warehousePanel.activeSelf);
-        RefreshUI();
+        bool nowOpen = !warehousePanel.activeSelf;
+        warehousePanel.SetActive(nowOpen);
+
+        if (nowOpen)
+            RefreshUI();
     }
     
 }

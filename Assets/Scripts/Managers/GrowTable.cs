@@ -19,6 +19,18 @@ public class GrowTable : MonoBehaviour
     public LightQuality lightQuality = LightQuality.Basic;
     public WaterQuality waterQuality = WaterQuality.Tap;
 
+    [Header("Warehouse Utility Status")]
+    public bool utilitiesOnline = true;
+
+    [Header("Warehouse Utility Usage")]
+    public float dataUsage = 10f;
+    public float powerUsage = 50f;
+    public float waterUsage = 25f;
+    
+    [Header("Utility Priority")]
+    [Range(0, 100)]
+    public int manualPriority = 50;
+
     public List<TableSlot> GetAvailableSlots()
     {
         List<TableSlot> available = new List<TableSlot>();

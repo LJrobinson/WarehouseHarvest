@@ -16,6 +16,10 @@ public class TableSlot : MonoBehaviour
 
         currentPlant = Instantiate(plantPrefab, transform.position, Quaternion.identity);
         currentPlant.transform.SetParent(transform);
+
+        GrowTable table = GetComponentInParent<GrowTable>();
+        if (table != null)
+            currentPlant.parentTable = table;
     }
 
     public void RemovePlant()
