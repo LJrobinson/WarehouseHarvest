@@ -26,5 +26,6 @@ public class EconomyManager : MonoBehaviour
     public void SetMoney(int amount)
     {
         Money = amount;
+        Debug.Log($"Money set to: {Money}");
     }
 }

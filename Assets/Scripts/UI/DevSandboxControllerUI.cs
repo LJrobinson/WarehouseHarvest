@@ -22,13 +22,20 @@ public class DevSandboxControllerUI : MonoBehaviour
     public SaveLoadManager saveLoadManager;
     public SeedInventory seedInventory;
     public SeedShop seedShop;
-    public StrainDatabase strainDatabase;
     public TimeManager timeManager;
+    public WarehouseManager warehouseManager;
     public WarehouseOverviewUIController warehouseOverviewUI;
+    public StrainDatabase strainDatabase;
 
     [Header("Panels")]
-    public GameObject shopPanel;
     public GameObject collectionPanel;
+    public GameObject debugPanel;
+    public GameObject playerPanel;
+    public GameObject realestatePanel;
+    public GameObject shopPanel;
+    public GameObject tradePanel;
+    public GameObject warehousePanel;
+    
 
     // ==============================
     // HUD UI (TOP BAR)

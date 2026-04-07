@@ -7,7 +7,7 @@ public class Warehouse : MonoBehaviour
     public List<GrowTable> tables = new List<GrowTable>();
 
     [Header("Warehouse Info")]
-    public string warehouseName = "My Warehouse";
+    public string warehouseName = "Warehouse 01";
 
     [Header("Utilities (Upgrade Levels)")]
     [Range(1, 6)] public int dataLevel = 1;
@@ -49,20 +49,29 @@ public class Warehouse : MonoBehaviour
         ApplyUpgradeCaps();
 
         // Start full (optional but feels good)
+        currentData = maxData;
         currentPower = maxPower;
         currentWater = maxWater;
-        currentData = maxData;
     }
 
     public void ApplyUpgradeCaps()
     {
+        maxData = dataUpgradeValues[Mathf.Clamp(dataLevel - 1, 0, dataUpgradeValues.Length - 1)];
         maxPower = powerUpgradeValues[Mathf.Clamp(powerLevel - 1, 0, powerUpgradeValues.Length - 1)];
         maxWater = waterUpgradeValues[Mathf.Clamp(waterLevel - 1, 0, waterUpgradeValues.Length - 1)];
-        maxData = dataUpgradeValues[Mathf.Clamp(dataLevel - 1, 0, dataUpgradeValues.Length - 1)];
 
+        currentData = Mathf.Clamp(currentData, 0, maxData);
         currentPower = Mathf.Clamp(currentPower, 0, maxPower);
         currentWater = Mathf.Clamp(currentWater, 0, maxWater);
-        currentData = Mathf.Clamp(currentData, 0, maxData);
+        
+    }
+
+    public bool UpgradeData()
+    {
+        if (dataLevel >= maxUpgradeLevel) return false;
+        dataLevel++;
+        ApplyUpgradeCaps();
+        return true;
     }
 
     public bool UpgradePower()
@@ -81,12 +90,19 @@ public class Warehouse : MonoBehaviour
         return true;
     }
 
-    public bool UpgradeData()
+    public float GetTotalDataUsage()
     {
-        if (dataLevel >= maxUpgradeLevel) return false;
-        dataLevel++;
-        ApplyUpgradeCaps();
-        return true;
+        float total = 0f;
+
+        foreach (var table in tables)
+        {
+            if (table == null) continue;
+            if (!table.isUnlocked) continue;
+
+            total += table.dataUsage;
+        }
+
+        return total;
     }
 
     public float GetTotalPowerUsage()
@@ -119,37 +135,23 @@ public class Warehouse : MonoBehaviour
         return total;
     }
 
-    public float GetTotalDataUsage()
-    {
-        float total = 0f;
-
-        foreach (var table in tables)
-        {
-            if (table == null) continue;
-            if (!table.isUnlocked) continue;
-
-            total += table.dataUsage;
-        }
-
-        return total;
-    }
-
     public bool HasEnoughUtilities()
     {
-        return GetTotalPowerUsage() <= maxPower &&
-               GetTotalWaterUsage() <= maxWater &&
-               GetTotalDataUsage() <= maxData;
+        return GetTotalDataUsage() <= maxData &&
+               GetTotalPowerUsage() <= maxPower &&
+               GetTotalWaterUsage() <= maxWater;
+               
     }
 
     public void UpdateUtilityStatusForTables()
     {
+        float dataCap = maxData;
         float powerCap = maxPower;
         float waterCap = maxWater;
-        float dataCap = maxData;
 
+        float dataUsed = 0f;
         float powerUsed = 0f;
         float waterUsed = 0f;
-        float dataUsed = 0f;
 
         List<GrowTable> unlockedTables = new List<GrowTable>();
 
@@ -174,16 +176,16 @@ public class Warehouse : MonoBehaviour
         foreach (GrowTable table in unlockedTables)
         {
             bool canSupport =
+                (dataUsed + table.dataUsage <= dataCap) &&
                 (powerUsed + table.powerUsage <= powerCap) &&
-                (waterUsed + table.waterUsage <= waterCap) &&
-                (dataUsed + table.dataUsage <= dataCap);
+                (waterUsed + table.waterUsage <= waterCap);
 
             if (canSupport)
             {
                 table.utilitiesOnline = true;
+                dataUsed += table.dataUsage;
                 powerUsed += table.powerUsage;
                 waterUsed += table.waterUsage;
-                dataUsed += table.dataUsage;
             }
             else
             {

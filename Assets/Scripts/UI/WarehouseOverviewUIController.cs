@@ -35,6 +35,14 @@ public class WarehouseOverviewUIController : MonoBehaviour
 
     private bool buttonsHooked = false;
 
+    private void Start()
+    {
+        if (warehouse != null)
+            SetWarehouse(warehouse);
+        else
+            Debug.LogWarning("WarehouseOverviewUIController: No warehouse assigned in inspector!");
+    }
+
     private void HookButtons()
     {
         if (buttonsHooked) return;
@@ -71,6 +79,8 @@ public class WarehouseOverviewUIController : MonoBehaviour
 
     public void SetWarehouse(Warehouse newWarehouse)
     {
+        Debug.Log("SetWarehouse CALLED");
+
         // Assign warehouse first
         warehouse = newWarehouse;
 
@@ -79,6 +89,7 @@ public class WarehouseOverviewUIController : MonoBehaviour
             Debug.LogWarning("WarehouseOverviewUIController: SetWarehouse called with null warehouse!");
             return;
         }
+
 
         selectedTable = null;
 
@@ -145,23 +156,23 @@ public class WarehouseOverviewUIController : MonoBehaviour
 
     private void RefreshHeader()
     {
+        float dataUse = warehouse.GetTotalDataUsage();
         float powerUse = warehouse.GetTotalPowerUsage();
         float waterUse = warehouse.GetTotalWaterUsage();
-        float dataUse = warehouse.GetTotalDataUsage();
-
+        
         string utilityWarning = warehouse.HasEnoughUtilities() ? "" : "\n<color=red>UTILITIES OVER CAPACITY</color>";
 
         if (utilitiesText != null)
         {
             utilitiesText.text =
-                $"Data: {dataUse}/{warehouse.maxData} (Lvl {warehouse.dataLevel})\n" +
+                $"Data:  {dataUse}/{warehouse.maxData} (Lvl {warehouse.dataLevel})\n" +
                 $"Power: {powerUse}/{warehouse.maxPower} (Lvl {warehouse.powerLevel})\n" +
                 $"Water: {waterUse}/{warehouse.maxWater} (Lvl {warehouse.waterLevel})" +
                 utilityWarning;
         }
 
         if (warehouseTitleText != null)
-            warehouseTitleText.text = $"WAREHOUSE: {warehouse.warehouseName}";
+            warehouseTitleText.text = $"{warehouse.name}:\n AKA: {warehouse.warehouseName}";
 
         int unlockedTables = 0;
         int totalPlants = 0;
