@@ -19,6 +19,7 @@ public class DevSandboxControllerUI : MonoBehaviour
     public DiscoveryManager discoveryManager;
     public EconomyManager economy;
     public PlantManager plantManager;
+    public PlayerStatsManager playerStatsManager;
     public SaveLoadManager saveLoadManager;
     public SeedInventory seedInventory;
     public SeedShop seedShop;

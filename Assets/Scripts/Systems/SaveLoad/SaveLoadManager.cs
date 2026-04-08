@@ -4,10 +4,12 @@ using UnityEngine;
 public class SaveLoadManager : MonoBehaviour
 {
     [Header("References")]
+    public DiscoveryManager discoveryManager;
     public EconomyManager economy;
-    public TimeManager timeManager;
+    public PlayerStatsManager playerStats;
     public SeedInventory seedInventory;
     public StrainDatabase strainDatabase;
+    public TimeManager timeManager;
 
     [Header("World References")]
     public Warehouse[] warehouses;
@@ -15,7 +17,19 @@ public class SaveLoadManager : MonoBehaviour
     [Header("Plant Prefab")]
     public PlantInstance plantPrefab;
 
+    private float sessionStartTime;
+
     private string SavePath => Path.Combine(Application.persistentDataPath, "savegame.json");
+
+    private void Start()
+    {
+        sessionStartTime = Time.time;
+    }
+
+    private float GetSessionPlayTime()
+    {
+        return Time.time - sessionStartTime;
+    }
 
     public void SaveGame()
     {
@@ -24,6 +38,16 @@ public class SaveLoadManager : MonoBehaviour
         // Save economy + time
         data.money = economy.Money;
         data.currentDay = timeManager.CurrentDay;
+
+        // Update and save player stats
+        playerStats.AddPlaytimeFromSession();
+        data.playerProfile = playerStats.GetSaveData();
+
+        // Save discovered strains
+        if (discoveryManager != null)
+        {
+            data.discoveredStrains = discoveryManager.GetDiscoveredStrainIDs();
+        }
 
         // Save inventory seeds
         foreach (var seed in seedInventory.GetAllSeeds())
@@ -100,6 +124,9 @@ public class SaveLoadManager : MonoBehaviour
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(SavePath, json);
 
+        //Reset Timer
+        sessionStartTime = Time.time;
+
         Debug.Log($"GAME SAVED: {SavePath}");
     }
 
@@ -123,6 +150,18 @@ public class SaveLoadManager : MonoBehaviour
         // Restore economy + time
         economy.SetMoney(data.money);
         timeManager.SetDay(data.currentDay);
+
+        // Restore player profile
+        if (data.playerProfile != null)
+            playerStats.LoadFromSave(data.playerProfile);
+        else
+            playerStats.LoadFromSave(new PlayerProfileSaveData());
+
+        // Restore discovered strains
+        if (discoveryManager != null)
+        {
+            discoveryManager.LoadDiscoveredStrainIDs(data.discoveredStrains);
+        }
 
         // Restore inventory
         seedInventory.ClearAllSeeds();

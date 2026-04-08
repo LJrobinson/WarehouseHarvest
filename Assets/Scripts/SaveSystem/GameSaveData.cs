@@ -7,8 +7,29 @@ public class GameSaveData
     public int currentDay;
     public int money;
 
+    public PlayerProfileSaveData playerProfile = new PlayerProfileSaveData();
+
+    public List<string> discoveredStrains = new List<string>();
+
     public List<SeedSaveData> seeds = new List<SeedSaveData>();
     public List<WarehouseSaveData> warehouses = new List<WarehouseSaveData>();
+}
+
+[Serializable]
+public class PlayerProfileSaveData
+{
+    public string playerName;
+    public string steamName;
+
+    public float totalPlayTimeSeconds;
+
+    public int totalPlantsGrown;
+    public int totalHarvests;
+
+    public int totalMoneyEarned;
+    public int totalMoneySpent;
+
+    public int totalStrainsUnlocked;
 }
 
 [Serializable]

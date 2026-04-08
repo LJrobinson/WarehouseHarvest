@@ -8,6 +8,8 @@ public class EconomyManager : MonoBehaviour
     {
         Money += amount;
         Debug.Log($"Money added: {amount}. New total: {Money}");
+        PlayerStatsManager.Instance.AddMoneyEarned(amount);
+        Debug.Log($"Money earned: {amount}");
     }
 
     public bool SpendMoney(int amount)
@@ -20,6 +22,8 @@ public class EconomyManager : MonoBehaviour
 
         Money -= amount;
         Debug.Log($"Money spent: {amount}. New total: {Money}");
+        PlayerStatsManager.Instance.AddMoneySpent(amount);
+        Debug.Log($"Money wasted: {amount}");
         return true;
     }
 

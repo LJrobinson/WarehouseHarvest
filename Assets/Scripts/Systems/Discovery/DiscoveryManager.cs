@@ -36,6 +36,11 @@ public class DiscoveryManager : MonoBehaviour
         {
             discoveredStrainIDs.Add(strain.name);
             Debug.Log($"DISCOVERED STRAIN: {strain.strainName}");
+
+            if (PlayerStatsManager.Instance != null)
+            {
+                PlayerStatsManager.Instance.SetStrainsUnlocked(GetDiscoveredCount());
+            }
         }
     }
 
@@ -72,5 +77,28 @@ public class DiscoveryManager : MonoBehaviour
         }
 
         return result;
+    }
+
+    public List<string> GetDiscoveredStrainIDs()
+    {
+        return new List<string>(discoveredStrainIDs);
+    }
+
+    public void LoadDiscoveredStrainIDs(List<string> ids)
+    {
+        discoveredStrainIDs.Clear();
+
+        if (ids == null)
+            return;
+
+        foreach (var id in ids)
+        {
+            if (!string.IsNullOrEmpty(id))
+                discoveredStrainIDs.Add(id);
+        }
+
+        // Update player stats count after loading
+        if (PlayerStatsManager.Instance != null)
+            PlayerStatsManager.Instance.SetStrainsUnlocked(GetDiscoveredCount());
     }
 }
