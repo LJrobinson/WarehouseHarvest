@@ -11,22 +11,25 @@ public class WarehouseListingUI : MonoBehaviour
     public TextMeshProUGUI statusText;
     public Button actionButton;
 
-    private WarehouseRealEstateData listingData;
+    private Warehouse warehouse;
     private RealEstatePanelController controller;
 
-    public void Setup(WarehouseRealEstateData data, bool isUnlocked, bool isActive, RealEstatePanelController panelController)
+    public void Setup(Warehouse warehouseData, bool isUnlocked, bool isActive, RealEstatePanelController panelController)
     {
-        listingData = data;
+        warehouse = warehouseData;
         controller = panelController;
 
+        if (warehouse == null)
+            return;
+
         if (warehouseNameText != null)
-            warehouseNameText.text = data.warehouseName;
+            warehouseNameText.text = warehouse.warehouseName;
 
         if (descriptionText != null)
-            descriptionText.text = data.description;
+            descriptionText.text = warehouse.description;
 
         if (costText != null)
-            costText.text = $"${data.cost:N0}";
+            costText.text = $"${warehouse.purchaseCost:N0}";
 
         if (statusText != null)
         {
@@ -43,16 +46,15 @@ public class WarehouseListingUI : MonoBehaviour
             actionButton.onClick.RemoveAllListeners();
             actionButton.onClick.AddListener(OnButtonPressed);
 
-            if (isActive)
-                actionButton.interactable = false;
-            else
-                actionButton.interactable = true;
+            actionButton.interactable = !isActive;
 
             TextMeshProUGUI btnText = actionButton.GetComponentInChildren<TextMeshProUGUI>();
 
             if (btnText != null)
             {
-                if (isUnlocked)
+                if (isActive)
+                    btnText.text = "CURRENT";
+                else if (isUnlocked)
                     btnText.text = "SELECT";
                 else
                     btnText.text = "BUY";
@@ -62,9 +64,9 @@ public class WarehouseListingUI : MonoBehaviour
 
     private void OnButtonPressed()
     {
-        if (controller == null || listingData == null)
+        if (controller == null || warehouse == null)
             return;
 
-        controller.OnClickPurchaseOrSelect(listingData);
+        controller.OnClickPurchaseOrSelect(warehouse);
     }
 }

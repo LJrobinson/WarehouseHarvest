@@ -95,11 +95,7 @@ public class PlantInstance : MonoBehaviour
         // Ripeness only when fully grown
         if (growthPercent >= 100f)
         {
-            ripenessPercent = Mathf.Clamp(
-                ripenessPercent + (strainData.ripenessPerDayInFlower * lightMultiplier),
-                0f,
-                150f
-            );
+            ripenessPercent = Mathf.Clamp(ripenessPercent + (strainData.ripenessPerDayInFlower * lightMultiplier), 0f, 150f);
         }
 
         // Harvest / Overripe logic

@@ -1,34 +1,18 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-public class RealEstatePanelController : MonoBehaviour
+public class RealEstatePanelController : UIPanel
 {
     [Header("UI References")]
-    public GameObject panelRoot;
     public Transform listingParent;
     public GameObject listingPrefab;
-
-    [Header("Warehouse Listings")]
-    public List<WarehouseRealEstateData> warehouseListings = new List<WarehouseRealEstateData>();
 
     [Header("Managers")]
     public EconomyManager economyManager;
     public WarehouseManager warehouseManager;
 
-    private void OnEnable()
+    protected override void OnOpened()
     {
         RefreshUI();
-    }
-
-    public void TogglePanel()
-    {
-        if (panelRoot == null)
-            return;
-
-        panelRoot.SetActive(!panelRoot.activeSelf);
-
-        if (panelRoot.activeSelf)
-            RefreshUI();
     }
 
     public void RefreshUI()
@@ -38,6 +22,12 @@ public class RealEstatePanelController : MonoBehaviour
             Debug.LogWarning("RealEstatePanelController missing listingParent or listingPrefab.");
             return;
         }
+
+        if (economyManager == null)
+            economyManager = EconomyManager.Instance;
+
+        if (warehouseManager == null)
+            warehouseManager = WarehouseManager.Instance;
 
         if (economyManager == null || warehouseManager == null)
         {
@@ -51,10 +41,10 @@ public class RealEstatePanelController : MonoBehaviour
             Destroy(listingParent.GetChild(i).gameObject);
         }
 
-        // Spawn each listing
-        foreach (WarehouseRealEstateData listing in warehouseListings)
+        // Spawn each warehouse from real warehouse system
+        foreach (Warehouse warehouse in warehouseManager.allWarehouses)
         {
-            if (listing == null)
+            if (warehouse == null)
                 continue;
 
             GameObject obj = Instantiate(listingPrefab, listingParent);
@@ -66,55 +56,45 @@ public class RealEstatePanelController : MonoBehaviour
                 continue;
             }
 
-            bool unlocked = warehouseManager.IsWarehouseUnlocked(listing.warehouseName);
+            bool unlocked = warehouseManager.IsWarehouseUnlocked(warehouse.warehouseName);
             bool isActive = (warehouseManager.activeWarehouse != null &&
-                             warehouseManager.activeWarehouse.warehouseName == listing.warehouseName);
+                             warehouseManager.activeWarehouse.warehouseName == warehouse.warehouseName);
 
-            ui.Setup(listing, unlocked, isActive, this);
+            ui.Setup(warehouse, unlocked, isActive, this);
         }
     }
 
-    public void OnClickPurchaseOrSelect(WarehouseRealEstateData listing)
+    public void OnClickPurchaseOrSelect(Warehouse warehouse)
     {
-        if (listing == null)
+        if (warehouse == null)
             return;
 
-        bool unlocked = warehouseManager.IsWarehouseUnlocked(listing.warehouseName);
+        bool unlocked = warehouseManager.IsWarehouseUnlocked(warehouse.warehouseName);
 
         // Already unlocked? Switch to it.
         if (unlocked)
         {
-            warehouseManager.SetActiveWarehouse(listing.warehouseName);
+            warehouseManager.SetActiveWarehouse(warehouse.warehouseName);
             RefreshUI();
             return;
         }
 
         // Locked: attempt purchase
-        if (economyManager.Money < listing.cost)
+        if (economyManager.Money < warehouse.purchaseCost)
         {
-            Debug.Log($"Not enough money to buy {listing.warehouseName}");
+            Debug.Log($"Not enough money to buy {warehouse.warehouseName}");
             return;
         }
 
-        bool success = economyManager.SpendMoney(listing.cost);
+        bool success = economyManager.SpendMoney(warehouse.purchaseCost);
         if (!success)
             return;
 
-        warehouseManager.UnlockWarehouse(listing.warehouseName);
-        warehouseManager.SetActiveWarehouse(listing.warehouseName);
+        warehouseManager.UnlockWarehouse(warehouse.warehouseName);
+        warehouseManager.SetActiveWarehouse(warehouse.warehouseName);
 
-        Debug.Log($"Purchased warehouse: {listing.warehouseName}");
+        Debug.Log($"Purchased warehouse: {warehouse.warehouseName}");
 
         RefreshUI();
     }
-}
-
-[System.Serializable]
-public class WarehouseRealEstateData
-{
-    public string warehouseName = "Warehouse 01";
-    public int cost = 10000;
-
-    [TextArea]
-    public string description = "A basic warehouse space.";
 }

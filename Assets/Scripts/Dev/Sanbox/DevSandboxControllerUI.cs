@@ -1216,6 +1216,22 @@ public class DevSandboxControllerUI : MonoBehaviour
         collectionUIController.RefreshList();
     }
 
+    public void OpenPlayer()
+    {
+        if (playerPanel != null)
+        {
+            playerPanel.SetActive(true);
+        }
+    }
+
+    public void ClosePlayer()
+    {
+        if (playerPanel != null)
+        {
+            playerPanel.SetActive(false);
+        }
+    }
+
     public void Dev_DiscoverSelectedTopStrain()
     {
         if (discoveryManager == null)

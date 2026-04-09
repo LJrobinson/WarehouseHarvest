@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-public class CollectionUIController : MonoBehaviour
+public class CollectionUIController : UIPanel
 {
     [Header("UI References")]
     public GameObject collectionPanel;

@@ -1,7 +1,7 @@
 using TMPro;
 using UnityEngine;
 
-public class PlayerPanelController : MonoBehaviour
+public class PlayerPanelController : UIPanel
 {
     [Header("References")]
     public PlayerStatsManager playerStats;

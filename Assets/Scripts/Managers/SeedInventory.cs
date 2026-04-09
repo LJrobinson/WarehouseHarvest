@@ -62,7 +62,7 @@ public class SeedInventory : MonoBehaviour
         foreach (SeedInstance seed in ownedSeeds)
         {
             bool mystery = seed.isMysterySeed;
-            string key = mystery ? "MYSTERY" : seed.strain.strainName;
+            string key = mystery ? "MYSTERY" : seed.strain != null ? seed.strain.strainName : "UNKNOWN";
 
             if (!map.ContainsKey(key))
             {

@@ -9,6 +9,12 @@ public class Warehouse : MonoBehaviour
     [Header("Warehouse Info")]
     public string warehouseName = "Warehouse 01";
 
+    [Header("Real Estate Info")]
+    public int purchaseCost = 10000;
+
+    [TextArea]
+    public string description = "A basic warehouse space.";
+
     [Header("Utilities (Upgrade Levels)")]
     [Range(1, 6)] public int dataLevel = 1;
     [Range(1, 6)] public int powerLevel = 1;

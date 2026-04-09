@@ -2,14 +2,28 @@ using UnityEngine;
 
 public class EconomyManager : MonoBehaviour
 {
+    public static EconomyManager Instance;
+
     public int Money { get; private set; } = 1000;
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+    }
 
     public void AddMoney(int amount)
     {
         Money += amount;
         Debug.Log($"Money added: {amount}. New total: {Money}");
-        PlayerStatsManager.Instance.AddMoneyEarned(amount);
-        Debug.Log($"Money earned: {amount}");
+
+        if (PlayerStatsManager.Instance != null)
+            PlayerStatsManager.Instance.AddMoneyEarned(amount);
     }
 
     public bool SpendMoney(int amount)
@@ -22,8 +36,10 @@ public class EconomyManager : MonoBehaviour
 
         Money -= amount;
         Debug.Log($"Money spent: {amount}. New total: {Money}");
-        PlayerStatsManager.Instance.AddMoneySpent(amount);
-        Debug.Log($"Money wasted: {amount}");
+
+        if (PlayerStatsManager.Instance != null)
+            PlayerStatsManager.Instance.AddMoneySpent(amount);
+
         return true;
     }
 

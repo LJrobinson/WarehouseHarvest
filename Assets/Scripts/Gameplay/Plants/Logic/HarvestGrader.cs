@@ -43,7 +43,7 @@ public static class HarvestGrader
 
         // Randomness
         score += Random.Range(-20, 20);
-
+        PlayerStatsManager.Instance.AddHarvest();
         return Mathf.Clamp(score, 0, 1000);
     }
 
