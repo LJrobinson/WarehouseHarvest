@@ -61,6 +61,8 @@ namespace Vertigro.Logic
                     // Save this node to our local table list so we can calculate it later
                     if (node != null)
                     {
+                        node.hexCoords = new Vector3Int(q, r, -q - r);
+                        node.floorLevel = floor;
                         _tableNodes.Add(node);
                     }
 

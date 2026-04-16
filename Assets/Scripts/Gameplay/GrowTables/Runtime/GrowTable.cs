@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Vertigro.Logic;
 
 
 public class GrowTable : MonoBehaviour
 {
+    private const int HexColumns = 6;
+
     [Header("Unlocking")]
     public bool isUnlocked = false;
 
@@ -19,6 +22,10 @@ public class GrowTable : MonoBehaviour
     public LightQuality lightQuality = LightQuality.Basic;
     public WaterQuality waterQuality = WaterQuality.Tap;
 
+    [Header("Hex Grid Visual")]
+    public TableGenerator tableGenerator;
+    public int floorIndex = 0;
+
     [Header("Warehouse Utility Status")]
     public bool utilitiesOnline = true;
 
@@ -30,6 +37,35 @@ public class GrowTable : MonoBehaviour
     [Header("Utility Priority")]
     [Range(0, 100)]
     public int manualPriority = 50;
+
+    private void Start()
+    {
+        if (isUnlocked)
+            RefreshHexGrid();
+    }
+
+    private int GetVisibleHexCount()
+    {
+        return Mathf.Clamp(unlockedSlots, 0, slots.Count);
+    }
+
+    private int GetHexRowCount()
+    {
+        int hexCount = GetVisibleHexCount();
+        return hexCount <= 0 ? 0 : Mathf.CeilToInt(hexCount / (float)HexColumns);
+    }
+
+    public void RefreshHexGrid()
+    {
+        if (tableGenerator == null)
+            return;
+
+        int rows = GetHexRowCount();
+        if (rows <= 0)
+            return;
+
+        tableGenerator.GenerateTable(rows, HexColumns, floorIndex);
+    }
 
     public List<TableSlot> GetAvailableSlots()
     {
@@ -45,6 +81,7 @@ public class GrowTable : MonoBehaviour
     public void UpgradeSlots(int extraSlots)
     {
         unlockedSlots = Mathf.Clamp(unlockedSlots + extraSlots, 1, slots.Count);
+        RefreshHexGrid();
         Debug.Log($"Table upgraded! Slots unlocked: {unlockedSlots}/{slots.Count}");
     }
 
@@ -81,6 +118,7 @@ public class GrowTable : MonoBehaviour
             return false;
 
         isUnlocked = true;
+        RefreshHexGrid();
         Debug.Log($"{name} unlocked!");
         return true;
     }
@@ -94,6 +132,7 @@ public class GrowTable : MonoBehaviour
             return false;
 
         unlockedSlots = Mathf.Clamp(unlockedSlots + extraSlots, 1, slots.Count);
+        RefreshHexGrid();
         Debug.Log($"{name} slots upgraded: {unlockedSlots}/{slots.Count}");
         return true;
     }
