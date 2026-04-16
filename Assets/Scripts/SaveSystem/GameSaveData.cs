@@ -13,6 +13,8 @@ public class GameSaveData
 
     public List<SeedSaveData> seeds = new List<SeedSaveData>();
     public List<WarehouseSaveData> warehouses = new List<WarehouseSaveData>();
+
+    public MarketSaveData marketData;
 }
 
 [Serializable]

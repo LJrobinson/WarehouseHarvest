@@ -39,6 +39,11 @@ public class SaveLoadManager : MonoBehaviour
         data.money = economy.Money;
         data.currentDay = timeManager.CurrentDay;
 
+        if (MarketManager.Instance != null)
+        {
+            data.marketData = MarketManager.Instance.GetSaveData(timeManager.CurrentDay);
+        }
+
         // Update and save player stats
         playerStats.AddPlaytimeFromSession();
         data.playerProfile = playerStats.GetSaveData();
@@ -150,6 +155,12 @@ public class SaveLoadManager : MonoBehaviour
         // Restore economy + time
         economy.SetMoney(data.money);
         timeManager.SetDay(data.currentDay);
+
+        // Restore market
+        if (MarketManager.Instance != null && data.marketData != null)
+        {
+            MarketManager.Instance.LoadFromSaveData(data.marketData);
+        }
 
         // Restore player profile
         if (data.playerProfile != null)

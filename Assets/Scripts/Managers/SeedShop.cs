@@ -23,7 +23,7 @@ public class SeedShop : MonoBehaviour
 
         SeedInstance seed = SeedGenerator.GenerateSeed(strain);
         seedInventory.AddSeed(seed);
-
+        StrainStatsManager.Instance.RecordSeedPurchase(strain.strainName, cost);
         Debug.Log($"Bought 1 seed: {seed.DisplayName} for ${cost}");
         return true;
     }
@@ -48,7 +48,7 @@ public class SeedShop : MonoBehaviour
             SeedInstance seed = SeedGenerator.GenerateSeed(strain);
             seedInventory.AddSeed(seed);
         }
-
+        StrainStatsManager.Instance.RecordSeedPurchase(strain.strainName, cost);
         Debug.Log($"Bought {amount}-pack of {strain.strainName} for ${cost}");
         return true;
     }
@@ -60,7 +60,7 @@ public class SeedShop : MonoBehaviour
 
         SeedInstance seed = SeedGenerator.GenerateMysterySeed(strainDatabase);
         seedInventory.AddSeed(seed);
-
+        StrainStatsManager.Instance.RecordSeedPurchase("MYSTERY", bagseedSingleCost);
         Debug.Log($"Bought 1 bagseed for ${bagseedSingleCost}");
         return true;
     }
@@ -82,7 +82,7 @@ public class SeedShop : MonoBehaviour
             SeedInstance seed = SeedGenerator.GenerateMysterySeed(strainDatabase);
             seedInventory.AddSeed(seed);
         }
-
+        StrainStatsManager.Instance.RecordSeedPurchase("MYSTERY", bagseedSingleCost);
         Debug.Log($"Bought bagseed pack ({amount}) for ${cost}");
         return true;
     }

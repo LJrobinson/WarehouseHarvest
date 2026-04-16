@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8ceea8310059854b99ce1f5bda1bd3d, type: 3}
+  m_Name: MarketConfig_Default
+  m_EditorClassIdentifier: Assembly-CSharp::MarketConfig
+  minMultiplier: 0.2
+  maxMultiplier: 2.5
+  supplyImpactPerGram: 0.01
+  supplyDecayRate: 0.9
+  supplyWeight: 0.08
+  demandDecayRate: 0.95
+  demandWeight: 0.03
+  dailyDemandDriftRange: 0.15
+  updateEveryHours: 24
+  simulateNPCMarket: 1
+  npcSupplyBase: 5
+  npcDemandBase: 1.5

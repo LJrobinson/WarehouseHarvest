@@ -11,6 +11,7 @@ public class WarehouseOverviewUIController : UIPanel
     public GameObject warehousePanel;
 
     [Header("Header UI")]
+    public Image iconImage;
     public TMP_Text warehouseTitleText;
     public TMP_Text warehouseSummaryText;
 
@@ -173,6 +174,9 @@ public class WarehouseOverviewUIController : UIPanel
 
         if (warehouseTitleText != null)
             warehouseTitleText.text = $"{warehouse.name}:\n AKA: {warehouse.warehouseName}";
+
+        iconImage.sprite = warehouse.warehouseIcon;
+        iconImage.enabled = (warehouse.warehouseIcon != null);
 
         int unlockedTables = 0;
         int totalPlants = 0;

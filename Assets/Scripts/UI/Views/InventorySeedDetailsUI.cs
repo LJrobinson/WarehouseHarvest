@@ -17,6 +17,13 @@ public class InventorySeedDetailsUI : MonoBehaviour
 
     public void Show(SeedInventorySummary summary)
     {
+        var stats = StrainStatsManager.Instance.GetStats(summary.isMystery ? "MYSTERY" : summary.strain.strainName);
+
+        firstHarvestText.text = stats.firstHarvestComplete ? stats.firstHarvestDate : "Not harvested yet";
+        totalHarvestsText.text = stats.totalHarvests.ToString();
+        moneyEarnedText.text = $"${stats.moneyEarned}";
+        moneySpentText.text = $"${stats.moneySpentOnSeeds}";
+
         if (summary == null)
         {
             Clear();

@@ -1,10 +1,12 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class WarehouseListingUI : MonoBehaviour
 {
     [Header("UI")]
+    public Image warehouseIcon;
     public TextMeshProUGUI warehouseNameText;
     public TextMeshProUGUI descriptionText;
     public TextMeshProUGUI costText;
@@ -21,6 +23,9 @@ public class WarehouseListingUI : MonoBehaviour
 
         if (warehouse == null)
             return;
+
+        if (warehouseIcon != null)
+            warehouseIcon.sprite = warehouse.warehouseIcon;
 
         if (warehouseNameText != null)
             warehouseNameText.text = warehouse.warehouseName;

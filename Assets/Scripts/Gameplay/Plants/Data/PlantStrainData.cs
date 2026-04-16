@@ -49,4 +49,11 @@ public class PlantStrainData : ScriptableObject
     [Header("Rarity / Phenotype")]
     [Range(0f, 0.2f)]
     public float shinyChance = 0.01f;
+
+    [Header("Harvest Product")]
+    public float baseYieldGrams = 10f;
+
+    public int baseValuePerGram = 20;
+
+    public float basePricePerGram = 10f;
 }

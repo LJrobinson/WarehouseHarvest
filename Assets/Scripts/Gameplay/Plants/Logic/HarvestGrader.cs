@@ -44,6 +44,12 @@ public static class HarvestGrader
         // Randomness
         score += Random.Range(-20, 20);
         PlayerStatsManager.Instance.AddHarvest();
+
+        if (plant.strainData != null)
+        {
+            StrainStatsManager.Instance.RecordHarvest(plant.strainData.strainName);
+        }
+
         return Mathf.Clamp(score, 0, 1000);
     }
 

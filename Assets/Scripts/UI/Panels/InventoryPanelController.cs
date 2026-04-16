@@ -13,7 +13,7 @@ public class InventoryPanelController : MonoBehaviour
     [Header("Details Panel")]
     public InventorySeedDetailsUI detailsPanel;
 
-    private List<InventorySeedRowUI> spawnedRows = new List<InventorySeedRowUI>();
+    private readonly List<InventorySeedRowUI> spawnedRows = new();
 
     private void OnEnable()
     {
@@ -24,7 +24,7 @@ public class InventoryPanelController : MonoBehaviour
     {
         if (seedInventory == null)
         {
-            Debug.LogWarning("[InventoryPanel] No SeedInventory assigned.");
+            Debug.LogError("[InventoryPanelController] SeedInventory not assigned.");
             return;
         }
 
@@ -32,18 +32,15 @@ public class InventoryPanelController : MonoBehaviour
 
         List<SeedInventorySummary> summaries = seedInventory.GetSummaries();
 
-        // Optional: sort by count descending
         summaries.Sort((a, b) => b.totalCount.CompareTo(a.totalCount));
 
         foreach (var summary in summaries)
         {
             InventorySeedRowUI row = Instantiate(rowPrefab, contentParent);
             row.Setup(summary, OnRowClicked);
-
             spawnedRows.Add(row);
         }
 
-        // Auto-clear details if nothing exists
         if (summaries.Count == 0 && detailsPanel != null)
             detailsPanel.Clear();
     }

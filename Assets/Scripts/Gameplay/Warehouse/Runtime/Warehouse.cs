@@ -3,8 +3,10 @@ using UnityEngine;
 
 public class Warehouse : MonoBehaviour
 {
-    [Header("Tables")]
-    public List<GrowTable> tables = new List<GrowTable>();
+    
+
+    [Header("Warehouse Visuals")]
+    public Sprite warehouseIcon;
 
     [Header("Warehouse Info")]
     public string warehouseName = "Warehouse 01";
@@ -27,6 +29,9 @@ public class Warehouse : MonoBehaviour
     public float maxData = 100;
     public float maxPower = 100;
     public float maxWater = 100;
+
+    [Header("Tables")]
+    public List<GrowTable> tables = new List<GrowTable>();
 
     [Header("Utility Allocation Mode")]
     public WarehouseAllocationMode allocationMode = WarehouseAllocationMode.Balanced;
