@@ -1,7 +1,7 @@
 using UnityEngine;
-using Vertigrow.Data; // Allows us to see the PlantTag enum
+using Vertigro.Data; // Allows us to see the PlantTag enum
 
-namespace Vertigrow.Logic
+namespace Vertigro.Logic
 {
     public static class AdjacencyDictionary
     {

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace Vertigrow.Data
+namespace Vertigro.Data
 {
     // --- ENUMS ---
     // A predefined list of equipment types so we don't have to type them manually.

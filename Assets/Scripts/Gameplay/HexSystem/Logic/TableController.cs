@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Vertigrow.Logic
+namespace Vertigro.Logic
 {
     public class TableController : MonoBehaviour
     {

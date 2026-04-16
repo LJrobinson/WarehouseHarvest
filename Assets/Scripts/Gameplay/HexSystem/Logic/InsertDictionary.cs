@@ -1,7 +1,7 @@
 using UnityEngine;
-using Vertigrow.Data;
+using Vertigro.Data;
 
-namespace Vertigrow.Logic
+namespace Vertigro.Logic
 {
     public static class InsertDictionary
     {

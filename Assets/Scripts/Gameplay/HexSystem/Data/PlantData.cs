@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Vertigrow.Data
+namespace Vertigro.Data
 {
     // --- ENUMS ---
     // By matching the exact order of the matrix, 

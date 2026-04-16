@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Vertigrow.Data; // Access our plant/insert definitions
+using Vertigro.Data; // Access our plant/insert definitions
 
-namespace Vertigrow.Logic
+namespace Vertigro.Logic
 {
     public class HexNode : MonoBehaviour
     {

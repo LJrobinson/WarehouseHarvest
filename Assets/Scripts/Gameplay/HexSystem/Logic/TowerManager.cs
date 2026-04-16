@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Vertigrow.Logic
+namespace Vertigro.Logic
 {
     public class TowerManager : MonoBehaviour
     {
