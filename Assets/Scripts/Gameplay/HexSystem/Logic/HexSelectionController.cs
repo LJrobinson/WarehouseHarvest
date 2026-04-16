@@ -120,7 +120,7 @@ namespace Vertigro.Logic
 
             if (Keyboard.current.eKey.wasPressedThisFrame)
             {
-                Debug.Log("E pressed on node: " + SelectedNode.name);
+                SelectedNode.Interact();
             }
         }
 

@@ -19,6 +19,16 @@ namespace Vertigro.Logic
 
         public List<HexNode> neighbors = new List<HexNode>();
 
+        public void Interact()
+        {
+            Debug.Log($"HexNode Interact: {name}");
+
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.OpenPanel("HexPanel");
+            }
+        }
+
         /// <summary>
         /// This is called by the TableGenerator every "Next Day".
         /// It handles the actual logic of growing the plant.
@@ -102,5 +112,21 @@ namespace Vertigro.Logic
 
             return totalModifier;
         }
+
+
+        public string GetDebugState()
+        {
+            if (currentPlant == null && currentInsert == null)
+                return "EMPTY";
+
+            if (currentPlant != null && currentInsert == null)
+                return $"PLANT: {currentPlant.plantName}";
+
+            if (currentInsert != null && currentPlant == null)
+                return $"INSERT: {currentInsert.name}";
+
+            return $"PLANT + INSERT";
+        }
+        
     }
 }
