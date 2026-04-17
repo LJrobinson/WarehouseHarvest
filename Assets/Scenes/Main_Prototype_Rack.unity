@@ -154,6 +154,11 @@ MonoBehaviour:
     m_Bits: 4294967295
   maxDistance: 500
   selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  placementMode: 1
+  selectedInsert: {fileID: 11400000, guid: 61459ee132426644eb4a28ab42783550, type: 2}
+  selectedPlantPrefab: {fileID: 5533158981873155238, guid: bca119c320eac0b46b774b1731f8bc99, type: 3}
+  seedInventory: {fileID: 1379748192}
+  placeOnClick: 1
 --- !u!4 &21351911
 Transform:
   m_ObjectHideFlags: 0
@@ -805,7 +810,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIManager
   panels:
-  - {fileID: 1822028994}
+  - {fileID: 0}
 --- !u!4 &854469482
 Transform:
   m_ObjectHideFlags: 0
@@ -864,6 +869,50 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1142338231
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1142338233}
+  - component: {fileID: 1142338232}
+  m_Layer: 0
+  m_Name: MGR_Economy
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1142338232
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142338231}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d045f13daca8ff4ba864c1494ecea0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EconomyManager
+--- !u!4 &1142338233
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142338231}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 900, y: 456.6667, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -943,6 +992,50 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1379748191
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1379748193}
+  - component: {fileID: 1379748192}
+  m_Layer: 0
+  m_Name: MGR_SeedInventory
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1379748192
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379748191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: be1e597961dec8542ad2b3fe8659bc27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SeedInventory
+--- !u!4 &1379748193
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379748191}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 900, y: 456.6667, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1140,9 +1233,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1822028991}
+  - component: {fileID: 1822028994}
   - component: {fileID: 1822028993}
   - component: {fileID: 1822028992}
-  - component: {fileID: 1822028994}
   m_Layer: 5
   m_Name: HexPanel
   m_TagString: Untagged
@@ -1220,15 +1313,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 1822028990}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8beba3df6acae2742894396b0ca5e946, type: 3}
+  m_Script: {fileID: 11500000, guid: ae961a81a870c7d47b47c95358d73487, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::HexPanelController
+  m_EditorClassIdentifier: Assembly-CSharp::Vertigro.Logic.HexPanelController
   closeOnEscape: 1
-  selection: {fileID: 21351910}
   titleText: {fileID: 1774502425}
   plantText: {fileID: 697780830}
   insertText: {fileID: 48248838}
   stateText: {fileID: 338078725}
+  selectionController: {fileID: 21351910}
+  seedInventory: {fileID: 1379748192}
+  plantPrefab: {fileID: 5533158981873155238, guid: bca119c320eac0b46b774b1731f8bc99, type: 3}
 --- !u!1 &1829791364
 GameObject:
   m_ObjectHideFlags: 0
@@ -1493,14 +1588,67 @@ MonoBehaviour:
   m_ShadowLayerMask: 1
   m_RenderingLayers: 1
   m_ShadowRenderingLayers: 1
+--- !u!1 &2083909666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2083909668}
+  - component: {fileID: 2083909667}
+  m_Layer: 0
+  m_Name: MGR_SeedShop
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2083909667
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083909666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73444932fe7094442acfef6266eea500, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SeedShop
+  economy: {fileID: 1142338232}
+  seedInventory: {fileID: 1379748192}
+  strainDatabase: {fileID: 11400000, guid: 1ba07f99640bd3046b65d215d2cc7e4c, type: 2}
+  bagseedSingleCost: 15
+  bagseedPack5Cost: 60
+  bagseedPack20Cost: 200
+--- !u!4 &2083909668
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2083909666}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 900, y: 456.6667, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1900430901}
   - {fileID: 1829791367}
+  - {fileID: 1142338233}
   - {fileID: 360913900}
   - {fileID: 21351911}
+  - {fileID: 1379748193}
+  - {fileID: 2083909668}
   - {fileID: 395237100}
   - {fileID: 961571847}
   - {fileID: 1761685377}
