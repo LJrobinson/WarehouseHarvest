@@ -6,16 +6,22 @@ namespace Vertigro.Logic
     public class HexPanelController : UIPanel
     {
         [Header("UI References")]
+        [SerializeField] private TMP_Text moneyText;
+        [SerializeField] private TMP_Text seedsText;
+        [SerializeField] private TMP_Text productsText;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text plantText;
         [SerializeField] private TMP_Text insertText;
         [SerializeField] private TMP_Text stateText;
+        
 
         [Header("Gameplay References")]
-        [SerializeField] private HexSelectionController selectionController;
+        [SerializeField] private EconomyManager economyManager;
         [SerializeField] private SeedInventory seedInventory;
+        [SerializeField] private HexSelectionController selectionController;
         [SerializeField] private ProductInventory productInventory;
         [SerializeField] private GameObject plantPrefab;
+        
 
         private HexNode currentNode;
 
@@ -40,6 +46,15 @@ namespace Vertigro.Logic
                 SetText(stateText, "ERROR: No Selection Controller");
                 return;
             }
+
+            if (economyManager != null)
+                moneyText.text = $"${economyManager.Money}";
+
+            if (seedInventory != null)
+                seedsText.text = $"Seeds: {seedInventory.GetAllSeeds().Count}";
+
+            if (productInventory != null)
+                productsText.text = $"Products: {productInventory.GetTotalItems()}";
 
             currentNode = selectionController.SelectedNode;
 
