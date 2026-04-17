@@ -1,10 +1,18 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Vertigro.Data;
 
 namespace Vertigro.Logic
 {
     public class HexSelectionController : MonoBehaviour
     {
+        public enum PlacementMode
+        {
+            None,
+            Insert,
+            Plant
+        }
+
         [Header("References")]
         [SerializeField] private Camera worldCamera;
 
@@ -14,6 +22,13 @@ namespace Vertigro.Logic
 
         [Header("Highlight")]
         [SerializeField] private Color selectedColor = Color.yellow;
+
+        [Header("Placement")]
+        [SerializeField] private PlacementMode placementMode = PlacementMode.None;
+        [SerializeField] private InsertData selectedInsert;
+        [SerializeField] private GameObject selectedPlantPrefab;
+        [SerializeField] private SeedInventory seedInventory;
+        [SerializeField] private bool placeOnClick = true;
 
         public HexNode SelectedNode { get; private set; }
         private HexNode hoveredNode;
@@ -108,6 +123,9 @@ namespace Vertigro.Logic
             }
 
             SelectNode(node);
+
+            if (placeOnClick && placementMode != PlacementMode.None)
+                TryPlaceOnNode(node);
         }
 
         private void HandleNodeAction()
@@ -140,6 +158,118 @@ namespace Vertigro.Logic
             }
 
             hoveredNode = newHovered;
+        }
+
+        public void SelectInsertPlacement()
+        {
+            placementMode = PlacementMode.Insert;
+        }
+
+        public void SelectPlantPlacement()
+        {
+            placementMode = PlacementMode.Plant;
+        }
+
+        public void ClearPlacement()
+        {
+            placementMode = PlacementMode.None;
+        }
+
+        public void SetSelectedInsert(InsertData insert)
+        {
+            selectedInsert = insert;
+            placementMode = PlacementMode.Insert;
+        }
+
+        public void SetSelectedPlantPrefab(GameObject plantPrefab)
+        {
+            selectedPlantPrefab = plantPrefab;
+            placementMode = PlacementMode.Plant;
+        }
+
+        public void PlaceSelectedOnSelectedNode()
+        {
+            TryPlaceOnNode(SelectedNode);
+        }
+
+        public void PlaceSelectedOnHoveredNode()
+        {
+            TryPlaceOnNode(hoveredNode);
+        }
+
+        private bool TryPlaceOnNode(HexNode node)
+        {
+            if (node == null)
+                return false;
+
+            switch (placementMode)
+            {
+                case PlacementMode.Insert:
+                    return TryPlaceInsert(node);
+
+                case PlacementMode.Plant:
+                    return TryPlacePlant(node);
+
+                default:
+                    return false;
+            }
+        }
+
+        private bool TryPlaceInsert(HexNode node)
+        {
+            if (selectedInsert == null)
+            {
+                Debug.LogWarning("HexSelectionController: No insert selected for placement.");
+                return false;
+            }
+
+            if (!node.TryPlaceInsert(selectedInsert))
+            {
+                Debug.Log("Cannot place insert: hex is not empty.");
+                return false;
+            }
+
+            Debug.Log($"Placed insert '{selectedInsert.insertName}' on {node.name}.");
+            return true;
+        }
+
+        private bool TryPlacePlant(HexNode node)
+        {
+            if (selectedPlantPrefab == null)
+            {
+                Debug.LogWarning("HexSelectionController: No plant prefab selected for placement.");
+                return false;
+            }
+
+            SeedInstance seed = GetFirstInventorySeed();
+            bool placed = seed != null
+                ? node.TryPlantSeed(seed, selectedPlantPrefab)
+                : node.TryPlacePlant(selectedPlantPrefab);
+
+            if (!placed)
+            {
+                Debug.Log("Cannot place plant: hex is not empty or plant prefab is invalid.");
+                return false;
+            }
+
+            if (seed != null && seedInventory != null)
+                seedInventory.RemoveSpecificSeed(seed);
+
+            Debug.Log($"Placed plant on {node.name}.");
+            return true;
+        }
+
+        private SeedInstance GetFirstInventorySeed()
+        {
+            if (seedInventory == null)
+                return null;
+
+            var seeds = seedInventory.GetAllSeeds();
+
+            if (seeds == null || seeds.Count == 0)
+                return null;
+
+            return seeds[0];
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Vertigro.Logic
         [Header("Gameplay References")]
         [SerializeField] private HexSelectionController selectionController;
         [SerializeField] private SeedInventory seedInventory;
-        [SerializeField] private PlantInstance plantPrefab;
+        [SerializeField] private GameObject plantPrefab;
 
         private HexNode currentNode;
 
@@ -58,8 +58,10 @@ namespace Vertigro.Logic
 
             titleText.text = $"HEX: {currentNode.hexCoords}";
 
-            if (currentNode.plantedSeed != null)
-                plantText.text = currentNode.plantedSeed.DisplayName;
+            if (currentNode.currentPlant != null && currentNode.currentPlant.seed != null)
+                plantText.text = currentNode.currentPlant.seed.DisplayName;
+            else if (currentNode.currentPlant != null)
+                plantText.text = "Placed Plant";
             else
                 plantText.text = "Empty";
 
@@ -99,14 +101,14 @@ namespace Vertigro.Logic
 
             SeedInstance seedToPlant = seeds[0];
 
-            // Remove from inventory FIRST
-            if (!seedInventory.RemoveSpecificSeed(seedToPlant))
+            if (!currentNode.TryPlantSeed(seedToPlant, plantPrefab))
             {
-                Debug.Log("Failed to remove seed from inventory.");
+                Debug.Log("Failed to plant seed.");
                 return;
             }
 
-            currentNode.TryPlantSeed(seedToPlant, plantPrefab);
+            if (!seedInventory.RemoveSpecificSeed(seedToPlant))
+                Debug.LogWarning("HexPanelController: Planted seed, but failed to remove it from inventory.");
 
             Refresh();
         }

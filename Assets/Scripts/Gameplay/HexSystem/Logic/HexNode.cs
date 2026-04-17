@@ -10,6 +10,7 @@ namespace Vertigro.Logic
         public int floorLevel;
 
         [Header("Current Occupant")]
+        [HideInInspector]
         public PlantInstance currentPlant;
         public InsertData currentInsert;
 
@@ -24,15 +25,69 @@ namespace Vertigro.Logic
         [Header("Seed System")]
         public SeedInstance plantedSeed;
 
+        public bool TryPlaceInsert(InsertData insert)
+        {
+            if (insert == null) return false;
+            if (!IsEmpty) return false;
+
+            currentInsert = insert;
+            return true;
+        }
+
+        public bool TryPlacePlant(GameObject plantPrefab)
+        {
+            return TryPlacePlant(plantPrefab, null);
+        }
+
+        public bool TryPlacePlant(PlantInstance plantPrefab)
+        {
+            if (plantPrefab == null) return false;
+
+            return TryPlacePlant(plantPrefab.gameObject, null);
+        }
+
+        public bool TryPlantSeed(SeedInstance seed, GameObject plantPrefab)
+        {
+            if (seed == null) return false;
+
+            return TryPlacePlant(plantPrefab, seed);
+        }
+
         public bool TryPlantSeed(SeedInstance seed, PlantInstance plantPrefab)
         {
             if (seed == null || plantPrefab == null) return false;
+
+            return TryPlacePlant(plantPrefab.gameObject, seed);
+        }
+
+        private bool TryPlacePlant(GameObject plantPrefab, SeedInstance seed)
+        {
+            if (plantPrefab == null) return false;
             if (!IsEmpty) return false;
 
-            PlantInstance plant = Instantiate(plantPrefab, transform);
-            plant.InitializeFromSeed(seed);
+            GameObject plantObject = Instantiate(plantPrefab, transform);
+            plantObject.transform.localPosition = Vector3.zero;
+
+            PlantInstance plant = plantObject.GetComponent<PlantInstance>();
+
+            if (plant == null)
+                plant = plantObject.GetComponentInChildren<PlantInstance>(true);
+
+            if (plant == null)
+            {
+                Debug.LogWarning($"HexNode: Plant prefab '{plantPrefab.name}' does not contain a PlantInstance component.");
+                Destroy(plantObject);
+                return false;
+            }
+
+            if (!plantObject.activeSelf)
+                plantObject.SetActive(true);
+
+            if (seed != null)
+                plant.InitializeFromSeed(seed);
 
             currentPlant = plant;
+            plantedSeed = plant.seed;
             return true;
         }
 

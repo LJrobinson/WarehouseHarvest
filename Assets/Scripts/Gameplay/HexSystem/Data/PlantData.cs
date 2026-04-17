@@ -4,8 +4,7 @@ using UnityEngine;
 namespace Vertigro.Data
 {
     // --- ENUMS ---
-    // By matching the exact order of the matrix, 
-    // NitrogenFixer = Row/Col 0, ShadeMaker = Row/Col 7
+    // By matching the exact order of the matrix, NitrogenFixer = Row/Col 0, ShadeMaker = Row/Col 7 
     public enum PlantTag
     {
         NitrogenFixer = 0,
