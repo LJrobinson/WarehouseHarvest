@@ -14,6 +14,7 @@ namespace Vertigro.Logic
         [Header("Gameplay References")]
         [SerializeField] private HexSelectionController selectionController;
         [SerializeField] private SeedInventory seedInventory;
+        [SerializeField] private ProductInventory productInventory;
         [SerializeField] private GameObject plantPrefab;
 
         private HexNode currentNode;
@@ -88,6 +89,61 @@ namespace Vertigro.Logic
         {
             if (text != null)
                 text.text = value;
+        }
+
+        // Hook this to a button
+        public void HarvestSelectedPlant()
+        {
+            if (selectionController == null)
+            {
+                Debug.LogWarning("HexPanelController: No Selection Controller assigned.");
+                return;
+            }
+
+            currentNode = selectionController.SelectedNode;
+
+            if (currentNode == null)
+            {
+                Debug.Log("Cannot harvest: no hex selected.");
+                return;
+            }
+
+            PlantInstance plant = currentNode.currentPlant;
+
+            if (plant == null)
+            {
+                Debug.Log("Cannot harvest: selected hex has no plant.");
+                Refresh();
+                return;
+            }
+
+            if (!plant.IsHarvestable && !plant.IsOverripe)
+            {
+                Debug.Log("Cannot harvest: plant is not ready.");
+                Refresh();
+                return;
+            }
+
+            if (productInventory == null)
+            {
+                Debug.LogWarning("HexPanelController: No ProductInventory assigned.");
+                return;
+            }
+
+            HarvestProductInstance product = HarvestProcessor.CreateHarvestProduct(plant);
+
+            if (product == null)
+            {
+                Debug.LogWarning("Harvest failed: plant could not create product.");
+                Refresh();
+                return;
+            }
+
+            productInventory.AddProduct(product);
+            currentNode.RemovePlant();
+
+            Debug.Log($"Harvested hex plant: {product.DisplayName}");
+            Refresh();
         }
 
         // Hook this to a button

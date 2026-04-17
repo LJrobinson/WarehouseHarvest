@@ -91,6 +91,15 @@ namespace Vertigro.Logic
             return true;
         }
 
+        public void RemovePlant()
+        {
+            if (currentPlant != null)
+                Destroy(currentPlant.gameObject);
+
+            currentPlant = null;
+            plantedSeed = null;
+        }
+
         public void Interact()
         {
             Debug.Log($"HexNode Interact: {name}");
