@@ -23,8 +23,8 @@ MonoBehaviour:
   growthPerDay: 25
   ripenessPerDayInFlower: 25
   harvestWindowStart: 100
-  harvestWindowEnd: 150
-  overripeThreshold: 175
+  harvestWindowEnd: 110
+  overripeThreshold: 111
   seedCost: 25
   pack5Cost: 100
   pack20Cost: 350

@@ -1,5 +1,4 @@
 using UnityEngine;
-using static UnityEngine.Rendering.DebugUI;
 
 public class PlantInstance : MonoBehaviour
 {
@@ -32,9 +31,56 @@ public class PlantInstance : MonoBehaviour
     public bool IsHarvestable => stage == PlantStage.Harvestable;
     public bool IsOverripe => stage == PlantStage.Overripe;
 
+    [Header("Visual Feedback")]
+    [SerializeField] private Renderer targetRenderer;
+    [SerializeField] private string emissionColorProperty = "_EmissionColor";
+    [SerializeField] private float harvestGlowMultiplier = 2f;
+    [SerializeField] private float overripeGlowMultiplier = 3f;
+    [SerializeField] private bool enableGlowDebugLogs = true;
+
+    private Material runtimeMaterial;
+    private Color baseEmissionColor = Color.black;
+
     private void Start()
     {
+        InitializeVisualReferences();
         ApplyVisuals();
+        RefreshVisualState();
+    }
+
+    private void InitializeVisualReferences()
+    {
+        if (targetRenderer == null)
+            targetRenderer = GetComponentInChildren<Renderer>();
+
+        if (targetRenderer == null)
+        {
+            Debug.LogWarning($"{name}: No targetRenderer found for PlantInstance.");
+            return;
+        }
+
+        runtimeMaterial = targetRenderer.material;
+
+        if (runtimeMaterial == null)
+        {
+            Debug.LogWarning($"{name}: targetRenderer exists but has no material.");
+            return;
+        }
+
+        if (!runtimeMaterial.HasProperty(emissionColorProperty))
+        {
+            Debug.LogWarning($"{name}: Material '{runtimeMaterial.name}' does not have emission property '{emissionColorProperty}'.");
+            return;
+        }
+
+        baseEmissionColor = runtimeMaterial.GetColor(emissionColorProperty);
+
+        if (enableGlowDebugLogs)
+        {
+            Debug.Log(
+                $"{name}: Visuals initialized | Renderer:{targetRenderer.name} | Material:{runtimeMaterial.name} | EmissionProperty:{emissionColorProperty}"
+            );
+        }
     }
 
     public void ApplyVisuals()
@@ -42,18 +88,16 @@ public class PlantInstance : MonoBehaviour
         if (seed == null)
             return;
 
-        Renderer r = GetComponent<Renderer>();
-        if (r == null)
+        if (runtimeMaterial == null)
             return;
 
         if (seed.isShiny)
         {
-            r.material.color = Color.magenta; // Shiny plants look wild
+            runtimeMaterial.color = Color.magenta;
         }
         else
         {
-            // Normal rarity coloring
-            r.material.color = seed.rarity switch
+            runtimeMaterial.color = seed.rarity switch
             {
                 SeedRarity.Common => Color.green,
                 SeedRarity.Uncommon => new Color(0.3f, 0.8f, 0.3f),
@@ -62,6 +106,51 @@ public class PlantInstance : MonoBehaviour
                 SeedRarity.Legendary => Color.yellow,
                 _ => Color.green
             };
+        }
+    }
+
+    private void RefreshVisualState()
+    {
+        if (runtimeMaterial == null)
+            return;
+
+        if (!runtimeMaterial.HasProperty(emissionColorProperty))
+            return;
+
+        runtimeMaterial.EnableKeyword("_EMISSION");
+
+        if (IsOverripe)
+        {
+            runtimeMaterial.SetColor(emissionColorProperty, Color.red * overripeGlowMultiplier);
+
+            if (enableGlowDebugLogs)
+            {
+                Debug.Log(
+                    $"{name} | Glow refresh | Stage:{stage} | Harvestable:{IsHarvestable} | Overripe:{IsOverripe} | Emission:RED x{overripeGlowMultiplier}"
+                );
+            }
+        }
+        else if (IsHarvestable)
+        {
+            runtimeMaterial.SetColor(emissionColorProperty, Color.green * harvestGlowMultiplier);
+
+            if (enableGlowDebugLogs)
+            {
+                Debug.Log(
+                    $"{name} | Glow refresh | Stage:{stage} | Harvestable:{IsHarvestable} | Overripe:{IsOverripe} | Emission:GREEN x{harvestGlowMultiplier}"
+                );
+            }
+        }
+        else
+        {
+            runtimeMaterial.SetColor(emissionColorProperty, baseEmissionColor);
+
+            if (enableGlowDebugLogs)
+            {
+                Debug.Log(
+                    $"{name} | Glow refresh | Stage:{stage} | Harvestable:{IsHarvestable} | Overripe:{IsOverripe} | Emission:BASE"
+                );
+            }
         }
     }
 
@@ -78,6 +167,7 @@ public class PlantInstance : MonoBehaviour
         {
             stress += 3f;
             health -= 1f;
+            RefreshVisualState();
             return;
         }
 
@@ -95,7 +185,11 @@ public class PlantInstance : MonoBehaviour
         // Ripeness only when fully grown
         if (growthPercent >= 100f)
         {
-            ripenessPercent = Mathf.Clamp(ripenessPercent + (strainData.ripenessPerDayInFlower * lightMultiplier), 0f, 150f);
+            ripenessPercent = Mathf.Clamp(
+                ripenessPercent + (strainData.ripenessPerDayInFlower * lightMultiplier),
+                0f,
+                150f
+            );
         }
 
         // Harvest / Overripe logic
@@ -159,6 +253,8 @@ public class PlantInstance : MonoBehaviour
         health = Mathf.Clamp(health, 0f, 100f);
         stress = Mathf.Clamp(stress, 0f, 100f);
 
+        RefreshVisualState();
+
         Debug.Log($"[{strainData.strainName}] ({seed.rarity}) Shiny:{seed.isShiny} Stage:{stage} Growth:{growthPercent}% Ripeness:{ripenessPercent}%");
     }
 
@@ -206,6 +302,10 @@ public class PlantInstance : MonoBehaviour
 
         stage = PlantStage.Seed;
 
+        if (runtimeMaterial == null)
+            InitializeVisualReferences();
+
         ApplyVisuals();
+        RefreshVisualState();
     }
 }

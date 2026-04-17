@@ -153,7 +153,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   maxDistance: 500
-  selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  selectedColor: {r: 0.03415597, g: 0.97759724, b: 0.98039216, a: 1}
   placementMode: 2
   selectedInsert: {fileID: 11400000, guid: 61459ee132426644eb4a28ab42783550, type: 2}
   selectedPlantPrefab: {fileID: 5533158981873155238, guid: bca119c320eac0b46b774b1731f8bc99, type: 3}
@@ -1698,7 +1698,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SeedInventory
   giveStarterSeedsOnPlay: 1
   starterSeedCount: 6
-  starterStrain: {fileID: 11400000, guid: 036678ebc0d68e741b2df4695168cd4d, type: 2}
+  starterStrain: {fileID: 11400000, guid: d90cd32d34ba3f64faf989b08491760b, type: 2}
 --- !u!4 &1379748193
 Transform:
   m_ObjectHideFlags: 0

@@ -9,17 +9,17 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 454348229827233913}
+  - component: {fileID: 7534518337717378833}
   - component: {fileID: 5345927073847817013}
   - component: {fileID: 8121376450367610741}
   - component: {fileID: 395824204236854661}
-  - component: {fileID: 7534518337717378833}
   m_Layer: 0
   m_Name: PlantPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &454348229827233913
 Transform:
   m_ObjectHideFlags: 0
@@ -35,6 +35,38 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7534518337717378833
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5533158981873155238}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea116e65072cb59459cb4d9f47c72182, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlantInstance
+  seed:
+    strain: {fileID: 0}
+    isMysterySeed: 0
+    hiddenStrain: {fileID: 0}
+    rarity: 0
+    isShiny: 0
+    geneticsBonus: 0
+  parentTable: {fileID: 0}
+  waterLevel: 60
+  nutrientsLevel: 60
+  stress: 0
+  health: 100
+  hasMold: 0
+  hasPests: 0
+  growthPercent: 0
+  ripenessPercent: 0
+  stage: 3
+  targetRenderer: {fileID: 8121376450367610741}
+  emissionColorProperty: _EmissionColor
+  harvestGlowMultiplier: 2.5
 --- !u!33 &5345927073847817013
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -68,7 +100,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 92f845725428c954b878da352f657fe5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -113,30 +145,3 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &7534518337717378833
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5533158981873155238}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea116e65072cb59459cb4d9f47c72182, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlantInstance
-  seed:
-    strain: {fileID: 0}
-    rarity: 0
-    isShiny: 0
-    isMysterySeed: 0
-    geneticsBonus: 0
-  waterLevel: 60
-  nutrientsLevel: 60
-  stress: 0
-  health: 100
-  hasMold: 0
-  hasPests: 0
-  growthPercent: 0
-  ripenessPercent: 0
-  stage: 0
