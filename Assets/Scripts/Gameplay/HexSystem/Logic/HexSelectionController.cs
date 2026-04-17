@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using Vertigro.Data;
 
 namespace Vertigro.Logic
@@ -103,6 +104,9 @@ namespace Vertigro.Logic
                 return;
 
             if (!Mouse.current.leftButton.wasPressedThisFrame)
+                return;
+
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
                 return;
 
             Vector2 mousePosition = Mouse.current.position.ReadValue();
@@ -242,9 +246,14 @@ namespace Vertigro.Logic
             }
 
             SeedInstance seed = GetFirstInventorySeed();
-            bool placed = seed != null
-                ? node.TryPlantSeed(seed, selectedPlantPrefab)
-                : node.TryPlacePlant(selectedPlantPrefab);
+
+            if (seed == null)
+            {
+                Debug.LogWarning("HexSelectionController: No seeds available. Cannot place plant.");
+                return false;
+            }
+
+            bool placed = node.TryPlantSeed(seed, selectedPlantPrefab);
 
             if (!placed)
             {
@@ -252,7 +261,7 @@ namespace Vertigro.Logic
                 return false;
             }
 
-            if (seed != null && seedInventory != null)
+            if (seedInventory != null)
                 seedInventory.RemoveSpecificSeed(seed);
 
             Debug.Log($"Placed plant on {node.name}.");

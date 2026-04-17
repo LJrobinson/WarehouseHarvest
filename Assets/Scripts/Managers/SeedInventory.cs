@@ -3,7 +3,40 @@ using UnityEngine;
 
 public class SeedInventory : MonoBehaviour
 {
+    [Header("Debug Starter Seeds")]
+    [SerializeField] private bool giveStarterSeedsOnPlay = true;
+    [SerializeField] private int starterSeedCount = 6;
+    [SerializeField] private PlantStrainData starterStrain;
+
     private List<SeedInstance> ownedSeeds = new List<SeedInstance>();
+
+    private void Awake()
+    {
+        TryGiveStarterSeeds();
+    }
+
+    private void TryGiveStarterSeeds()
+    {
+        if (!giveStarterSeedsOnPlay)
+            return;
+
+        if (ownedSeeds.Count > 0)
+            return;
+
+        if (starterStrain == null)
+        {
+            Debug.LogWarning("SeedInventory: Starter seeds enabled, but no starterStrain is assigned.");
+            return;
+        }
+
+        for (int i = 0; i < starterSeedCount; i++)
+        {
+            SeedInstance seed = SeedGenerator.GenerateSeed(starterStrain);
+            AddSeed(seed);
+        }
+
+        Debug.Log($"SeedInventory: Added {starterSeedCount} starter seeds for testing.");
+    }
 
     public void AddSeed(SeedInstance seed)
     {

@@ -29,19 +29,14 @@ namespace Vertigro.Logic
             if (!IsOpen)
                 return;
 
-            // Keep panel synced to selection
-            if (selectionController != null && selectionController.SelectedNode != currentNode)
-            {
-                currentNode = selectionController.SelectedNode;
-                Refresh();
-            }
+            Refresh();
         }
 
         public void Refresh()
         {
             if (selectionController == null)
             {
-                stateText.text = "ERROR: No Selection Controller";
+                SetText(stateText, "ERROR: No Selection Controller");
                 return;
             }
 
@@ -49,28 +44,50 @@ namespace Vertigro.Logic
 
             if (currentNode == null)
             {
-                titleText.text = "No Hex Selected";
-                plantText.text = "-";
-                insertText.text = "-";
-                stateText.text = "NONE";
+                SetText(titleText, "No Hex Selected");
+                SetText(plantText, "-");
+                SetText(insertText, "-");
+                SetText(stateText, "NONE");
                 return;
             }
 
-            titleText.text = $"HEX: {currentNode.hexCoords}";
+            SetText(titleText, $"HEX: {currentNode.hexCoords}");
 
             if (currentNode.currentPlant != null && currentNode.currentPlant.seed != null)
-                plantText.text = currentNode.currentPlant.seed.DisplayName;
+                SetText(plantText, currentNode.currentPlant.seed.DisplayName);
             else if (currentNode.currentPlant != null)
-                plantText.text = "Placed Plant";
+                SetText(plantText, "Placed Plant");
             else
-                plantText.text = "Empty";
+                SetText(plantText, "Empty");
 
             if (currentNode.currentInsert != null)
-                insertText.text = currentNode.currentInsert.insertName;
+                SetText(insertText, currentNode.currentInsert.insertName);
             else
-                insertText.text = "None";
+                SetText(insertText, "None");
 
-            stateText.text = currentNode.IsEmpty ? "EMPTY" : "OCCUPIED";
+            SetText(stateText, GetNodeStateText(currentNode));
+        }
+
+        private static string GetNodeStateText(HexNode node)
+        {
+            if (node == null || node.IsEmpty)
+                return "EMPTY";
+
+            PlantInstance plant = node.currentPlant;
+
+            if (plant == null)
+                return "OCCUPIED";
+
+            if (plant.seed == null || plant.strainData == null)
+                return "PLANT\nNo seed/strain data";
+
+            return $"PLANT\nStage: {plant.stage}\nGrowth: {plant.growthPercent:0}%\nRipeness: {plant.ripenessPercent:0}%";
+        }
+
+        private static void SetText(TMP_Text text, string value)
+        {
+            if (text != null)
+                text.text = value;
         }
 
         // Hook this to a button

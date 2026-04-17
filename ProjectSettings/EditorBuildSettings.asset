@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/SampleScene.unity
     guid: 99c9720ab356a0642a771bea13969a05
   - enabled: 1
+    path: Assets/Scenes/Vertigro_GameLoop.unity
+    guid: b58d7caee8d728745b6af040882494ef
+  - enabled: 1
     path: Assets/Scenes/DevSandbox.unity
     guid: df7ab88600f927a43bd2ff5f3cb9600a
   - enabled: 1

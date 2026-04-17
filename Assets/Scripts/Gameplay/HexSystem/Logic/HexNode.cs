@@ -101,18 +101,17 @@ namespace Vertigro.Logic
 
         public void ProcessTick()
         {
-            if (currentPlant == null || currentPlant.seed == null)
+            if (currentPlant == null)
                 return;
 
-            growthProgress++;
-
-            var strain = currentPlant.seed.EffectiveStrain;
-            if (strain == null) return;
-
-            if (growthProgress >= strain.growthPerDay)
+            if (currentPlant.seed == null || currentPlant.seed.EffectiveStrain == null)
             {
-                Debug.Log($"{strain.strainName} at {hexCoords} is ready for harvest!");
+                Debug.LogWarning($"HexNode: Skipping plant tick on {name}; plant has no seed or strain data.");
+                return;
             }
+
+            growthProgress++;
+            currentPlant.AdvanceDay(1f, 0f);
         }
 
         public void FindNeighbors(List<HexNode> allNodes)
