@@ -406,7 +406,11 @@ public class DevSandboxControllerUI : MonoBehaviour
     private void BuildWarehouseDropdown()
     {
         foundWarehouses.Clear();
-        foundWarehouses.AddRange(FindObjectsByType<Warehouse>());
+        //foundWarehouses.AddRange(FindObjectsByType<Warehouse>());
+        //foundWarehouses = new List<Warehouse>(FindObjectsByType<Warehouse>(FindObjectsInactive.Include, FindObjectsSortMode.None));
+        //FindObjectsByType<Warehouse>(FindObjectsInactive.Exclude);
+        foundWarehouses.Clear();
+        foundWarehouses.AddRange(FindObjectsByType<Warehouse>(FindObjectsInactive.Exclude));
 
         if (warehouseDropdown == null)
             return;
@@ -445,18 +449,25 @@ public class DevSandboxControllerUI : MonoBehaviour
 
     private void BuildTableDropdown()
     {
-        if (selectedWarehouse == null || tableDropdown == null)
+        if (tableDropdown == null)
             return;
 
         currentTables.Clear();
+
+        if (selectedWarehouse == null || selectedWarehouse.tables == null)
+            return;
+
         currentTables.AddRange(selectedWarehouse.tables);
 
         tableDropdown.ClearOptions();
 
         List<string> tableNames = new List<string>();
-        for (int i = 0; i < currentTables.Count; i++)
+
+        foreach (var t in currentTables)
         {
-            GrowTable t = currentTables[i];
+            if (t == null)
+                continue;
+
             tableNames.Add($"{t.name} ({t.unlockedSlots}/{t.slots.Count})");
         }
 

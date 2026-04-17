@@ -1,4 +1,17 @@
+using System.Collections.Generic;
 using UnityEngine;
+using Vertigro.Data;
+
+namespace Vertigro.Data
+{
+    [System.Serializable]
+    public class PlantStrainData
+    {
+        public string strainName;
+
+        public List<PlantTag> myTags;
+    }
+}
 
 [CreateAssetMenu(fileName = "NewPlantStrain", menuName = "WarehouseHarvest/Plant Strain")]
 public class PlantStrainData : ScriptableObject
@@ -56,4 +69,7 @@ public class PlantStrainData : ScriptableObject
     public int baseValuePerGram = 20;
 
     public float basePricePerGram = 10f;
+
+    [Header("Plant Identity")]
+    public List<PlantTag> myTags = new List<PlantTag>();
 }

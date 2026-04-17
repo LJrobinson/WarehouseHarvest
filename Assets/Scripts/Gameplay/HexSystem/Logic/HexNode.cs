@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Vertigro.Data; // Access our plant/insert definitions
+using Vertigro.Data;
 
 namespace Vertigro.Logic
 {
@@ -10,123 +10,123 @@ namespace Vertigro.Logic
         public int floorLevel;
 
         [Header("Current Occupant")]
-        public PlantData currentPlant;    // The "blueprint" for the plant currently growing here
-        public InsertData currentInsert;  // The "blueprint" for a piece of equipment here
+        public PlantInstance currentPlant;
+        public InsertData currentInsert;
 
         [Header("State")]
-        public int growthProgress = 0;    // How many days this plant has been growing
+        public int growthProgress = 0;
+
         public bool isOccupied => currentPlant != null || currentInsert != null;
+        public bool IsEmpty => currentPlant == null && currentInsert == null;
 
         public List<HexNode> neighbors = new List<HexNode>();
+
+        [Header("Seed System")]
+        public SeedInstance plantedSeed;
+
+        public bool TryPlantSeed(SeedInstance seed, PlantInstance plantPrefab)
+        {
+            if (seed == null || plantPrefab == null) return false;
+            if (!IsEmpty) return false;
+
+            PlantInstance plant = Instantiate(plantPrefab, transform);
+            plant.InitializeFromSeed(seed);
+
+            currentPlant = plant;
+            return true;
+        }
 
         public void Interact()
         {
             Debug.Log($"HexNode Interact: {name}");
 
             if (UIManager.Instance != null)
-            {
                 UIManager.Instance.OpenPanel("HexPanel");
-            }
         }
 
-        /// <summary>
-        /// This is called by the TableGenerator every "Next Day".
-        /// It handles the actual logic of growing the plant.
-        /// </summary>
         public void ProcessTick()
         {
-            // If there is no plant here, there's nothing to grow!
-            if (currentPlant == null) return;
+            if (currentPlant == null || currentPlant.seed == null)
+                return;
 
-            // Increment growth progress
             growthProgress++;
 
-            if (growthProgress >= currentPlant.daysToMature)
+            var strain = currentPlant.seed.EffectiveStrain;
+            if (strain == null) return;
+
+            if (growthProgress >= strain.growthPerDay)
             {
-                Debug.Log($"{currentPlant.plantName} at {hexCoords} is ready for harvest!");
-                // Future: Trigger harvest score calculation here
+                Debug.Log($"{strain.strainName} at {hexCoords} is ready for harvest!");
             }
         }
 
-        // --- ADJACENCY LOGIC ---
         public void FindNeighbors(List<HexNode> allNodes)
         {
             neighbors.Clear();
-            foreach (var potentialNeighbor in allNodes)
-            {
-                if (IsAdjacent(potentialNeighbor)) neighbors.Add(potentialNeighbor);
-            }
+            foreach (var n in allNodes)
+                if (IsAdjacent(n)) neighbors.Add(n);
         }
 
         private bool IsAdjacent(HexNode other)
         {
-            if (other.floorLevel == this.floorLevel)
+            if (other.floorLevel == floorLevel)
             {
-                float d = (Mathf.Abs(hexCoords.x - other.hexCoords.x) +
-                           Mathf.Abs(hexCoords.y - other.hexCoords.y) +
-                           Mathf.Abs(hexCoords.z - other.hexCoords.z)) / 2;
+                float d =
+                    (Mathf.Abs(hexCoords.x - other.hexCoords.x) +
+                     Mathf.Abs(hexCoords.y - other.hexCoords.y) +
+                     Mathf.Abs(hexCoords.z - other.hexCoords.z)) / 2;
+
                 return d == 1;
             }
-            // Vertical adjacency (Same spot, floor above/below)
-            return (other.hexCoords == this.hexCoords && Mathf.Abs(other.floorLevel - this.floorLevel) == 1);
+
+            return other.hexCoords == hexCoords &&
+                   Mathf.Abs(other.floorLevel - floorLevel) == 1;
         }
 
-        /// <summary>
-        /// Looks at all neighbors and calculates the final +/- adjacency modifier from BOTH plants and inserts.
-        /// </summary>
         public int CalculateAdjacencyScore()
         {
-            if (currentPlant == null) return 0;
+            if (currentPlant == null || currentPlant.seed == null)
+                return 0;
 
-            int totalModifier = 0;
+            int total = 0;
 
-            foreach (HexNode neighbor in neighbors)
+            var myTags = currentPlant.seed.EffectiveStrain?.myTags;
+            if (myTags == null) return 0;
+
+            foreach (var neighbor in neighbors)
             {
-                if (!neighbor.isOccupied) continue;
+                if (neighbor == null || !neighbor.isOccupied)
+                    continue;
 
-                // 1. Check Plant-to-Plant Bonuses
-                if (neighbor.currentPlant != null)
+                // plant vs plant
+                if (neighbor.currentPlant != null && neighbor.currentPlant.seed != null)
                 {
-                    foreach (PlantTag myTag in currentPlant.myTags)
+                    var neighborTags = neighbor.currentPlant.seed.EffectiveStrain?.myTags;
+                    if (neighborTags != null)
                     {
-                        foreach (PlantTag neighborTag in neighbor.currentPlant.myTags)
-                        {
-                            totalModifier += AdjacencyDictionary.GetBonus(myTag, neighborTag);
-                        }
+                        foreach (var a in myTags)
+                        foreach (var b in neighborTags)
+                            total += AdjacencyDictionary.GetBonus(a, b);
                     }
                 }
 
-                // 2. Check Insert-to-Plant Bonuses (Equipment like ShadeMakers)
+                // insert effects
                 if (neighbor.currentInsert != null)
                 {
-                    foreach (PlantTag myTag in currentPlant.myTags)
-                    {
-                        // Assuming your InsertData blueprint also uses the PlantTag enum (e.g., Tag = ShadeMaker)
-                        foreach (PlantTag insertTag in neighbor.currentInsert.affectedTags) 
-                        {
-                            totalModifier += InsertDictionary.GetAdjacencyBonus(myTag, insertTag);
-                        }
-                    }
+                    foreach (var a in myTags)
+                    foreach (var b in neighbor.currentInsert.affectedTags)
+                        total += InsertDictionary.GetAdjacencyBonus(a, b);
                 }
             }
 
-            return totalModifier;
+            return total;
         }
-
 
         public string GetDebugState()
         {
-            if (currentPlant == null && currentInsert == null)
-                return "EMPTY";
-
-            if (currentPlant != null && currentInsert == null)
-                return $"PLANT: {currentPlant.plantName}";
-
-            if (currentInsert != null && currentPlant == null)
-                return $"INSERT: {currentInsert.name}";
-
-            return $"PLANT + INSERT";
+            if (currentPlant == null && currentInsert == null) return "EMPTY";
+            if (currentPlant != null) return $"PLANT: {currentPlant.seed?.EffectiveStrain?.strainName}";
+            return $"INSERT: {currentInsert.name}";
         }
-        
     }
 }

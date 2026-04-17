@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using Vertigro.Logic;
 
 public class PlantManager : MonoBehaviour
 {
@@ -10,13 +11,10 @@ public class PlantManager : MonoBehaviour
         AutoFindTables();
     }
 
-    [ContextMenu("Auto Find Tables")]
     public void AutoFindTables()
     {
         allTables.Clear();
         allTables.AddRange(FindObjectsByType<GrowTable>(FindObjectsInactive.Exclude));
-
-        Debug.Log($"PlantManager found {allTables.Count} tables.");
     }
 
     public void AdvanceDayAll()
@@ -31,10 +29,13 @@ public class PlantManager : MonoBehaviour
 
             foreach (var slot in table.slots)
             {
-                if (!slot.IsEmpty)
-                {
-                    slot.currentPlant.AdvanceDay(lightMult, waterReduction);
-                }
+                if (slot == null || slot.IsEmpty)
+                    continue;
+
+                if (slot.currentPlant == null)
+                    continue;
+
+                slot.currentPlant.AdvanceDay(lightMult, waterReduction);
             }
         }
     }

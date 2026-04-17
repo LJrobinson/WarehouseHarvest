@@ -45,13 +45,16 @@ public class Warehouse : MonoBehaviour
 
     private void Awake()
     {
-        // Auto-fill tables if not assigned
+        if (tables == null)
+            tables = new List<GrowTable>();
+
         if (tables.Count == 0)
         {
             tables.AddRange(GetComponentsInChildren<GrowTable>());
         }
 
-        // Default: first table unlocked
+        tables.RemoveAll(t => t == null);
+
         if (tables.Count > 0)
         {
             tables[0].isUnlocked = true;
@@ -59,7 +62,6 @@ public class Warehouse : MonoBehaviour
 
         ApplyUpgradeCaps();
 
-        // Start full (optional but feels good)
         currentData = maxData;
         currentPower = maxPower;
         currentWater = maxWater;
