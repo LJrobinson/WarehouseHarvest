@@ -21,10 +21,10 @@ MonoBehaviour:
   moldSusceptibility: 0.2
   pestSusceptibility: 0.2
   growthPerDay: 25
-  ripenessPerDayInFlower: 25
+  ripenessPerDayInFlower: 10
   harvestWindowStart: 100
   harvestWindowEnd: 110
-  overripeThreshold: 111
+  overripeThreshold: 110
   seedCost: 25
   pack5Cost: 100
   pack20Cost: 350

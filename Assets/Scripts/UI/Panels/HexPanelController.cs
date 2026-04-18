@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 namespace Vertigro.Logic
 {
@@ -13,6 +14,7 @@ namespace Vertigro.Logic
         [SerializeField] private TMP_Text plantText;
         [SerializeField] private TMP_Text insertText;
         [SerializeField] private TMP_Text stateText;
+        [SerializeField] private Button harvestButton;
         
 
         [Header("Gameplay References")]
@@ -43,6 +45,7 @@ namespace Vertigro.Logic
         {
             if (selectionController == null)
             {
+                SetHarvestButtonInteractable(false);
                 SetText(stateText, "ERROR: No Selection Controller");
                 return;
             }
@@ -57,6 +60,7 @@ namespace Vertigro.Logic
                 productsText.text = $"Products: {productInventory.GetTotalItems()}";
 
             currentNode = selectionController.SelectedNode;
+            SetHarvestButtonInteractable(CanHarvest(currentNode));
 
             if (currentNode == null)
             {
@@ -82,6 +86,18 @@ namespace Vertigro.Logic
                 SetText(insertText, "None");
 
             SetText(stateText, GetNodeStateText(currentNode));
+        }
+
+        private static bool CanHarvest(HexNode node)
+        {
+            PlantInstance plant = node != null ? node.currentPlant : null;
+            return plant != null && (plant.IsHarvestable || plant.IsOverripe);
+        }
+
+        private void SetHarvestButtonInteractable(bool interactable)
+        {
+            if (harvestButton != null)
+                harvestButton.interactable = interactable;
         }
 
         private static string GetNodeStateText(HexNode node)

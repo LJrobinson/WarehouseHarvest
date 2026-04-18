@@ -3450,6 +3450,7 @@ MonoBehaviour:
   plantText: {fileID: 697780830}
   insertText: {fileID: 48248838}
   stateText: {fileID: 338078725}
+  harvestButton: {fileID: 1305215709}
   economyManager: {fileID: 1142338232}
   seedInventory: {fileID: 1379748192}
   selectionController: {fileID: 21351910}
