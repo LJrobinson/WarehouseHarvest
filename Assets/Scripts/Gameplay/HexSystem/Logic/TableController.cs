@@ -8,7 +8,8 @@ namespace Vertigro.Logic
         [Header("References")]
         public TableGenerator generator;
         public TowerManager towerManager;
-
+        public HexSelectionController selectionController;
+        
         [Header("Table Settings")]
         public int currentLevel = 1;
         public int floorIndex = 0;
@@ -20,15 +21,79 @@ namespace Vertigro.Logic
 
         public void BuildTable()
         {
-            // Define your scaling logic here
             int rows = Mathf.Max(1, (int)Mathf.Pow(2, currentLevel - 1));
             int cols = 6;
 
-            // If it's a high level, maybe we widen the table too
-            if (currentLevel >= 4) cols = 12;
+            if (currentLevel >= 4)
+                cols = 12;
 
             Debug.Log($"Building Table Level {currentLevel}: {rows}x{cols}");
+
+            if (selectionController != null)
+                selectionController.ClearSelectionForRegeneration();
+
+            if (towerManager != null)
+                towerManager.ClearGrid();
+
             generator.GenerateTable(rows, cols, floorIndex);
+        }
+
+        public bool IsRackEmpty()
+        {
+            if (towerManager == null)
+            {
+                Debug.LogWarning("Cannot check rack: no TowerManager assigned.");
+                return false;
+            }
+
+            foreach (var entry in towerManager.Grid)
+            {
+                HexNode node = entry.Value;
+
+                if (node != null && !node.IsEmpty)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public bool TryUpgradeRack(EconomyManager economyManager, int upgradeCost)
+        {
+            if (generator == null)
+            {
+                Debug.LogWarning("Cannot upgrade rack: no TableGenerator assigned.");
+                return false;
+            }
+
+            if (towerManager == null)
+            {
+                Debug.LogWarning("Cannot upgrade rack: no TowerManager assigned.");
+                return false;
+            }
+
+            if (!IsRackEmpty())
+            {
+                Debug.Log("Cannot upgrade rack: rack is not empty.");
+                return false;
+            }
+
+            if (economyManager == null)
+            {
+                Debug.LogWarning("Cannot upgrade rack: no EconomyManager assigned.");
+                return false;
+            }
+
+            if (!economyManager.SpendMoney(upgradeCost))
+            {
+                Debug.Log("Cannot upgrade rack: not enough money.");
+                return false;
+            }
+
+            currentLevel++;
+            BuildTable();
+
+            Debug.Log($"Rack upgraded to level {currentLevel}.");
+            return true;
         }
     }
 }

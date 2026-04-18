@@ -31,7 +31,11 @@ namespace Vertigro.Logic
         [SerializeField] private SeedInventory seedInventory;
         [SerializeField] private HexSelectionController selectionController;
         [SerializeField] private ProductInventory productInventory;
+        [SerializeField] private TableController tableController;
         [SerializeField] private GameObject plantPrefab;
+
+        [Header("Rack Upgrade")]
+        [SerializeField] private int rackUpgradeCost = 500;
         
         private const int MaxSeedSummaryLines = 4;
         private const int MaxProductSummaryLines = 4;
@@ -391,6 +395,20 @@ namespace Vertigro.Logic
             Debug.Log($"Sold {totalItems} items for ${totalValue}");
 
             Refresh();
+        }
+
+        public void UpgradeRack()
+        {
+            if (tableController == null)
+            {
+                Debug.LogWarning("Cannot upgrade rack: no TableController assigned.");
+                return;
+            }
+
+            bool upgraded = tableController.TryUpgradeRack(economyManager, rackUpgradeCost);
+
+            if (upgraded)
+                Refresh();
         }
 
         private string GetNextSeedText()

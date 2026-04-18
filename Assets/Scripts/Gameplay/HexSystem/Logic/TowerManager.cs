@@ -23,5 +23,10 @@ namespace Vertigro.Logic
             Vector3Int key = new Vector3Int(q, r, floor);
             return Grid.TryGetValue(key, out HexNode node) ? node : null;
         }
+
+        public void ClearGrid()
+        {
+            Grid.Clear();
+        }
     }
 }

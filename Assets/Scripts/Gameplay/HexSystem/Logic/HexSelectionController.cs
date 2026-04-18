@@ -97,6 +97,12 @@ namespace Vertigro.Logic
             _selectedRenderer = null;
         }
 
+        public void ClearSelectionForRegeneration()
+        {
+            DeselectNode();
+            hoveredNode = null;
+        }
+
         private static void LogSelection(HexNode node)
         {
             Debug.Log($"Selected HexNode | id:{node.name} | coords:{node.hexCoords} | floor:{node.floorLevel}");
