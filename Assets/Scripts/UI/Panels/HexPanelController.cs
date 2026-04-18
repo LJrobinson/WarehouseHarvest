@@ -14,6 +14,7 @@ namespace Vertigro.Logic
         [SerializeField] private TMP_Text seedSummaryText;
         [SerializeField] private TMP_Text nextSeedText;
         [SerializeField] private TMP_Text productsText;
+        [SerializeField] private TMP_Text productSummaryText;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text plantText;
         [SerializeField] private TMP_Text insertText;
@@ -33,6 +34,7 @@ namespace Vertigro.Logic
         [SerializeField] private GameObject plantPrefab;
         
         private const int MaxSeedSummaryLines = 4;
+        private const int MaxProductSummaryLines = 4;
 
         private HexNode currentNode;
 
@@ -78,7 +80,15 @@ namespace Vertigro.Logic
             }
 
             if (productInventory != null)
+            {
                 productsText.text = $"Products: {productInventory.GetTotalItems()}";
+                SetText(productSummaryText, BuildProductSummary(productInventory.GetAllProduct()));
+            }
+            else
+            {
+                SetText(productsText, "Products: 0");
+                SetText(productSummaryText, "No products available");
+            }
 
             currentNode = selectionController.SelectedNode;
             SetHarvestButtonInteractable(CanHarvest(currentNode));
@@ -164,6 +174,52 @@ namespace Vertigro.Logic
             }
 
             return builder.ToString();
+        }
+
+        private static string BuildProductSummary(List<HarvestProductInstance> products)
+        {
+            if (products == null || products.Count == 0)
+                return "No products available";
+
+            StringBuilder builder = new StringBuilder();
+            int shownCount = 0;
+
+            foreach (HarvestProductInstance product in products)
+            {
+                if (product == null)
+                    continue;
+
+                if (shownCount >= MaxProductSummaryLines)
+                    break;
+
+                if (shownCount > 0)
+                    builder.AppendLine();
+
+                builder.Append(FormatProductSummaryLine(product));
+                shownCount++;
+            }
+
+            if (shownCount == 0)
+                return "No products available";
+
+            int remainingCount = products.Count - shownCount;
+
+            if (remainingCount > 0)
+            {
+                builder.AppendLine();
+                builder.Append($"+{remainingCount} more...");
+            }
+
+            return builder.ToString();
+        }
+
+        private static string FormatProductSummaryLine(HarvestProductInstance product)
+        {
+            string strainName = string.IsNullOrEmpty(product.strainName) ? "Unknown Product" : product.strainName;
+            string grade = string.IsNullOrEmpty(product.gradeLetter) ? "?" : product.gradeLetter;
+            string shinyPrefix = product.isShiny ? "Shiny " : "";
+
+            return $"{shinyPrefix}{strainName} | {grade} | {product.grams:0.0}g | ${product.TotalValue}";
         }
 
         private static string GetNodeStateText(HexNode node)
