@@ -12,6 +12,7 @@ namespace Vertigro.Logic
         [SerializeField] private TMP_Text moneyText;
         [SerializeField] private TMP_Text seedsText;
         [SerializeField] private TMP_Text seedSummaryText;
+        [SerializeField] private TMP_Text nextSeedText;
         [SerializeField] private TMP_Text productsText;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text plantText;
@@ -68,6 +69,7 @@ namespace Vertigro.Logic
             {
                 seedsText.text = $"Seeds: {seedInventory.GetAllSeeds().Count}";
                 SetText(seedSummaryText, BuildSeedSummary(seedInventory.GetSeedStacks()));
+                SetText(nextSeedText, GetNextSeedText());
             }
             else
             {
@@ -333,6 +335,19 @@ namespace Vertigro.Logic
             Debug.Log($"Sold {totalItems} items for ${totalValue}");
 
             Refresh();
+        }
+
+        private string GetNextSeedText()
+        {
+            if (seedInventory == null)
+                return "Next Seed: -";
+
+            var seeds = seedInventory.GetAllSeeds();
+
+            if (seeds == null || seeds.Count == 0)
+                return "Next Seed: None";
+
+            return $"Next Seed: {seeds[0].DisplayName}";
         }
     }
 }
