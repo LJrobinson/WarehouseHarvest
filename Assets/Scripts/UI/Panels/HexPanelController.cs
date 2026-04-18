@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
@@ -9,6 +11,7 @@ namespace Vertigro.Logic
         [Header("UI References")]
         [SerializeField] private TMP_Text moneyText;
         [SerializeField] private TMP_Text seedsText;
+        [SerializeField] private TMP_Text seedSummaryText;
         [SerializeField] private TMP_Text productsText;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text plantText;
@@ -28,6 +31,7 @@ namespace Vertigro.Logic
         [SerializeField] private ProductInventory productInventory;
         [SerializeField] private GameObject plantPrefab;
         
+        private const int MaxSeedSummaryLines = 4;
 
         private HexNode currentNode;
 
@@ -58,10 +62,18 @@ namespace Vertigro.Logic
                 modeText.text = $"Mode: {selectionController.CurrentPlacementMode}";
 
             if (economyManager != null)
-                moneyText.text = $"${economyManager.Money}";
+                moneyText.text = $"Money: ${economyManager.Money}";
 
             if (seedInventory != null)
+            {
                 seedsText.text = $"Seeds: {seedInventory.GetAllSeeds().Count}";
+                SetText(seedSummaryText, BuildSeedSummary(seedInventory.GetSeedStacks()));
+            }
+            else
+            {
+                SetText(seedsText, "Seeds: 0");
+                SetText(seedSummaryText, "No seeds available");
+            }
 
             if (productInventory != null)
                 productsText.text = $"Products: {productInventory.GetTotalItems()}";
@@ -113,6 +125,43 @@ namespace Vertigro.Logic
         {
             if (harvestButton != null)
                 harvestButton.interactable = interactable;
+        }
+
+        private static string BuildSeedSummary(List<SeedStack> seedStacks)
+        {
+            if (seedStacks == null || seedStacks.Count == 0)
+                return "No seeds available";
+
+            StringBuilder builder = new StringBuilder();
+            int shownCount = 0;
+
+            foreach (SeedStack stack in seedStacks)
+            {
+                if (stack == null)
+                    continue;
+
+                if (shownCount >= MaxSeedSummaryLines)
+                    break;
+
+                if (shownCount > 0)
+                    builder.AppendLine();
+
+                builder.Append(stack.DisplayName);
+                shownCount++;
+            }
+
+            if (shownCount == 0)
+                return "No seeds available";
+
+            int remainingCount = seedStacks.Count - shownCount;
+
+            if (remainingCount > 0)
+            {
+                builder.AppendLine();
+                builder.Append($"+{remainingCount} more...");
+            }
+
+            return builder.ToString();
         }
 
         private static string GetNodeStateText(HexNode node)
