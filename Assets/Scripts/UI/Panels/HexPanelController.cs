@@ -14,7 +14,11 @@ namespace Vertigro.Logic
         [SerializeField] private TMP_Text plantText;
         [SerializeField] private TMP_Text insertText;
         [SerializeField] private TMP_Text stateText;
+        [SerializeField] private TMP_Text modeText;
         [SerializeField] private Button harvestButton;
+        [SerializeField] private Button plantModeButton;
+        [SerializeField] private Button insertModeButton;
+        [SerializeField] private Button sellAllButton;
         
 
         [Header("Gameplay References")]
@@ -49,6 +53,9 @@ namespace Vertigro.Logic
                 SetText(stateText, "ERROR: No Selection Controller");
                 return;
             }
+
+            if (selectionController != null && modeText != null)
+                modeText.text = $"Mode: {selectionController.CurrentPlacementMode}";
 
             if (economyManager != null)
                 moneyText.text = $"${economyManager.Money}";
@@ -86,6 +93,14 @@ namespace Vertigro.Logic
                 SetText(insertText, "None");
 
             SetText(stateText, GetNodeStateText(currentNode));
+            
+            if (sellAllButton != null && productInventory != null)
+            {
+                sellAllButton.interactable = productInventory.GetTotalItems() > 0;
+                sellAllButton.GetComponentInChildren<TMP_Text>().text = $"Sell All (${productInventory.GetEstimatedTotalValue()})";
+            }
+            
+            RefreshModeButtons();
         }
 
         private static bool CanHarvest(HexNode node)
@@ -213,6 +228,60 @@ namespace Vertigro.Logic
 
             if (!seedInventory.RemoveSpecificSeed(seedToPlant))
                 Debug.LogWarning("HexPanelController: Planted seed, but failed to remove it from inventory.");
+
+            Refresh();
+        }
+
+        private void RefreshModeButtons()
+        {
+            if (selectionController == null)
+                return;
+
+            var mode = selectionController.CurrentPlacementMode;
+
+            Color activeColor = Color.green;
+            Color inactiveColor = Color.white;
+
+            if (plantModeButton != null)
+            {
+                var colors = plantModeButton.colors;
+                colors.normalColor = (mode == HexSelectionController.PlacementMode.Plant) ? activeColor : inactiveColor;
+                plantModeButton.colors = colors;
+            }
+
+            if (insertModeButton != null)
+            {
+                var colors = insertModeButton.colors;
+                colors.normalColor = (mode == HexSelectionController.PlacementMode.Insert) ? activeColor : inactiveColor;
+                insertModeButton.colors = colors;
+            }
+        }
+
+        public void SellAllProducts()
+        {
+            if (productInventory == null)
+            {
+                Debug.LogWarning("No ProductInventory assigned.");
+                return;
+            }
+
+            if (economyManager == null)
+            {
+                Debug.LogWarning("No EconomyManager assigned.");
+                return;
+            }
+
+            int totalItems = productInventory.GetTotalItems();
+
+            if (totalItems == 0)
+            {
+                Debug.Log("No products to sell.");
+                return;
+            }
+
+            int totalValue = productInventory.SellAll(economyManager);
+
+            Debug.Log($"Sold {totalItems} items for ${totalValue}");
 
             Refresh();
         }

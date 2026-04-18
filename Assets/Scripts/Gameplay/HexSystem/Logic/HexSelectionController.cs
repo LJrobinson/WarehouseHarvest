@@ -3,6 +3,8 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using Vertigro.Data;
 
+
+
 namespace Vertigro.Logic
 {
     public class HexSelectionController : MonoBehaviour
@@ -13,7 +15,7 @@ namespace Vertigro.Logic
             Insert,
             Plant
         }
-
+        
         [Header("References")]
         [SerializeField] private Camera worldCamera;
 
@@ -36,6 +38,8 @@ namespace Vertigro.Logic
 
         private Renderer _selectedRenderer;
         private Color _selectedOriginalColor;
+
+        public PlacementMode CurrentPlacementMode => placementMode;
 
         private void Update()
         {
