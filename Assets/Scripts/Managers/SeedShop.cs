@@ -82,8 +82,23 @@ public class SeedShop : MonoBehaviour
             SeedInstance seed = SeedGenerator.GenerateMysterySeed(strainDatabase);
             seedInventory.AddSeed(seed);
         }
-        StrainStatsManager.Instance.RecordSeedPurchase("MYSTERY", bagseedSingleCost);
+        StrainStatsManager.Instance.RecordSeedPurchase("MYSTERY", cost);
         Debug.Log($"Bought bagseed pack ({amount}) for ${cost}");
         return true;
+    }
+
+    public void BuyOneBagseedButton()
+    {
+        BuyBagseedSingle();
+    }
+
+    public void BuyFiveBagseedButton()
+    {
+        BuyBagseedPack(5);
+    }
+
+    public void BuyTwentyBagseedButton()
+    {
+        BuyBagseedPack(20);
     }
 }
