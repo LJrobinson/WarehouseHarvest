@@ -29,6 +29,7 @@ namespace Vertigro.Logic
         [FormerlySerializedAs("upgradeRackButton")]
         [SerializeField] private Button upgradeShelfButton;
         [SerializeField] private Button unlockShelf2Button;
+        [SerializeField] private Button unlockShelf6Button;
 
         [Header("Gameplay References")]
         [SerializeField] private DiscoveryManager discoveryManager;
@@ -46,10 +47,12 @@ namespace Vertigro.Logic
 
         [Header("Rack Shelf Unlock")]
         [SerializeField] private int shelf2UnlockCost = 250;
+        [SerializeField] private int shelf6UnlockCost = 250;
         
         private const int MaxSeedSummaryLines = 4;
         private const int MaxProductSummaryLines = 4;
-        private const int UnlockShelfSlotIndex = 2;
+        private const int UnlockShelf2SlotIndex = 2;
+        private const int UnlockShelf6SlotIndex = 6;
 
         private HexNode currentNode;
 
@@ -73,7 +76,7 @@ namespace Vertigro.Logic
             {
                 SetHarvestButtonInteractable(false);
                 SetUpgradeButtonState();
-                SetUnlockShelfButtonState();
+                SetUnlockShelfButtonStates();
                 RefreshRackSlotSummary();
                 SetText(stateText, "ERROR: No Selection Controller");
                 return;
@@ -112,7 +115,7 @@ namespace Vertigro.Logic
             currentNode = selectionController.SelectedNode;
             SetHarvestButtonInteractable(CanHarvest(currentNode));
             SetUpgradeButtonState();
-            SetUnlockShelfButtonState();
+            SetUnlockShelfButtonStates();
             RefreshRackSlotSummary();
 
             if (currentNode == null)
@@ -206,25 +209,31 @@ namespace Vertigro.Logic
             }
         }
 
-        private void SetUnlockShelfButtonState()
+        private void SetUnlockShelfButtonStates()
         {
-            if (unlockShelf2Button == null)
+            SetUnlockShelfButtonState(unlockShelf2Button, UnlockShelf2SlotIndex, shelf2UnlockCost);
+            SetUnlockShelfButtonState(unlockShelf6Button, UnlockShelf6SlotIndex, shelf6UnlockCost);
+        }
+
+        private void SetUnlockShelfButtonState(Button unlockButton, int slotIndex, int unlockCost)
+        {
+            if (unlockButton == null)
                 return;
 
-            ShelfSlotRecord slot = rackController != null ? rackController.GetShelfSlot(UnlockShelfSlotIndex) : null;
+            ShelfSlotRecord slot = rackController != null ? rackController.GetShelfSlot(slotIndex) : null;
             bool isUnlocked = slot != null && slot.isUnlocked;
-            bool canAfford = economyManager != null && economyManager.Money >= shelf2UnlockCost;
-            bool hasValidCost = shelf2UnlockCost >= 0;
+            bool canAfford = economyManager != null && economyManager.Money >= unlockCost;
+            bool hasValidCost = unlockCost >= 0;
 
-            unlockShelf2Button.interactable = rackController != null && slot != null && !isUnlocked && canAfford && hasValidCost;
+            unlockButton.interactable = rackController != null && slot != null && !isUnlocked && canAfford && hasValidCost;
 
-            TMP_Text unlockLabel = unlockShelf2Button.GetComponentInChildren<TMP_Text>();
+            TMP_Text unlockLabel = unlockButton.GetComponentInChildren<TMP_Text>();
             if (unlockLabel != null)
             {
                 if (isUnlocked)
-                    unlockLabel.text = slot.shelf != null ? $"Shelf {UnlockShelfSlotIndex} Active" : $"Shelf {UnlockShelfSlotIndex} Unlocked";
+                    unlockLabel.text = slot.shelf != null ? $"Shelf {slotIndex} Active" : $"Shelf {slotIndex} Unlocked";
                 else
-                    unlockLabel.text = $"Unlock Shelf {UnlockShelfSlotIndex} (${shelf2UnlockCost})";
+                    unlockLabel.text = $"Unlock Shelf {slotIndex} (${unlockCost})";
             }
         }
 
@@ -527,19 +536,29 @@ namespace Vertigro.Logic
 
         public void UnlockShelfSlot2()
         {
+            TryUnlockShelfSlot(UnlockShelf2SlotIndex, shelf2UnlockCost);
+        }
+
+        public void UnlockShelfSlot6()
+        {
+            TryUnlockShelfSlot(UnlockShelf6SlotIndex, shelf6UnlockCost);
+        }
+
+        private void TryUnlockShelfSlot(int slotIndex, int unlockCost)
+        {
             if (rackController == null)
             {
-                Debug.LogWarning("Cannot unlock shelf slot 2: no RackController assigned.");
+                Debug.LogWarning($"Cannot unlock shelf slot {slotIndex}: no RackController assigned.");
                 return;
             }
 
             if (economyManager == null)
             {
-                Debug.LogWarning("Cannot unlock shelf slot 2: no EconomyManager assigned.");
+                Debug.LogWarning($"Cannot unlock shelf slot {slotIndex}: no EconomyManager assigned.");
                 return;
             }
 
-            bool unlocked = rackController.TryUnlockShelfSlot(UnlockShelfSlotIndex, economyManager, shelf2UnlockCost);
+            bool unlocked = rackController.TryUnlockShelfSlot(slotIndex, economyManager, unlockCost);
 
             if (unlocked)
                 Refresh();
