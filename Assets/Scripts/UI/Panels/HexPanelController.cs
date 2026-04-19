@@ -170,7 +170,25 @@ namespace Vertigro.Logic
                 builder.Append($"Shelf {i} - {GetShelfSlotStatus(slot)}");
             }
 
+            AppendRackDebugSummary(builder, rack);
             return builder.ToString();
+        }
+
+        private static void AppendRackDebugSummary(StringBuilder builder, RackController rack)
+        {
+            builder.AppendLine();
+            builder.AppendLine();
+            builder.Append("Rack Totals");
+            builder.AppendLine();
+            builder.Append($"Unlocked Shelves: {rack.GetUnlockedShelfCount()}");
+            builder.AppendLine();
+            builder.Append($"Active Shelves: {rack.GetActiveShelfCount()}");
+            builder.AppendLine();
+            builder.Append($"Total Growable Hexes: {rack.GetTotalGrowableHexCount()}");
+            builder.AppendLine();
+            builder.Append($"Total Planted Hexes: {rack.GetTotalPlantedHexCount()}");
+            builder.AppendLine();
+            builder.Append($"Total Empty Hexes: {rack.GetTotalEmptyHexCount()}");
         }
 
         private static string GetShelfSlotStatus(ShelfSlotRecord slot)
