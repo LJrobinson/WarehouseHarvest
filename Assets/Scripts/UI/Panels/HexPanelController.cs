@@ -16,6 +16,7 @@ namespace Vertigro.Logic
         [SerializeField] private TMP_Text nextSeedText;
         [SerializeField] private TMP_Text productsText;
         [SerializeField] private TMP_Text productSummaryText;
+        [SerializeField] private TMP_Text rackSlotSummaryText;
         [SerializeField] private TMP_Text titleText;
         [SerializeField] private TMP_Text plantText;
         [SerializeField] private TMP_Text insertText;
@@ -37,6 +38,7 @@ namespace Vertigro.Logic
         [SerializeField] private SeedInventory seedInventory;
         [SerializeField] private HexSelectionController selectionController;
         [SerializeField] private TableController tableController;
+        [SerializeField] private RackController rackController;
 
         [Header("Shelf Capacity Upgrade")]
         [FormerlySerializedAs("rackUpgradeCost")]
@@ -67,6 +69,7 @@ namespace Vertigro.Logic
             {
                 SetHarvestButtonInteractable(false);
                 SetUpgradeButtonState();
+                RefreshRackSlotSummary();
                 SetText(stateText, "ERROR: No Selection Controller");
                 return;
             }
@@ -104,6 +107,7 @@ namespace Vertigro.Logic
             currentNode = selectionController.SelectedNode;
             SetHarvestButtonInteractable(CanHarvest(currentNode));
             SetUpgradeButtonState();
+            RefreshRackSlotSummary();
 
             if (currentNode == null)
             {
@@ -134,6 +138,37 @@ namespace Vertigro.Logic
             
             RefreshSellAllButton();
             RefreshModeButtons();
+        }
+
+        private void RefreshRackSlotSummary()
+        {
+            SetText(rackSlotSummaryText, BuildRackSlotSummary(rackController));
+        }
+
+        private static string BuildRackSlotSummary(RackController rack)
+        {
+            if (rack == null)
+                return "Rack Slots\nNo rack assigned";
+
+            StringBuilder builder = new StringBuilder();
+            builder.Append("Rack Slots");
+
+            for (int i = 1; i <= RackController.ShelfSlotCount; i++)
+            {
+                ShelfSlotRecord slot = rack.GetShelfSlot(i);
+                builder.AppendLine();
+                builder.Append($"Shelf {i} - {GetShelfSlotStatus(slot)}");
+            }
+
+            return builder.ToString();
+        }
+
+        private static string GetShelfSlotStatus(ShelfSlotRecord slot)
+        {
+            if (slot == null || !slot.isUnlocked)
+                return "Locked";
+
+            return slot.shelf != null ? "Active" : "Unlocked";
         }
 
         private void RefreshSellAllButton()
