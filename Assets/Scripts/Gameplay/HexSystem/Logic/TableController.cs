@@ -22,8 +22,16 @@ namespace Vertigro.Logic
         [FormerlySerializedAs("maxRackLevel")]
         public int maxShelfLevel = 4;
 
+        [Header("Shelf Utility Demand")]
+        [SerializeField] private float powerDemand = 50f;
+        [SerializeField] private float waterDemand = 25f;
+        [SerializeField] private float dataDemand = 10f;
+
         public string ShelfId => TowerManager.NormalizeShelfId(shelfId);
         public bool IsMaxShelfLevelReached => currentShelfLevel >= maxShelfLevel;
+        public float PowerDemand => Mathf.Max(0f, powerDemand);
+        public float WaterDemand => Mathf.Max(0f, waterDemand);
+        public float DataDemand => Mathf.Max(0f, dataDemand);
 
         private bool wasInitialized;
 

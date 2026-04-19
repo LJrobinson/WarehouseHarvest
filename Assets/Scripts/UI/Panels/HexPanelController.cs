@@ -189,6 +189,12 @@ namespace Vertigro.Logic
             builder.Append($"Total Planted Hexes: {rack.GetTotalPlantedHexCount()}");
             builder.AppendLine();
             builder.Append($"Total Empty Hexes: {rack.GetTotalEmptyHexCount()}");
+            builder.AppendLine();
+            builder.Append($"Power Demand: {rack.GetTotalPowerDemand():0.#}");
+            builder.AppendLine();
+            builder.Append($"Water Demand: {rack.GetTotalWaterDemand():0.#}");
+            builder.AppendLine();
+            builder.Append($"Data Demand: {rack.GetTotalDataDemand():0.#}");
         }
 
         private static string GetShelfSlotStatus(ShelfSlotRecord slot)

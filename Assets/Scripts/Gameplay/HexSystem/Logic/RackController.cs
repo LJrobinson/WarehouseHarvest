@@ -272,6 +272,45 @@ namespace Vertigro.Logic
             return GetTotalGrowableHexCount() - GetTotalPlantedHexCount();
         }
 
+        public float GetTotalPowerDemand()
+        {
+            float total = 0f;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                if (slot.shelf != null)
+                    total += slot.shelf.PowerDemand;
+            }
+
+            return total;
+        }
+
+        public float GetTotalWaterDemand()
+        {
+            float total = 0f;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                if (slot.shelf != null)
+                    total += slot.shelf.WaterDemand;
+            }
+
+            return total;
+        }
+
+        public float GetTotalDataDemand()
+        {
+            float total = 0f;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                if (slot.shelf != null)
+                    total += slot.shelf.DataDemand;
+            }
+
+            return total;
+        }
+
         public static string GetShelfIdForSlot(int slotIndex)
         {
             return $"RackSlot_{slotIndex}";
