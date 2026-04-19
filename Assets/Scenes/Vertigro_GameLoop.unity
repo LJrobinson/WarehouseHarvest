@@ -820,7 +820,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Upgrade Rack
+  m_text: Upgrade Shelf
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1823,7 +1823,7 @@ GameObject:
   - component: {fileID: 733848550}
   - component: {fileID: 733848549}
   m_Layer: 5
-  m_Name: BTN_UpgradeRack
+  m_Name: BTN_UpgradeShelf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1895,7 +1895,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1822028994}
         m_TargetAssemblyTypeName: Vertigro.Logic.HexPanelController, Assembly-CSharp
-        m_MethodName: UpgradeRack
+        m_MethodName: UpgradeShelf
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2297,9 +2297,9 @@ MonoBehaviour:
   generator: {fileID: 360913901}
   towerManager: {fileID: 395237099}
   selectionController: {fileID: 21351910}
-  currentLevel: 1
+  currentShelfLevel: 1
   floorIndex: 0
-  maxRackLevel: 4
+  maxShelfLevel: 4
 --- !u!4 &961571847
 Transform:
   m_ObjectHideFlags: 0
@@ -4732,7 +4732,7 @@ MonoBehaviour:
   plantModeButton: {fileID: 1540082152}
   insertModeButton: {fileID: 1104960058}
   sellAllButton: {fileID: 413250730}
-  upgradeRackButton: {fileID: 733848549}
+  upgradeShelfButton: {fileID: 733848549}
   discoveryManager: {fileID: 1119988807}
   economyManager: {fileID: 1142338232}
   plantPrefab: {fileID: 5533158981873155238, guid: bca119c320eac0b46b774b1731f8bc99, type: 3}
@@ -4740,7 +4740,7 @@ MonoBehaviour:
   seedInventory: {fileID: 1379748192}
   selectionController: {fileID: 21351910}
   tableController: {fileID: 961571846}
-  rackUpgradeCost: 500
+  shelfUpgradeCost: 500
 --- !u!1 &1829791364
 GameObject:
   m_ObjectHideFlags: 0

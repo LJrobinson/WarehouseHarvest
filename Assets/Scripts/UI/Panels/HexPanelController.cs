@@ -3,6 +3,7 @@ using System.Text;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using UnityEngine.Serialization;
 
 namespace Vertigro.Logic
 {
@@ -24,7 +25,8 @@ namespace Vertigro.Logic
         [SerializeField] private Button plantModeButton;
         [SerializeField] private Button insertModeButton;
         [SerializeField] private Button sellAllButton;
-        [SerializeField] private Button upgradeRackButton;
+        [FormerlySerializedAs("upgradeRackButton")]
+        [SerializeField] private Button upgradeShelfButton;
         
 
         [Header("Gameplay References")]
@@ -36,8 +38,9 @@ namespace Vertigro.Logic
         [SerializeField] private HexSelectionController selectionController;
         [SerializeField] private TableController tableController;
 
-        [Header("Rack Upgrade")]
-        [SerializeField] private int rackUpgradeCost = 500;
+        [Header("Shelf Capacity Upgrade")]
+        [FormerlySerializedAs("rackUpgradeCost")]
+        [SerializeField] private int shelfUpgradeCost = 500;
         
         private const int MaxSeedSummaryLines = 4;
         private const int MaxProductSummaryLines = 4;
@@ -147,18 +150,18 @@ namespace Vertigro.Logic
 
         private void SetUpgradeButtonState()
         {
-            if (upgradeRackButton == null)
+            if (upgradeShelfButton == null)
                 return;
 
-            bool isMaxed = tableController != null && tableController.IsMaxRackLevelReached;
-            upgradeRackButton.interactable = !isMaxed;
+            bool isMaxed = tableController != null && tableController.IsMaxShelfLevelReached;
+            upgradeShelfButton.interactable = !isMaxed;
 
-            TMP_Text upgradeLabel = upgradeRackButton.GetComponentInChildren<TMP_Text>();
+            TMP_Text upgradeLabel = upgradeShelfButton.GetComponentInChildren<TMP_Text>();
             if (upgradeLabel != null)
             {
                 upgradeLabel.text = isMaxed
-                    ? "Rack Maxed"
-                    : $"Upgrade Rack (${rackUpgradeCost})";
+                    ? "Shelf Maxed"
+                    : $"Upgrade Shelf (${shelfUpgradeCost})";
             }
         }
 
@@ -445,15 +448,15 @@ namespace Vertigro.Logic
             Refresh();
         }
 
-        public void UpgradeRack()
+        public void UpgradeShelf()
         {
             if (tableController == null)
             {
-                Debug.LogWarning("Cannot upgrade rack: no TableController assigned.");
+                Debug.LogWarning("Cannot upgrade shelf: no TableController assigned.");
                 return;
             }
 
-            bool upgraded = tableController.TryUpgradeRack(economyManager, rackUpgradeCost);
+            bool upgraded = tableController.TryUpgradeShelf(economyManager, shelfUpgradeCost);
 
             if (upgraded)
                 Refresh();
