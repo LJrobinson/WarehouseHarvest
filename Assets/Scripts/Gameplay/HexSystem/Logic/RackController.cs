@@ -35,7 +35,7 @@ namespace Vertigro.Logic
             return shelfSlots[slotIndex - 1];
         }
 
-        public bool TryUnlockShelfSlot(int slotIndex)
+        public bool TryUnlockShelfSlot(int slotIndex, EconomyManager economyManager, int unlockCost)
         {
             ShelfSlotRecord slot = GetShelfSlot(slotIndex);
 
@@ -46,17 +46,32 @@ namespace Vertigro.Logic
             }
 
             if (slot.isUnlocked)
-                return true;
+            {
+                Debug.Log($"Shelf slot {slotIndex} is already unlocked.");
+                return false;
+            }
+
+            if (economyManager == null)
+            {
+                Debug.LogWarning($"Cannot unlock shelf slot {slotIndex}: no EconomyManager assigned.");
+                return false;
+            }
+
+            if (unlockCost < 0)
+            {
+                Debug.LogWarning($"Cannot unlock shelf slot {slotIndex}: unlock cost cannot be negative.");
+                return false;
+            }
+
+            if (!economyManager.SpendMoney(unlockCost))
+            {
+                Debug.Log($"Cannot unlock shelf slot {slotIndex}: not enough money.");
+                return false;
+            }
 
             slot.isUnlocked = true;
-            Debug.Log($"Rack shelf slot {slotIndex} unlocked. No shelf instance assigned.");
+            Debug.Log($"Rack shelf slot {slotIndex} unlocked for ${unlockCost}. No shelf instance assigned.");
             return true;
-        }
-
-        [ContextMenu("Test Unlock Shelf Slot 2")]
-        public void UnlockShelfSlot2ForTest()
-        {
-            TryUnlockShelfSlot(2);
         }
 
         private void EnsureShelfSlots()

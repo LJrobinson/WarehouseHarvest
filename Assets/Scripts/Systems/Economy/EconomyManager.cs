@@ -4,7 +4,7 @@ public class EconomyManager : MonoBehaviour
 {
     public static EconomyManager Instance;
 
-    public int Money { get; private set; } = 1000;
+    public int Money { get; private set; } = 10000;
 
     private void Awake()
     {

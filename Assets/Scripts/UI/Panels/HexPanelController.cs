@@ -28,7 +28,7 @@ namespace Vertigro.Logic
         [SerializeField] private Button sellAllButton;
         [FormerlySerializedAs("upgradeRackButton")]
         [SerializeField] private Button upgradeShelfButton;
-        
+        [SerializeField] private Button unlockShelf2Button;
 
         [Header("Gameplay References")]
         [SerializeField] private DiscoveryManager discoveryManager;
@@ -43,9 +43,13 @@ namespace Vertigro.Logic
         [Header("Shelf Capacity Upgrade")]
         [FormerlySerializedAs("rackUpgradeCost")]
         [SerializeField] private int shelfUpgradeCost = 500;
+
+        [Header("Rack Shelf Unlock")]
+        [SerializeField] private int shelf2UnlockCost = 250;
         
         private const int MaxSeedSummaryLines = 4;
         private const int MaxProductSummaryLines = 4;
+        private const int UnlockShelfSlotIndex = 2;
 
         private HexNode currentNode;
 
@@ -69,6 +73,7 @@ namespace Vertigro.Logic
             {
                 SetHarvestButtonInteractable(false);
                 SetUpgradeButtonState();
+                SetUnlockShelfButtonState();
                 RefreshRackSlotSummary();
                 SetText(stateText, "ERROR: No Selection Controller");
                 return;
@@ -107,6 +112,7 @@ namespace Vertigro.Logic
             currentNode = selectionController.SelectedNode;
             SetHarvestButtonInteractable(CanHarvest(currentNode));
             SetUpgradeButtonState();
+            SetUnlockShelfButtonState();
             RefreshRackSlotSummary();
 
             if (currentNode == null)
@@ -197,6 +203,28 @@ namespace Vertigro.Logic
                 upgradeLabel.text = isMaxed
                     ? "Shelf Maxed"
                     : $"Upgrade Shelf (${shelfUpgradeCost})";
+            }
+        }
+
+        private void SetUnlockShelfButtonState()
+        {
+            if (unlockShelf2Button == null)
+                return;
+
+            ShelfSlotRecord slot = rackController != null ? rackController.GetShelfSlot(UnlockShelfSlotIndex) : null;
+            bool isUnlocked = slot != null && slot.isUnlocked;
+            bool canAfford = economyManager != null && economyManager.Money >= shelf2UnlockCost;
+            bool hasValidCost = shelf2UnlockCost >= 0;
+
+            unlockShelf2Button.interactable = rackController != null && slot != null && !isUnlocked && canAfford && hasValidCost;
+
+            TMP_Text unlockLabel = unlockShelf2Button.GetComponentInChildren<TMP_Text>();
+            if (unlockLabel != null)
+            {
+                if (isUnlocked)
+                    unlockLabel.text = slot.shelf != null ? $"Shelf {UnlockShelfSlotIndex} Active" : $"Shelf {UnlockShelfSlotIndex} Unlocked";
+                else
+                    unlockLabel.text = $"Unlock Shelf {UnlockShelfSlotIndex} (${shelf2UnlockCost})";
             }
         }
 
@@ -494,6 +522,26 @@ namespace Vertigro.Logic
             bool upgraded = tableController.TryUpgradeShelf(economyManager, shelfUpgradeCost);
 
             if (upgraded)
+                Refresh();
+        }
+
+        public void UnlockShelfSlot2()
+        {
+            if (rackController == null)
+            {
+                Debug.LogWarning("Cannot unlock shelf slot 2: no RackController assigned.");
+                return;
+            }
+
+            if (economyManager == null)
+            {
+                Debug.LogWarning("Cannot unlock shelf slot 2: no EconomyManager assigned.");
+                return;
+            }
+
+            bool unlocked = rackController.TryUnlockShelfSlot(UnlockShelfSlotIndex, economyManager, shelf2UnlockCost);
+
+            if (unlocked)
                 Refresh();
         }
 
