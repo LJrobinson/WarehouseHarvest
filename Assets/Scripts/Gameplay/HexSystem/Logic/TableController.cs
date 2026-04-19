@@ -13,6 +13,7 @@ namespace Vertigro.Logic
 
         [Header("Shelf Identity")]
         [SerializeField] private string shelfId = TowerManager.DefaultShelfId;
+        [SerializeField] private bool autoBuildOnStart = true;
         
         [Header("Shelf Settings")]
         [FormerlySerializedAs("currentLevel")]
@@ -24,20 +25,65 @@ namespace Vertigro.Logic
         public string ShelfId => TowerManager.NormalizeShelfId(shelfId);
         public bool IsMaxShelfLevelReached => currentShelfLevel >= maxShelfLevel;
 
+        private bool wasInitialized;
+
         void Start()
         {
+            ApplySharedReferencesToGenerator();
+
+            if (!autoBuildOnStart || wasInitialized)
+                return;
+
             BuildTable();
+        }
+
+        public void InitializeShelf(
+            string newShelfId,
+            TableGenerator shelfGenerator,
+            TowerManager sharedTowerManager,
+            HexSelectionController sharedSelectionController,
+            bool buildAfterInitialize = true)
+        {
+            shelfId = TowerManager.NormalizeShelfId(newShelfId);
+
+            if (shelfGenerator != null)
+                generator = shelfGenerator;
+
+            if (sharedTowerManager != null)
+                towerManager = sharedTowerManager;
+
+            if (sharedSelectionController != null)
+                selectionController = sharedSelectionController;
+
+            ApplySharedReferencesToGenerator();
+            wasInitialized = true;
+
+            if (buildAfterInitialize)
+                BuildTable();
+        }
+
+        public void InitializeShelf(string newShelfId, bool buildAfterInitialize = true)
+        {
+            InitializeShelf(newShelfId, generator, towerManager, selectionController, buildAfterInitialize);
         }
 
         public void BuildTable()
         {
+            string activeShelfId = ShelfId;
+
+            ApplySharedReferencesToGenerator();
+
+            if (generator == null)
+            {
+                Debug.LogWarning($"Cannot build shelf {activeShelfId}: no TableGenerator assigned.");
+                return;
+            }
+
             int rows = Mathf.Max(1, (int)Mathf.Pow(2, currentShelfLevel - 1));
             int cols = 6;
 
             if (currentShelfLevel >= 4)
                 cols = 12;
-
-            string activeShelfId = ShelfId;
 
             Debug.Log($"Building Shelf {activeShelfId} Capacity Level {currentShelfLevel}: {rows}x{cols}");
 
@@ -48,6 +94,12 @@ namespace Vertigro.Logic
                 towerManager.ClearShelfGrid(activeShelfId);
 
             generator.GenerateTable(rows, cols, floorIndex, activeShelfId, this);
+        }
+
+        private void ApplySharedReferencesToGenerator()
+        {
+            if (generator != null && towerManager != null)
+                generator.towerManager = towerManager;
         }
 
         public bool IsShelfEmpty()

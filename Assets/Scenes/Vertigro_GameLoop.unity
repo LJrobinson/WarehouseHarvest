@@ -2298,6 +2298,7 @@ MonoBehaviour:
   towerManager: {fileID: 395237099}
   selectionController: {fileID: 21351910}
   shelfId: RackSlot_1
+  autoBuildOnStart: 1
   currentShelfLevel: 1
   floorIndex: 0
   maxShelfLevel: 4
