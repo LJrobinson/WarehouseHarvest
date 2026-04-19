@@ -35,6 +35,30 @@ namespace Vertigro.Logic
             return shelfSlots[slotIndex - 1];
         }
 
+        public bool TryUnlockShelfSlot(int slotIndex)
+        {
+            ShelfSlotRecord slot = GetShelfSlot(slotIndex);
+
+            if (slot == null)
+            {
+                Debug.LogWarning($"Cannot unlock shelf slot {slotIndex}: index is outside 1-{ShelfSlotCount}.");
+                return false;
+            }
+
+            if (slot.isUnlocked)
+                return true;
+
+            slot.isUnlocked = true;
+            Debug.Log($"Rack shelf slot {slotIndex} unlocked. No shelf instance assigned.");
+            return true;
+        }
+
+        [ContextMenu("Test Unlock Shelf Slot 2")]
+        public void UnlockShelfSlot2ForTest()
+        {
+            TryUnlockShelfSlot(2);
+        }
+
         private void EnsureShelfSlots()
         {
             if (shelfSlots == null)
