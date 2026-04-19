@@ -24,15 +24,17 @@ namespace Vertigro.Logic
         [SerializeField] private Button plantModeButton;
         [SerializeField] private Button insertModeButton;
         [SerializeField] private Button sellAllButton;
+        [SerializeField] private Button upgradeRackButton;
         
 
         [Header("Gameplay References")]
+        [SerializeField] private DiscoveryManager discoveryManager;
         [SerializeField] private EconomyManager economyManager;
+        [SerializeField] private GameObject plantPrefab;
+        [SerializeField] private ProductInventory productInventory;        
         [SerializeField] private SeedInventory seedInventory;
         [SerializeField] private HexSelectionController selectionController;
-        [SerializeField] private ProductInventory productInventory;
         [SerializeField] private TableController tableController;
-        [SerializeField] private GameObject plantPrefab;
 
         [Header("Rack Upgrade")]
         [SerializeField] private int rackUpgradeCost = 500;
@@ -61,11 +63,12 @@ namespace Vertigro.Logic
             if (selectionController == null)
             {
                 SetHarvestButtonInteractable(false);
+                SetUpgradeButtonState();
                 SetText(stateText, "ERROR: No Selection Controller");
                 return;
             }
 
-            if (selectionController != null && modeText != null)
+            if (modeText != null)
                 modeText.text = $"Mode: {selectionController.CurrentPlacementMode}";
 
             if (economyManager != null)
@@ -81,6 +84,7 @@ namespace Vertigro.Logic
             {
                 SetText(seedsText, "Seeds: 0");
                 SetText(seedSummaryText, "No seeds available");
+                SetText(nextSeedText, "Next Seed: -");
             }
 
             if (productInventory != null)
@@ -96,6 +100,7 @@ namespace Vertigro.Logic
 
             currentNode = selectionController.SelectedNode;
             SetHarvestButtonInteractable(CanHarvest(currentNode));
+            SetUpgradeButtonState();
 
             if (currentNode == null)
             {
@@ -103,6 +108,8 @@ namespace Vertigro.Logic
                 SetText(plantText, "-");
                 SetText(insertText, "-");
                 SetText(stateText, "NONE");
+                RefreshModeButtons();
+                RefreshSellAllButton();
                 return;
             }
 
@@ -122,13 +129,37 @@ namespace Vertigro.Logic
 
             SetText(stateText, GetNodeStateText(currentNode));
             
+            RefreshSellAllButton();
+            RefreshModeButtons();
+        }
+
+        private void RefreshSellAllButton()
+        {
             if (sellAllButton != null && productInventory != null)
             {
                 sellAllButton.interactable = productInventory.GetTotalItems() > 0;
-                sellAllButton.GetComponentInChildren<TMP_Text>().text = $"Sell All (${productInventory.GetEstimatedTotalValue()})";
+
+                TMP_Text sellAllLabel = sellAllButton.GetComponentInChildren<TMP_Text>();
+                if (sellAllLabel != null)
+                    sellAllLabel.text = $"Sell All (${productInventory.GetEstimatedTotalValue()})";
             }
-            
-            RefreshModeButtons();
+        }
+
+        private void SetUpgradeButtonState()
+        {
+            if (upgradeRackButton == null)
+                return;
+
+            bool isMaxed = tableController != null && tableController.IsMaxRackLevelReached;
+            upgradeRackButton.interactable = !isMaxed;
+
+            TMP_Text upgradeLabel = upgradeRackButton.GetComponentInChildren<TMP_Text>();
+            if (upgradeLabel != null)
+            {
+                upgradeLabel.text = isMaxed
+                    ? "Rack Maxed"
+                    : $"Upgrade Rack (${rackUpgradeCost})";
+            }
         }
 
         private static bool CanHarvest(HexNode node)
@@ -248,7 +279,6 @@ namespace Vertigro.Logic
                 text.text = value;
         }
 
-        // Hook this to a button
         public void HarvestSelectedPlant()
         {
             if (selectionController == null)
@@ -287,6 +317,7 @@ namespace Vertigro.Logic
                 return;
             }
 
+            PlantStrainData harvestedStrain = plant.strainData;
             HarvestProductInstance product = HarvestProcessor.CreateHarvestProduct(plant);
 
             if (product == null)
@@ -296,6 +327,7 @@ namespace Vertigro.Logic
                 return;
             }
 
+            DiscoverHarvestedStrain(harvestedStrain);
             productInventory.AddProduct(product);
             currentNode.RemovePlant();
 
@@ -303,7 +335,23 @@ namespace Vertigro.Logic
             Refresh();
         }
 
-        // Hook this to a button
+        private void DiscoverHarvestedStrain(PlantStrainData strain)
+        {
+            if (strain == null)
+                return;
+
+            if (discoveryManager == null)
+                discoveryManager = DiscoveryManager.Instance;
+
+            if (discoveryManager == null)
+            {
+                Debug.LogWarning("HexPanelController: No DiscoveryManager assigned.");
+                return;
+            }
+
+            discoveryManager.DiscoverStrain(strain);
+        }
+
         public void PlantFirstSeedInInventory()
         {
             if (currentNode == null)

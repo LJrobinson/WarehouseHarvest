@@ -13,6 +13,9 @@ namespace Vertigro.Logic
         [Header("Table Settings")]
         public int currentLevel = 1;
         public int floorIndex = 0;
+        public int maxRackLevel = 4;
+
+        public bool IsMaxRackLevelReached => currentLevel >= maxRackLevel;
 
         void Start()
         {
@@ -68,6 +71,12 @@ namespace Vertigro.Logic
             if (towerManager == null)
             {
                 Debug.LogWarning("Cannot upgrade rack: no TowerManager assigned.");
+                return false;
+            }
+
+            if (IsMaxRackLevelReached)
+            {
+                Debug.Log("Cannot upgrade rack: rack is already at max level.");
                 return false;
             }
 
