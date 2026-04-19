@@ -3,9 +3,17 @@ using UnityEngine;
 
 namespace Vertigro.Logic
 {
+    public enum UtilityStatus
+    {
+        Healthy,
+        Strained,
+        Deficit
+    }
+
     public class RackController : MonoBehaviour
     {
         public const int ShelfSlotCount = 6;
+        private const float StrainedDemandCapacityRatio = 0.9f;
 
         [Header("Utility Capacity Source")]
         [SerializeField] private global::Warehouse utilityCapacitySource;
@@ -360,6 +368,21 @@ namespace Vertigro.Logic
             return GetDataSurplus() < 0f;
         }
 
+        public UtilityStatus GetPowerStatus()
+        {
+            return GetUtilityStatus(GetTotalPowerDemand(), GetTotalPowerCapacity(), GetPowerSurplus());
+        }
+
+        public UtilityStatus GetWaterStatus()
+        {
+            return GetUtilityStatus(GetTotalWaterDemand(), GetTotalWaterCapacity(), GetWaterSurplus());
+        }
+
+        public UtilityStatus GetDataStatus()
+        {
+            return GetUtilityStatus(GetTotalDataDemand(), GetTotalDataCapacity(), GetDataSurplus());
+        }
+
         public static string GetShelfIdForSlot(int slotIndex)
         {
             return $"RackSlot_{slotIndex}";
@@ -412,6 +435,20 @@ namespace Vertigro.Logic
             return shelf.generator != null
                 ? shelf.generator
                 : shelf.GetComponentInChildren<TableGenerator>(true);
+        }
+
+        private static UtilityStatus GetUtilityStatus(float demand, float capacity, float surplus)
+        {
+            if (surplus < 0f)
+                return UtilityStatus.Deficit;
+
+            if (capacity <= 0f)
+                return UtilityStatus.Healthy;
+
+            float demandCapacityRatio = demand / capacity;
+            return demandCapacityRatio >= StrainedDemandCapacityRatio
+                ? UtilityStatus.Strained
+                : UtilityStatus.Healthy;
         }
 
         private static void CleanupFailedShelfActivation(TableController shelfInstance, TowerManager towerManager, string shelfId)

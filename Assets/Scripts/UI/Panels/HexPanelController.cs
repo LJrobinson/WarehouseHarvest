@@ -190,18 +190,17 @@ namespace Vertigro.Logic
             builder.AppendLine();
             builder.Append($"Total Empty Hexes: {rack.GetTotalEmptyHexCount()}");
             builder.AppendLine();
-            builder.Append($"Power: {FormatUtilityComparison(rack.GetTotalPowerDemand(), rack.GetTotalPowerCapacity(), rack.GetPowerSurplus(), rack.HasPowerDeficit())}");
+            builder.Append($"Power: {FormatUtilityComparison(rack.GetTotalPowerDemand(), rack.GetTotalPowerCapacity(), rack.GetPowerSurplus(), rack.GetPowerStatus())}");
             builder.AppendLine();
-            builder.Append($"Water: {FormatUtilityComparison(rack.GetTotalWaterDemand(), rack.GetTotalWaterCapacity(), rack.GetWaterSurplus(), rack.HasWaterDeficit())}");
+            builder.Append($"Water: {FormatUtilityComparison(rack.GetTotalWaterDemand(), rack.GetTotalWaterCapacity(), rack.GetWaterSurplus(), rack.GetWaterStatus())}");
             builder.AppendLine();
-            builder.Append($"Data: {FormatUtilityComparison(rack.GetTotalDataDemand(), rack.GetTotalDataCapacity(), rack.GetDataSurplus(), rack.HasDataDeficit())}");
+            builder.Append($"Data: {FormatUtilityComparison(rack.GetTotalDataDemand(), rack.GetTotalDataCapacity(), rack.GetDataSurplus(), rack.GetDataStatus())}");
         }
 
-        private static string FormatUtilityComparison(float demand, float capacity, float surplus, bool hasDeficit)
+        private static string FormatUtilityComparison(float demand, float capacity, float surplus, UtilityStatus status)
         {
             string sign = surplus > 0f ? "+" : "";
-            string state = hasDeficit ? " deficit" : "";
-            return $"{demand:0.#}/{capacity:0.#} ({sign}{surplus:0.#}{state})";
+            return $"{demand:0.#}/{capacity:0.#} ({sign}{surplus:0.#}, {status})";
         }
 
         private static string GetShelfSlotStatus(ShelfSlotRecord slot)
