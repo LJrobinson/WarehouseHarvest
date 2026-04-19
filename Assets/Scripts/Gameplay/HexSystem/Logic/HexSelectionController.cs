@@ -105,7 +105,7 @@ namespace Vertigro.Logic
 
         private static void LogSelection(HexNode node)
         {
-            Debug.Log($"Selected HexNode | id:{node.name} | coords:{node.hexCoords} | floor:{node.floorLevel}");
+            Debug.Log($"Selected HexNode | id:{node.name} | shelf:{node.ShelfId} | coords:{node.hexCoords} | floor:{node.floorLevel}");
         }
 
         private void HandleMouseSelection()

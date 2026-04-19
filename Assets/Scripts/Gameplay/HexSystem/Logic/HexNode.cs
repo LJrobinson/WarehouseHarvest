@@ -9,6 +9,10 @@ namespace Vertigro.Logic
         public Vector3Int hexCoords;
         public int floorLevel;
 
+        [Header("Shelf Identity")]
+        [SerializeField] private string shelfId = TowerManager.DefaultShelfId;
+        [SerializeField] private TableController owningShelf;
+
         [Header("Current Occupant")]
         [HideInInspector]
         public PlantInstance currentPlant;
@@ -19,11 +23,19 @@ namespace Vertigro.Logic
 
         public bool isOccupied => currentPlant != null || currentInsert != null;
         public bool IsEmpty => currentPlant == null && currentInsert == null;
+        public string ShelfId => TowerManager.NormalizeShelfId(shelfId);
+        public TableController OwningShelf => owningShelf;
 
         public List<HexNode> neighbors = new List<HexNode>();
 
         [Header("Seed System")]
         public SeedInstance plantedSeed;
+
+        public void SetShelfIdentity(string newShelfId, TableController shelfOwner)
+        {
+            shelfId = TowerManager.NormalizeShelfId(newShelfId);
+            owningShelf = shelfOwner;
+        }
 
         public bool TryPlaceInsert(InsertData insert)
         {

@@ -10,6 +10,9 @@ namespace Vertigro.Logic
         public TableGenerator generator;
         public TowerManager towerManager;
         public HexSelectionController selectionController;
+
+        [Header("Shelf Identity")]
+        [SerializeField] private string shelfId = TowerManager.DefaultShelfId;
         
         [Header("Shelf Settings")]
         [FormerlySerializedAs("currentLevel")]
@@ -18,6 +21,7 @@ namespace Vertigro.Logic
         [FormerlySerializedAs("maxRackLevel")]
         public int maxShelfLevel = 4;
 
+        public string ShelfId => TowerManager.NormalizeShelfId(shelfId);
         public bool IsMaxShelfLevelReached => currentShelfLevel >= maxShelfLevel;
 
         void Start()
@@ -33,15 +37,17 @@ namespace Vertigro.Logic
             if (currentShelfLevel >= 4)
                 cols = 12;
 
-            Debug.Log($"Building Shelf Capacity Level {currentShelfLevel}: {rows}x{cols}");
+            string activeShelfId = ShelfId;
+
+            Debug.Log($"Building Shelf {activeShelfId} Capacity Level {currentShelfLevel}: {rows}x{cols}");
 
             if (selectionController != null)
                 selectionController.ClearSelectionForRegeneration();
 
             if (towerManager != null)
-                towerManager.ClearGrid();
+                towerManager.ClearShelfGrid(activeShelfId);
 
-            generator.GenerateTable(rows, cols, floorIndex);
+            generator.GenerateTable(rows, cols, floorIndex, activeShelfId, this);
         }
 
         public bool IsShelfEmpty()
@@ -52,10 +58,8 @@ namespace Vertigro.Logic
                 return false;
             }
 
-            foreach (var entry in towerManager.Grid)
+            foreach (HexNode node in towerManager.GetShelfNodes(ShelfId))
             {
-                HexNode node = entry.Value;
-
                 if (node != null && !node.IsEmpty)
                     return false;
             }

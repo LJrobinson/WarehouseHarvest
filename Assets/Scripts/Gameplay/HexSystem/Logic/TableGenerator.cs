@@ -18,10 +18,17 @@ namespace Vertigro.Logic
         private float _hueSelection = 0f;
 
         private List<HexNode> _tableNodes = new List<HexNode>();
+        public IReadOnlyList<HexNode> TableNodes => _tableNodes;
 
         public void GenerateTable(int rows, int cols, int floor)
         {
+            GenerateTable(rows, cols, floor, TowerManager.DefaultShelfId, null);
+        }
+
+        public void GenerateTable(int rows, int cols, int floor, string shelfId, TableController owningShelf)
+        {
             _hueSelection = Random.value;
+            string normalizedShelfId = TowerManager.NormalizeShelfId(shelfId);
 
             // Clear old grid
             foreach (Transform child in transform)
@@ -52,7 +59,7 @@ namespace Vertigro.Logic
                         this.transform
                     );
 
-                    go.name = $"Hex_F{floor}_R{r}_C{q}";
+                    go.name = $"{normalizedShelfId}_Hex_F{floor}_R{r}_C{q}";
 
                     // Color distribution
                     MeshRenderer renderer = go.GetComponentInChildren<MeshRenderer>();
@@ -68,11 +75,12 @@ namespace Vertigro.Logic
                     {
                         node.hexCoords = new Vector3Int(q, r, -q - r);
                         node.floorLevel = floor;
+                        node.SetShelfIdentity(normalizedShelfId, owningShelf);
                         _tableNodes.Add(node);
                     }
 
                     if (towerManager != null)
-                        towerManager.RegisterNode(q, r, floor, node);
+                        towerManager.RegisterNode(normalizedShelfId, q, r, floor, node);
                 }
             }
         }
