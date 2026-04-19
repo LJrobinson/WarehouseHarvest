@@ -1096,7 +1096,7 @@ GameObject:
   - component: {fileID: 360913900}
   - component: {fileID: 360913901}
   m_Layer: 0
-  m_Name: MGR_Grid
+  m_Name: GEN_RackSlot_1_Grid
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1115,7 +1115,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 961571847}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &360913901
 MonoBehaviour:
@@ -2276,7 +2276,7 @@ GameObject:
   - component: {fileID: 961571847}
   - component: {fileID: 961571846}
   m_Layer: 0
-  m_Name: MGR_Table
+  m_Name: Shelf_RackSlot_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2314,7 +2314,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 360913900}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1104960056
@@ -6609,7 +6610,6 @@ SceneRoots:
   m_Roots:
   - {fileID: 1119988808}
   - {fileID: 1142338233}
-  - {fileID: 360913900}
   - {fileID: 21351911}
   - {fileID: 954499500}
   - {fileID: 590349420}
