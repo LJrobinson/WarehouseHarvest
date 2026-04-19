@@ -197,16 +197,31 @@ namespace Vertigro.Logic
             if (upgradeShelfButton == null)
                 return;
 
-            bool isMaxed = tableController != null && tableController.IsMaxShelfLevelReached;
-            upgradeShelfButton.interactable = !isMaxed;
+            TableController targetShelf = ResolveTargetShelf();
+            bool hasTargetShelf = targetShelf != null;
+            bool isMaxed = hasTargetShelf && targetShelf.IsMaxShelfLevelReached;
+            upgradeShelfButton.interactable = hasTargetShelf && !isMaxed;
 
             TMP_Text upgradeLabel = upgradeShelfButton.GetComponentInChildren<TMP_Text>();
             if (upgradeLabel != null)
             {
-                upgradeLabel.text = isMaxed
-                    ? "Shelf Maxed"
-                    : $"Upgrade Shelf (${shelfUpgradeCost})";
+                if (!hasTargetShelf)
+                    upgradeLabel.text = "No Shelf";
+                else
+                    upgradeLabel.text = isMaxed
+                        ? "Shelf Maxed"
+                        : $"Upgrade Shelf (${shelfUpgradeCost})";
             }
+        }
+
+        private TableController ResolveTargetShelf()
+        {
+            HexNode selectedNode = selectionController != null ? selectionController.SelectedNode : null;
+
+            if (selectedNode != null && selectedNode.OwningShelf != null)
+                return selectedNode.OwningShelf;
+
+            return tableController;
         }
 
         private void SetUnlockShelfButtonStates()
@@ -522,13 +537,15 @@ namespace Vertigro.Logic
 
         public void UpgradeShelf()
         {
-            if (tableController == null)
+            TableController targetShelf = ResolveTargetShelf();
+
+            if (targetShelf == null)
             {
-                Debug.LogWarning("Cannot upgrade shelf: no TableController assigned.");
+                Debug.LogWarning("Cannot upgrade shelf: no target TableController resolved.");
                 return;
             }
 
-            bool upgraded = tableController.TryUpgradeShelf(economyManager, shelfUpgradeCost);
+            bool upgraded = targetShelf.TryUpgradeShelf(economyManager, shelfUpgradeCost);
 
             if (upgraded)
                 Refresh();
