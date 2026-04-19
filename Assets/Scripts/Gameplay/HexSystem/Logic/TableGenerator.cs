@@ -50,15 +50,16 @@ namespace Vertigro.Logic
                     float zPos = r * ySpacing;
                     float yPos = 0f;
 
-                    Vector3 spawnPos = new Vector3(xPos, yPos, zPos);
+                    Vector3 localPos = new Vector3(xPos, yPos, zPos);
 
                     GameObject go = Instantiate(
                         hexPrefab,
-                        spawnPos,
-                        hexPrefab.transform.rotation,
-                        this.transform
+                        transform,
+                        false
                     );
 
+                    go.transform.localPosition = localPos;
+                    go.transform.localRotation = hexPrefab.transform.localRotation;
                     go.name = $"{normalizedShelfId}_Hex_F{floor}_R{r}_C{q}";
 
                     // Color distribution
