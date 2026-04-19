@@ -40,6 +40,7 @@ namespace Vertigro.Logic
         [SerializeField] private HexSelectionController selectionController;
         [SerializeField] private TableController tableController;
         [SerializeField] private RackController rackController;
+        [SerializeField] private TableController shelfUnitPrefab;
 
         [Header("Shelf Capacity Upgrade")]
         [FormerlySerializedAs("rackUpgradeCost")]
@@ -227,7 +228,7 @@ namespace Vertigro.Logic
         private void SetUnlockShelfButtonStates()
         {
             SetUnlockShelfButtonState(unlockShelf2Button, UnlockShelf2SlotIndex, shelf2UnlockCost);
-            SetUnlockShelfButtonState(unlockShelf6Button, UnlockShelf6SlotIndex, shelf6UnlockCost);
+            SetShelf6ButtonState();
         }
 
         private void SetUnlockShelfButtonState(Button unlockButton, int slotIndex, int unlockCost)
@@ -250,6 +251,45 @@ namespace Vertigro.Logic
                 else
                     unlockLabel.text = $"Unlock Shelf {slotIndex} (${unlockCost})";
             }
+        }
+
+        private void SetShelf6ButtonState()
+        {
+            if (unlockShelf6Button == null)
+                return;
+
+            ShelfSlotRecord slot = rackController != null ? rackController.GetShelfSlot(UnlockShelf6SlotIndex) : null;
+            bool canAfford = economyManager != null && economyManager.Money >= shelf6UnlockCost;
+            bool hasValidCost = shelf6UnlockCost >= 0;
+            bool canUnlock = rackController != null && slot != null && !slot.isUnlocked && canAfford && hasValidCost;
+            bool canActivate = CanActivateShelfSlot(slot);
+
+            unlockShelf6Button.interactable = canUnlock || canActivate;
+
+            TMP_Text unlockLabel = unlockShelf6Button.GetComponentInChildren<TMP_Text>();
+            if (unlockLabel == null)
+                return;
+
+            if (slot == null)
+                unlockLabel.text = "Shelf 6 Unavailable";
+            else if (!slot.isUnlocked)
+                unlockLabel.text = $"Unlock Shelf 6 (${shelf6UnlockCost})";
+            else if (slot.shelf != null)
+                unlockLabel.text = "Shelf 6 Active";
+            else
+                unlockLabel.text = "Activate Shelf 6";
+        }
+
+        private bool CanActivateShelfSlot(ShelfSlotRecord slot)
+        {
+            return rackController != null
+                   && slot != null
+                   && slot.isUnlocked
+                   && slot.shelf == null
+                   && slot.anchor != null
+                   && shelfUnitPrefab != null
+                   && ResolveSharedTowerManager() != null
+                   && selectionController != null;
         }
 
         private static bool CanHarvest(HexNode node)
@@ -558,7 +598,26 @@ namespace Vertigro.Logic
 
         public void UnlockShelfSlot6()
         {
-            TryUnlockShelfSlot(UnlockShelf6SlotIndex, shelf6UnlockCost);
+            HandleShelfSlot6Action();
+        }
+
+        public void HandleShelfSlot6Action()
+        {
+            ShelfSlotRecord slot = rackController != null ? rackController.GetShelfSlot(UnlockShelf6SlotIndex) : null;
+
+            if (slot == null || !slot.isUnlocked)
+            {
+                TryUnlockShelfSlot(UnlockShelf6SlotIndex, shelf6UnlockCost);
+                return;
+            }
+
+            if (slot.shelf != null)
+            {
+                Refresh();
+                return;
+            }
+
+            TryActivateShelfSlot6();
         }
 
         private void TryUnlockShelfSlot(int slotIndex, int unlockCost)
@@ -579,6 +638,36 @@ namespace Vertigro.Logic
 
             if (unlocked)
                 Refresh();
+        }
+
+        private void TryActivateShelfSlot6()
+        {
+            if (rackController == null)
+            {
+                Debug.LogWarning("Cannot activate shelf slot 6: no RackController assigned.");
+                return;
+            }
+
+            TowerManager sharedTowerManager = ResolveSharedTowerManager();
+
+            bool activated = rackController.TryActivateShelfSlot(
+                UnlockShelf6SlotIndex,
+                shelfUnitPrefab,
+                sharedTowerManager,
+                selectionController,
+                out _);
+
+            if (activated)
+                Refresh();
+        }
+
+        private TowerManager ResolveSharedTowerManager()
+        {
+            if (tableController != null && tableController.towerManager != null)
+                return tableController.towerManager;
+
+            TableController targetShelf = ResolveTargetShelf();
+            return targetShelf != null ? targetShelf.towerManager : null;
         }
 
         private string GetNextSeedText()

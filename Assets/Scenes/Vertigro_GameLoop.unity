@@ -4050,9 +4050,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 360913901}
-        m_TargetAssemblyTypeName: Vertigro.Logic.TableGenerator, Assembly-CSharp
-        m_MethodName: TableTick
+      - m_Target: {fileID: 2057750002}
+        m_TargetAssemblyTypeName: Vertigro.Logic.RackController, Assembly-CSharp
+        m_MethodName: TickActiveShelves
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4750,6 +4750,7 @@ MonoBehaviour:
   selectionController: {fileID: 21351910}
   tableController: {fileID: 961571846}
   rackController: {fileID: 2057750002}
+  shelfUnitPrefab: {fileID: 1000000000000000002, guid: 8b6e3b67264d4c2a8a5fb0d5f9864e53, type: 3}
   shelfUpgradeCost: 500
   shelf2UnlockCost: 250
   shelf6UnlockCost: 250
@@ -6451,7 +6452,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1822028994}
         m_TargetAssemblyTypeName: Vertigro.Logic.HexPanelController, Assembly-CSharp
-        m_MethodName: UnlockShelfSlot6
+        m_MethodName: HandleShelfSlot6Action
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

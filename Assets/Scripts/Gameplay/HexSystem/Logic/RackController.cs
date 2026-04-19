@@ -74,6 +74,147 @@ namespace Vertigro.Logic
             return true;
         }
 
+        public bool TryActivateShelfSlot(
+            int slotIndex,
+            TableController shelfPrefab,
+            TowerManager sharedTowerManager,
+            HexSelectionController sharedSelectionController,
+            out TableController activatedShelf)
+        {
+            activatedShelf = null;
+            ShelfSlotRecord slot = GetShelfSlot(slotIndex);
+            string shelfId = GetShelfIdForSlot(slotIndex);
+
+            if (slot == null)
+            {
+                Debug.LogWarning($"Cannot activate shelf slot {slotIndex}: index is outside 1-{ShelfSlotCount}.");
+                return false;
+            }
+
+            if (!slot.isUnlocked)
+            {
+                Debug.Log($"Cannot activate shelf slot {slotIndex}: slot is locked.");
+                return false;
+            }
+
+            if (slot.shelf != null)
+            {
+                Debug.Log($"Cannot activate shelf slot {slotIndex}: slot already has an active shelf.");
+                return false;
+            }
+
+            if (slot.anchor == null)
+            {
+                Debug.LogWarning($"Cannot activate shelf slot {slotIndex}: no shelf anchor assigned.");
+                return false;
+            }
+
+            if (shelfPrefab == null)
+            {
+                Debug.LogWarning($"Cannot activate shelf slot {slotIndex}: no ShelfUnit prefab assigned.");
+                return false;
+            }
+
+            if (sharedTowerManager == null)
+            {
+                Debug.LogWarning($"Cannot activate shelf slot {slotIndex}: no TowerManager assigned.");
+                return false;
+            }
+
+            if (sharedSelectionController == null)
+            {
+                Debug.LogWarning($"Cannot activate shelf slot {slotIndex}: no HexSelectionController assigned.");
+                return false;
+            }
+
+            TableController shelfInstance = Instantiate(shelfPrefab, slot.anchor);
+            shelfInstance.name = $"Shelf_RackSlot_{slotIndex}";
+            shelfInstance.transform.localPosition = Vector3.zero;
+            shelfInstance.transform.localRotation = Quaternion.identity;
+            shelfInstance.transform.localScale = Vector3.one;
+
+            TableGenerator generator = shelfInstance.generator != null
+                ? shelfInstance.generator
+                : shelfInstance.GetComponentInChildren<TableGenerator>(true);
+
+            if (generator == null)
+            {
+                Debug.LogWarning($"Cannot activate shelf slot {slotIndex}: ShelfUnit has no TableGenerator.");
+                CleanupFailedShelfActivation(shelfInstance, sharedTowerManager, shelfId);
+                return false;
+            }
+
+            if (generator.hexPrefab == null)
+            {
+                Debug.LogWarning($"Cannot activate shelf slot {slotIndex}: ShelfUnit generator has no hex prefab.");
+                CleanupFailedShelfActivation(shelfInstance, sharedTowerManager, shelfId);
+                return false;
+            }
+
+            try
+            {
+                shelfInstance.InitializeShelf(shelfId, generator, sharedTowerManager, sharedSelectionController, true);
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogError($"Failed to activate shelf slot {slotIndex}: {exception.Message}");
+                CleanupFailedShelfActivation(shelfInstance, sharedTowerManager, shelfId);
+                return false;
+            }
+
+            if (generator.TableNodes.Count == 0)
+            {
+                Debug.LogWarning($"Cannot activate shelf slot {slotIndex}: ShelfUnit built no hex nodes.");
+                CleanupFailedShelfActivation(shelfInstance, sharedTowerManager, shelfId);
+                return false;
+            }
+
+            slot.shelf = shelfInstance;
+            activatedShelf = shelfInstance;
+
+            Debug.Log($"Rack shelf slot {slotIndex} activated as {shelfId}.");
+            return true;
+        }
+
+        public void TickActiveShelves()
+        {
+            EnsureShelfSlots();
+
+            HashSet<TableController> tickedShelves = new HashSet<TableController>();
+            int tickedCount = 0;
+
+            foreach (ShelfSlotRecord slot in shelfSlots)
+            {
+                if (slot == null || !slot.isUnlocked || slot.shelf == null)
+                    continue;
+
+                TableController shelf = slot.shelf;
+
+                if (!tickedShelves.Add(shelf))
+                    continue;
+
+                TableGenerator generator = shelf.generator != null
+                    ? shelf.generator
+                    : shelf.GetComponentInChildren<TableGenerator>(true);
+
+                if (generator == null)
+                {
+                    Debug.LogWarning($"Cannot tick shelf slot {slot.slotIndex}: active shelf has no TableGenerator.");
+                    continue;
+                }
+
+                generator.TableTick();
+                tickedCount++;
+            }
+
+            Debug.Log($"Rack processed Next Day for {tickedCount} active shelf(s).");
+        }
+
+        public static string GetShelfIdForSlot(int slotIndex)
+        {
+            return $"RackSlot_{slotIndex}";
+        }
+
         private void EnsureShelfSlots()
         {
             if (shelfSlots == null)
@@ -92,6 +233,20 @@ namespace Vertigro.Logic
 
                 shelfSlots[i].slotIndex = i + 1;
             }
+        }
+
+        private static void CleanupFailedShelfActivation(TableController shelfInstance, TowerManager towerManager, string shelfId)
+        {
+            if (towerManager != null)
+                towerManager.ClearShelfGrid(shelfId);
+
+            if (shelfInstance == null)
+                return;
+
+            if (Application.isPlaying)
+                Destroy(shelfInstance.gameObject);
+            else
+                DestroyImmediate(shelfInstance.gameObject);
         }
     }
 
