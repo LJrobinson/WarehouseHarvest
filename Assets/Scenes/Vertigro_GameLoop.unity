@@ -5336,6 +5336,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69e7dcecf5eb4a74aa96bfc0c54a88d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Vertigro.Logic.RackController
+  utilityCapacitySource: {fileID: 949550763}
   shelfSlots:
   - slotIndex: 1
     isUnlocked: 1

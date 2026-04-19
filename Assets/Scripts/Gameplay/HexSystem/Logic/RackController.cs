@@ -7,6 +7,10 @@ namespace Vertigro.Logic
     {
         public const int ShelfSlotCount = 6;
 
+        [Header("Utility Capacity Source")]
+        [SerializeField] private global::Warehouse utilityCapacitySource;
+
+        [Header("Shelf Slots")]
         [SerializeField] private List<ShelfSlotRecord> shelfSlots = new List<ShelfSlotRecord>(ShelfSlotCount);
 
         public IReadOnlyList<ShelfSlotRecord> ShelfSlots => shelfSlots;
@@ -309,6 +313,51 @@ namespace Vertigro.Logic
             }
 
             return total;
+        }
+
+        public float GetTotalPowerCapacity()
+        {
+            return utilityCapacitySource != null ? Mathf.Max(0f, utilityCapacitySource.maxPower) : 0f;
+        }
+
+        public float GetTotalWaterCapacity()
+        {
+            return utilityCapacitySource != null ? Mathf.Max(0f, utilityCapacitySource.maxWater) : 0f;
+        }
+
+        public float GetTotalDataCapacity()
+        {
+            return utilityCapacitySource != null ? Mathf.Max(0f, utilityCapacitySource.maxData) : 0f;
+        }
+
+        public float GetPowerSurplus()
+        {
+            return GetTotalPowerCapacity() - GetTotalPowerDemand();
+        }
+
+        public float GetWaterSurplus()
+        {
+            return GetTotalWaterCapacity() - GetTotalWaterDemand();
+        }
+
+        public float GetDataSurplus()
+        {
+            return GetTotalDataCapacity() - GetTotalDataDemand();
+        }
+
+        public bool HasPowerDeficit()
+        {
+            return GetPowerSurplus() < 0f;
+        }
+
+        public bool HasWaterDeficit()
+        {
+            return GetWaterSurplus() < 0f;
+        }
+
+        public bool HasDataDeficit()
+        {
+            return GetDataSurplus() < 0f;
         }
 
         public static string GetShelfIdForSlot(int slotIndex)

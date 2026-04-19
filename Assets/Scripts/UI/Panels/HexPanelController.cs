@@ -190,11 +190,18 @@ namespace Vertigro.Logic
             builder.AppendLine();
             builder.Append($"Total Empty Hexes: {rack.GetTotalEmptyHexCount()}");
             builder.AppendLine();
-            builder.Append($"Power Demand: {rack.GetTotalPowerDemand():0.#}");
+            builder.Append($"Power: {FormatUtilityComparison(rack.GetTotalPowerDemand(), rack.GetTotalPowerCapacity(), rack.GetPowerSurplus(), rack.HasPowerDeficit())}");
             builder.AppendLine();
-            builder.Append($"Water Demand: {rack.GetTotalWaterDemand():0.#}");
+            builder.Append($"Water: {FormatUtilityComparison(rack.GetTotalWaterDemand(), rack.GetTotalWaterCapacity(), rack.GetWaterSurplus(), rack.HasWaterDeficit())}");
             builder.AppendLine();
-            builder.Append($"Data Demand: {rack.GetTotalDataDemand():0.#}");
+            builder.Append($"Data: {FormatUtilityComparison(rack.GetTotalDataDemand(), rack.GetTotalDataCapacity(), rack.GetDataSurplus(), rack.HasDataDeficit())}");
+        }
+
+        private static string FormatUtilityComparison(float demand, float capacity, float surplus, bool hasDeficit)
+        {
+            string sign = surplus > 0f ? "+" : "";
+            string state = hasDeficit ? " deficit" : "";
+            return $"{demand:0.#}/{capacity:0.#} ({sign}{surplus:0.#}{state})";
         }
 
         private static string GetShelfSlotStatus(ShelfSlotRecord slot)
