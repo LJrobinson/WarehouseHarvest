@@ -180,22 +180,11 @@ namespace Vertigro.Logic
         {
             EnsureShelfSlots();
 
-            HashSet<TableController> tickedShelves = new HashSet<TableController>();
             int tickedCount = 0;
 
-            foreach (ShelfSlotRecord slot in shelfSlots)
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
             {
-                if (slot == null || !slot.isUnlocked || slot.shelf == null)
-                    continue;
-
-                TableController shelf = slot.shelf;
-
-                if (!tickedShelves.Add(shelf))
-                    continue;
-
-                TableGenerator generator = shelf.generator != null
-                    ? shelf.generator
-                    : shelf.GetComponentInChildren<TableGenerator>(true);
+                TableGenerator generator = ResolveShelfGenerator(slot.shelf);
 
                 if (generator == null)
                 {
@@ -208,6 +197,79 @@ namespace Vertigro.Logic
             }
 
             Debug.Log($"Rack processed Next Day for {tickedCount} active shelf(s).");
+        }
+
+        public int GetUnlockedShelfCount()
+        {
+            if (shelfSlots == null)
+                return 0;
+
+            int count = 0;
+
+            foreach (ShelfSlotRecord slot in shelfSlots)
+            {
+                if (slot != null && slot.isUnlocked)
+                    count++;
+            }
+
+            return count;
+        }
+
+        public int GetActiveShelfCount()
+        {
+            int count = 0;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+                count++;
+
+            return count;
+        }
+
+        public int GetTotalGrowableHexCount()
+        {
+            int count = 0;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                TableGenerator generator = ResolveShelfGenerator(slot.shelf);
+
+                if (generator == null || generator.TableNodes == null)
+                    continue;
+
+                foreach (HexNode node in generator.TableNodes)
+                {
+                    if (node != null)
+                        count++;
+                }
+            }
+
+            return count;
+        }
+
+        public int GetTotalPlantedHexCount()
+        {
+            int count = 0;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                TableGenerator generator = ResolveShelfGenerator(slot.shelf);
+
+                if (generator == null || generator.TableNodes == null)
+                    continue;
+
+                foreach (HexNode node in generator.TableNodes)
+                {
+                    if (node != null && node.currentPlant != null)
+                        count++;
+                }
+            }
+
+            return count;
+        }
+
+        public int GetTotalEmptyHexCount()
+        {
+            return GetTotalGrowableHexCount() - GetTotalPlantedHexCount();
         }
 
         public static string GetShelfIdForSlot(int slotIndex)
@@ -233,6 +295,35 @@ namespace Vertigro.Logic
 
                 shelfSlots[i].slotIndex = i + 1;
             }
+        }
+
+        private IEnumerable<ShelfSlotRecord> GetUniqueActiveShelfSlots()
+        {
+            if (shelfSlots == null)
+                yield break;
+
+            HashSet<TableController> activeShelves = new HashSet<TableController>();
+
+            foreach (ShelfSlotRecord slot in shelfSlots)
+            {
+                if (slot == null || !slot.isUnlocked || slot.shelf == null)
+                    continue;
+
+                if (!activeShelves.Add(slot.shelf))
+                    continue;
+
+                yield return slot;
+            }
+        }
+
+        private static TableGenerator ResolveShelfGenerator(TableController shelf)
+        {
+            if (shelf == null)
+                return null;
+
+            return shelf.generator != null
+                ? shelf.generator
+                : shelf.GetComponentInChildren<TableGenerator>(true);
         }
 
         private static void CleanupFailedShelfActivation(TableController shelfInstance, TowerManager towerManager, string shelfId)
