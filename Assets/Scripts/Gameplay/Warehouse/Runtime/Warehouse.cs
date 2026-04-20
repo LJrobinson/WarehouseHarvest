@@ -30,6 +30,11 @@ public class Warehouse : MonoBehaviour
     public float maxPower = 100;
     public float maxWater = 100;
 
+    [Header("Utilities (Additive Capacity Bonus)")]
+    [SerializeField] private float dataCapacityBonus;
+    [SerializeField] private float powerCapacityBonus;
+    [SerializeField] private float waterCapacityBonus;
+
     [Header("Tables")]
     public List<GrowTable> tables = new List<GrowTable>();
 
@@ -42,6 +47,13 @@ public class Warehouse : MonoBehaviour
     public float[] dataUpgradeValues = { 250, 500, 1000, 2000, 4000, 8000 };
     public float[] powerUpgradeValues = { 250, 500, 1000, 2000, 4000, 8000 };
     public float[] waterUpgradeValues = { 250, 500, 1000, 2000, 4000, 8000 };
+
+    public float BaseDataCapacity => GetUpgradeCapacity(dataUpgradeValues, dataLevel);
+    public float BasePowerCapacity => GetUpgradeCapacity(powerUpgradeValues, powerLevel);
+    public float BaseWaterCapacity => GetUpgradeCapacity(waterUpgradeValues, waterLevel);
+    public float BonusDataCapacity => GetSafeUtilityValue(dataCapacityBonus);
+    public float BonusPowerCapacity => GetSafeUtilityValue(powerCapacityBonus);
+    public float BonusWaterCapacity => GetSafeUtilityValue(waterCapacityBonus);
 
     private void Awake()
     {
@@ -69,13 +81,13 @@ public class Warehouse : MonoBehaviour
 
     public void ApplyUpgradeCaps()
     {
-        maxData = dataUpgradeValues[Mathf.Clamp(dataLevel - 1, 0, dataUpgradeValues.Length - 1)];
-        maxPower = powerUpgradeValues[Mathf.Clamp(powerLevel - 1, 0, powerUpgradeValues.Length - 1)];
-        maxWater = waterUpgradeValues[Mathf.Clamp(waterLevel - 1, 0, waterUpgradeValues.Length - 1)];
+        maxData = BaseDataCapacity + BonusDataCapacity;
+        maxPower = BasePowerCapacity + BonusPowerCapacity;
+        maxWater = BaseWaterCapacity + BonusWaterCapacity;
 
-        currentData = Mathf.Clamp(currentData, 0, maxData);
-        currentPower = Mathf.Clamp(currentPower, 0, maxPower);
-        currentWater = Mathf.Clamp(currentWater, 0, maxWater);
+        currentData = ClampCurrentUtility(currentData, maxData);
+        currentPower = ClampCurrentUtility(currentPower, maxPower);
+        currentWater = ClampCurrentUtility(currentWater, maxWater);
         
     }
 
@@ -105,20 +117,20 @@ public class Warehouse : MonoBehaviour
 
     public void AddPowerCapacity(float amount)
     {
-        maxPower = GetIncreasedCapacity(maxPower, amount);
-        currentPower = ClampCurrentUtility(currentPower, maxPower);
+        powerCapacityBonus = GetIncreasedCapacity(powerCapacityBonus, amount);
+        ApplyUpgradeCaps();
     }
 
     public void AddWaterCapacity(float amount)
     {
-        maxWater = GetIncreasedCapacity(maxWater, amount);
-        currentWater = ClampCurrentUtility(currentWater, maxWater);
+        waterCapacityBonus = GetIncreasedCapacity(waterCapacityBonus, amount);
+        ApplyUpgradeCaps();
     }
 
     public void AddDataCapacity(float amount)
     {
-        maxData = GetIncreasedCapacity(maxData, amount);
-        currentData = ClampCurrentUtility(currentData, maxData);
+        dataCapacityBonus = GetIncreasedCapacity(dataCapacityBonus, amount);
+        ApplyUpgradeCaps();
     }
 
     public float GetTotalDataUsage()
@@ -318,6 +330,15 @@ public class Warehouse : MonoBehaviour
     private static float GetIncreasedCapacity(float currentCapacity, float amount)
     {
         return GetSafeUtilityValue(currentCapacity) + GetSafeUtilityValue(amount);
+    }
+
+    private static float GetUpgradeCapacity(float[] upgradeValues, int level)
+    {
+        if (upgradeValues == null || upgradeValues.Length == 0)
+            return 0f;
+
+        int index = Mathf.Clamp(level - 1, 0, upgradeValues.Length - 1);
+        return GetSafeUtilityValue(upgradeValues[index]);
     }
 
     private static float ClampCurrentUtility(float currentValue, float maxValue)
