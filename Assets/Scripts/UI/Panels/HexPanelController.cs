@@ -245,8 +245,34 @@ namespace Vertigro.Logic
                 builder.Append($"Shelf {i} - {GetShelfSlotStatus(slot)}");
             }
 
+            AppendExpansionUtilityWarning(builder, rack);
             AppendRackDebugSummary(builder, rack);
             return builder.ToString();
+        }
+
+        private static void AppendExpansionUtilityWarning(StringBuilder builder, RackController rack)
+        {
+            string warningText = BuildExpansionUtilityWarningText(rack);
+            if (string.IsNullOrEmpty(warningText))
+                return;
+
+            builder.AppendLine();
+            builder.AppendLine();
+            builder.Append(warningText);
+        }
+
+        private static string BuildExpansionUtilityWarningText(RackController rack)
+        {
+            if (rack == null)
+                return string.Empty;
+
+            UtilityStatus status = rack.GetOverallUtilityStatus();
+            UtilityType bottleneck = rack.GetMostConstrainedUtility();
+
+            if (!ShouldRecommendUtilityUpgrade(status, bottleneck))
+                return string.Empty;
+
+            return $"Expansion Warning: Utilities {status}. Unlocking or activating shelves may worsen {bottleneck} pressure.";
         }
 
         private static void AppendRackDebugSummary(StringBuilder builder, RackController rack)
