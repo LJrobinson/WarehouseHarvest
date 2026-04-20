@@ -131,8 +131,10 @@ namespace Vertigro.Logic
                 return;
             }
 
+            float utilityGrowthMultiplier = owningShelf != null ? owningShelf.UtilityGrowthMultiplier : 1f;
+
             growthProgress++;
-            currentPlant.AdvanceDay(1f, 0f);
+            currentPlant.AdvanceDay(utilityGrowthMultiplier, 0f);
         }
 
         public void FindNeighbors(List<HexNode> allNodes)
