@@ -230,7 +230,7 @@ namespace Vertigro.Logic
             SetText(rackSlotSummaryText, BuildRackSlotSummary(rackController));
         }
 
-        private static string BuildRackSlotSummary(RackController rack)
+        private string BuildRackSlotSummary(RackController rack)
         {
             if (rack == null)
                 return "Rack Slots\nNo rack assigned";
@@ -246,6 +246,7 @@ namespace Vertigro.Logic
             }
 
             AppendExpansionUtilityWarning(builder, rack);
+            AppendActivationUtilityPreview(builder, rack, ResolveActivationPreviewDemandSource());
             AppendRackDebugSummary(builder, rack);
             return builder.ToString();
         }
@@ -273,6 +274,64 @@ namespace Vertigro.Logic
                 return string.Empty;
 
             return $"Expansion Warning: Utilities {status}. Unlocking or activating shelves may worsen {bottleneck} pressure.";
+        }
+
+        private static void AppendActivationUtilityPreview(StringBuilder builder, RackController rack, TableController previewDemandSource)
+        {
+            string previewText = BuildActivationUtilityPreviewText(rack, previewDemandSource);
+            if (string.IsNullOrEmpty(previewText))
+                return;
+
+            builder.AppendLine();
+            builder.Append(previewText);
+        }
+
+        private static string BuildActivationUtilityPreviewText(RackController rack, TableController previewDemandSource)
+        {
+            if (rack == null || previewDemandSource == null || !HasInactiveShelfSlot(rack))
+                return string.Empty;
+
+            float additionalPowerDemand = previewDemandSource.BasePowerDemand;
+            float additionalWaterDemand = previewDemandSource.BaseWaterDemand;
+            float additionalDataDemand = previewDemandSource.BaseDataDemand;
+
+            UtilityStatus projectedStatus = rack.GetProjectedOverallUtilityStatus(
+                additionalPowerDemand,
+                additionalWaterDemand,
+                additionalDataDemand);
+            UtilityType projectedBottleneck = rack.GetProjectedMostConstrainedUtility(
+                additionalPowerDemand,
+                additionalWaterDemand,
+                additionalDataDemand);
+            string demandText = $"(+P {additionalPowerDemand:0.#} W {additionalWaterDemand:0.#} D {additionalDataDemand:0.#} base)";
+
+            if (projectedStatus == UtilityStatus.Healthy || projectedBottleneck == UtilityType.None)
+                return $"Activation Preview: No utility issue expected {demandText}";
+
+            return $"Activation Preview: {projectedBottleneck} projected {projectedStatus} {demandText}";
+        }
+
+        private TableController ResolveActivationPreviewDemandSource()
+        {
+            if (shelfUnitPrefab != null)
+                return shelfUnitPrefab;
+
+            return tableController;
+        }
+
+        private static bool HasInactiveShelfSlot(RackController rack)
+        {
+            if (rack == null)
+                return false;
+
+            for (int i = 1; i <= RackController.ShelfSlotCount; i++)
+            {
+                ShelfSlotRecord slot = rack.GetShelfSlot(i);
+                if (slot != null && slot.shelf == null)
+                    return true;
+            }
+
+            return false;
         }
 
         private static void AppendRackDebugSummary(StringBuilder builder, RackController rack)

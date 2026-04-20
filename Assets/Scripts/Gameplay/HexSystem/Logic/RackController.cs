@@ -448,6 +448,71 @@ namespace Vertigro.Logic
             return GetUtilityStatus(GetTotalDataDemand(), GetTotalDataCapacity(), GetDataSurplus());
         }
 
+        public UtilityStatus GetProjectedPowerStatus(float additionalPowerDemand)
+        {
+            float demand = GetTotalPowerDemand() + GetSafeAdditionalDemand(additionalPowerDemand);
+            float capacity = GetTotalPowerCapacity();
+            return GetUtilityStatus(demand, capacity, capacity - demand);
+        }
+
+        public UtilityStatus GetProjectedWaterStatus(float additionalWaterDemand)
+        {
+            float demand = GetTotalWaterDemand() + GetSafeAdditionalDemand(additionalWaterDemand);
+            float capacity = GetTotalWaterCapacity();
+            return GetUtilityStatus(demand, capacity, capacity - demand);
+        }
+
+        public UtilityStatus GetProjectedDataStatus(float additionalDataDemand)
+        {
+            float demand = GetTotalDataDemand() + GetSafeAdditionalDemand(additionalDataDemand);
+            float capacity = GetTotalDataCapacity();
+            return GetUtilityStatus(demand, capacity, capacity - demand);
+        }
+
+        public UtilityType GetProjectedMostConstrainedUtility(float additionalPowerDemand, float additionalWaterDemand, float additionalDataDemand)
+        {
+            float powerUtilization = GetUtilityUtilization(
+                GetTotalPowerDemand() + GetSafeAdditionalDemand(additionalPowerDemand),
+                GetTotalPowerCapacity());
+            float waterUtilization = GetUtilityUtilization(
+                GetTotalWaterDemand() + GetSafeAdditionalDemand(additionalWaterDemand),
+                GetTotalWaterCapacity());
+            float dataUtilization = GetUtilityUtilization(
+                GetTotalDataDemand() + GetSafeAdditionalDemand(additionalDataDemand),
+                GetTotalDataCapacity());
+            float highestUtilization = Mathf.Max(powerUtilization, Mathf.Max(waterUtilization, dataUtilization));
+
+            if (highestUtilization <= 0f)
+                return UtilityType.None;
+
+            if (powerUtilization >= waterUtilization && powerUtilization >= dataUtilization)
+                return UtilityType.Power;
+
+            if (waterUtilization >= dataUtilization)
+                return UtilityType.Water;
+
+            return UtilityType.Data;
+        }
+
+        public UtilityStatus GetProjectedOverallUtilityStatus(float additionalPowerDemand, float additionalWaterDemand, float additionalDataDemand)
+        {
+            UtilityStatus powerStatus = GetProjectedPowerStatus(additionalPowerDemand);
+            UtilityStatus waterStatus = GetProjectedWaterStatus(additionalWaterDemand);
+            UtilityStatus dataStatus = GetProjectedDataStatus(additionalDataDemand);
+
+            if (powerStatus == UtilityStatus.Deficit ||
+                waterStatus == UtilityStatus.Deficit ||
+                dataStatus == UtilityStatus.Deficit)
+                return UtilityStatus.Deficit;
+
+            if (powerStatus == UtilityStatus.Strained ||
+                waterStatus == UtilityStatus.Strained ||
+                dataStatus == UtilityStatus.Strained)
+                return UtilityStatus.Strained;
+
+            return UtilityStatus.Healthy;
+        }
+
         public UtilityType GetMostConstrainedUtility()
         {
             float powerUtilization = GetUtilityUtilization(GetTotalPowerDemand(), GetTotalPowerCapacity());
@@ -581,6 +646,14 @@ namespace Vertigro.Logic
                 return float.PositiveInfinity;
 
             return demand / capacity;
+        }
+
+        private static float GetSafeAdditionalDemand(float additionalDemand)
+        {
+            if (float.IsNaN(additionalDemand) || float.IsInfinity(additionalDemand))
+                return 0f;
+
+            return Mathf.Max(0f, additionalDemand);
         }
 
         private static void CleanupFailedShelfActivation(TableController shelfInstance, TowerManager towerManager, string shelfId)
