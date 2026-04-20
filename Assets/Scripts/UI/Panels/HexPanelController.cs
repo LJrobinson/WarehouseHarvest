@@ -161,7 +161,9 @@ namespace Vertigro.Logic
                 $"\nShelf Utilities: P {FormatShelfUtilitySignal(shelf.HasSufficientPower, shelf.PowerUtilityStatus)}" +
                 $" | W {FormatShelfUtilitySignal(shelf.HasSufficientWater, shelf.WaterUtilityStatus)}" +
                 $" | D {FormatShelfUtilitySignal(shelf.HasSufficientData, shelf.DataUtilityStatus)}" +
-                $" | Live Growth x{shelf.UtilityGrowthMultiplier:0.##}";
+                $" | Live Growth x{shelf.UtilityGrowthMultiplier:0.##}" +
+                $"\nShelf Load: {shelf.PlantedHexCount}/{shelf.GrowableHexCount} planted" +
+                $" | Demand P {shelf.PowerDemand:0.#} W {shelf.WaterDemand:0.#} D {shelf.DataDemand:0.#}";
         }
 
         private static string FormatShelfUtilitySignal(bool hasSufficientUtility, UtilityStatus status)

@@ -32,11 +32,18 @@ namespace Vertigro.Logic
         [SerializeField] private float waterDemand = 25f;
         [SerializeField] private float dataDemand = 10f;
 
+        [Header("Shelf Utility Demand Scaling")]
+        [SerializeField] private float powerDemandPerPlantedHex = 1f;
+        [SerializeField] private float waterDemandPerPlantedHex = 0.5f;
+        [SerializeField] private float dataDemandPerPlantedHex = 0.1f;
+
         public string ShelfId => TowerManager.NormalizeShelfId(shelfId);
         public bool IsMaxShelfLevelReached => currentShelfLevel >= maxShelfLevel;
-        public float PowerDemand => Mathf.Max(0f, powerDemand);
-        public float WaterDemand => Mathf.Max(0f, waterDemand);
-        public float DataDemand => Mathf.Max(0f, dataDemand);
+        public int GrowableHexCount => CountGrowableHexes();
+        public int PlantedHexCount => CountPlantedHexes();
+        public float PowerDemand => GetScaledDemand(powerDemand, powerDemandPerPlantedHex);
+        public float WaterDemand => GetScaledDemand(waterDemand, waterDemandPerPlantedHex);
+        public float DataDemand => GetScaledDemand(dataDemand, dataDemandPerPlantedHex);
         public bool HasSufficientPower => PowerUtilityStatus != UtilityStatus.Deficit;
         public bool HasSufficientWater => WaterUtilityStatus != UtilityStatus.Deficit;
         public bool HasSufficientData => DataUtilityStatus != UtilityStatus.Deficit;
@@ -111,6 +118,43 @@ namespace Vertigro.Logic
         {
             if (rackController != null)
                 utilityStateSourceRack = rackController;
+        }
+
+        private float GetScaledDemand(float baseDemand, float plantedHexDemand)
+        {
+            return Mathf.Max(0f, baseDemand) + (PlantedHexCount * Mathf.Max(0f, plantedHexDemand));
+        }
+
+        private int CountGrowableHexes()
+        {
+            if (generator == null || generator.TableNodes == null)
+                return 0;
+
+            int count = 0;
+
+            foreach (HexNode node in generator.TableNodes)
+            {
+                if (node != null)
+                    count++;
+            }
+
+            return count;
+        }
+
+        private int CountPlantedHexes()
+        {
+            if (generator == null || generator.TableNodes == null)
+                return 0;
+
+            int count = 0;
+
+            foreach (HexNode node in generator.TableNodes)
+            {
+                if (node != null && node.currentPlant != null)
+                    count++;
+            }
+
+            return count;
         }
 
         public void BuildTable()
