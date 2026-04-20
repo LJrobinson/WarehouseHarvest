@@ -102,7 +102,12 @@ namespace Vertigro.Logic
             }
 
             if (modeText != null)
-                modeText.text = $"Mode: {selectionController.CurrentPlacementMode}\n{BuildUtilityWarningText(rackController)}";
+            {
+                modeText.text =
+                    $"Mode: {selectionController.CurrentPlacementMode}" +
+                    $"\n{BuildUtilityWarningText(rackController)}" +
+                    $"\n{BuildUtilityActionRecommendationText(rackController, selectionController.SelectedNode, ResolveActivationPreviewDemandSource())}";
+            }
 
             if (economyManager != null)
                 moneyText.text = $"Money: ${economyManager.Money}";
@@ -228,6 +233,74 @@ namespace Vertigro.Logic
                 return $"Utilities: {status}";
 
             return $"Utilities: {status} ({bottleneck}) - Upgrade {bottleneck}";
+        }
+
+        private static string BuildUtilityActionRecommendationText(RackController rack, HexNode selectedNode, TableController activationPreviewDemandSource)
+        {
+            if (rack == null)
+                return "Recommended Action: Utility status unavailable";
+
+            UtilityStatus currentStatus = rack.GetOverallUtilityStatus();
+            UtilityType currentBottleneck = rack.GetMostConstrainedUtility();
+            bool hasPlantingTarget = selectedNode != null && selectedNode.IsEmpty && selectedNode.OwningShelf != null;
+            UtilityStatus plantingStatus = UtilityStatus.Healthy;
+            UtilityType plantingBottleneck = UtilityType.None;
+
+            if (hasPlantingTarget)
+            {
+                TableController shelf = selectedNode.OwningShelf;
+                plantingStatus = rack.GetProjectedOverallUtilityStatus(
+                    shelf.PowerDemandPerPlantedHex,
+                    shelf.WaterDemandPerPlantedHex,
+                    shelf.DataDemandPerPlantedHex);
+                plantingBottleneck = rack.GetProjectedMostConstrainedUtility(
+                    shelf.PowerDemandPerPlantedHex,
+                    shelf.WaterDemandPerPlantedHex,
+                    shelf.DataDemandPerPlantedHex);
+            }
+
+            bool hasExpansionTarget = activationPreviewDemandSource != null && HasInactiveShelfSlot(rack);
+            UtilityStatus activationStatus = UtilityStatus.Healthy;
+            UtilityType activationBottleneck = UtilityType.None;
+
+            if (hasExpansionTarget)
+            {
+                activationStatus = rack.GetProjectedOverallUtilityStatus(
+                    activationPreviewDemandSource.BasePowerDemand,
+                    activationPreviewDemandSource.BaseWaterDemand,
+                    activationPreviewDemandSource.BaseDataDemand);
+                activationBottleneck = rack.GetProjectedMostConstrainedUtility(
+                    activationPreviewDemandSource.BasePowerDemand,
+                    activationPreviewDemandSource.BaseWaterDemand,
+                    activationPreviewDemandSource.BaseDataDemand);
+            }
+
+            if (currentStatus == UtilityStatus.Deficit && currentBottleneck != UtilityType.None)
+                return $"Recommended Action: Upgrade {currentBottleneck} before planting or expanding";
+
+            if (hasPlantingTarget && plantingStatus == UtilityStatus.Deficit && plantingBottleneck != UtilityType.None)
+                return $"Recommended Action: Avoid planting until {plantingBottleneck} improves";
+
+            if (hasExpansionTarget && activationStatus != UtilityStatus.Healthy && activationBottleneck != UtilityType.None)
+            {
+                if (hasPlantingTarget && plantingStatus == UtilityStatus.Healthy)
+                    return $"Recommended Action: Safe to plant; upgrade {activationBottleneck} before expanding";
+
+                return $"Recommended Action: Upgrade {activationBottleneck} before expanding";
+            }
+
+            if (currentStatus == UtilityStatus.Strained && currentBottleneck != UtilityType.None)
+                return $"Recommended Action: Upgrade {currentBottleneck} before expanding";
+
+            if (hasPlantingTarget)
+            {
+                if (plantingStatus == UtilityStatus.Strained && plantingBottleneck != UtilityType.None)
+                    return $"Recommended Action: Planting may strain {plantingBottleneck}";
+
+                return "Recommended Action: Safe to plant";
+            }
+
+            return "Recommended Action: No utility issue";
         }
 
         private static UtilityType GetRecommendedUtilityUpgrade(RackController rack)
