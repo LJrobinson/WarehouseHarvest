@@ -10,6 +10,14 @@ namespace Vertigro.Logic
         Deficit
     }
 
+    public enum UtilityType
+    {
+        None,
+        Power,
+        Water,
+        Data
+    }
+
     public class RackController : MonoBehaviour
     {
         public const int ShelfSlotCount = 6;
@@ -439,6 +447,53 @@ namespace Vertigro.Logic
             return GetUtilityStatus(GetTotalDataDemand(), GetTotalDataCapacity(), GetDataSurplus());
         }
 
+        public UtilityType GetMostConstrainedUtility()
+        {
+            float powerUtilization = GetUtilityUtilization(GetTotalPowerDemand(), GetTotalPowerCapacity());
+            float waterUtilization = GetUtilityUtilization(GetTotalWaterDemand(), GetTotalWaterCapacity());
+            float dataUtilization = GetUtilityUtilization(GetTotalDataDemand(), GetTotalDataCapacity());
+            float highestUtilization = Mathf.Max(powerUtilization, Mathf.Max(waterUtilization, dataUtilization));
+
+            if (highestUtilization <= 0f)
+                return UtilityType.None;
+
+            if (powerUtilization >= waterUtilization && powerUtilization >= dataUtilization)
+                return UtilityType.Power;
+
+            if (waterUtilization >= dataUtilization)
+                return UtilityType.Water;
+
+            return UtilityType.Data;
+        }
+
+        public float GetHighestUtilityUtilization()
+        {
+            float powerUtilization = GetUtilityUtilization(GetTotalPowerDemand(), GetTotalPowerCapacity());
+            float waterUtilization = GetUtilityUtilization(GetTotalWaterDemand(), GetTotalWaterCapacity());
+            float dataUtilization = GetUtilityUtilization(GetTotalDataDemand(), GetTotalDataCapacity());
+
+            return Mathf.Max(powerUtilization, Mathf.Max(waterUtilization, dataUtilization));
+        }
+
+        public UtilityStatus GetOverallUtilityStatus()
+        {
+            UtilityStatus powerStatus = GetPowerStatus();
+            UtilityStatus waterStatus = GetWaterStatus();
+            UtilityStatus dataStatus = GetDataStatus();
+
+            if (powerStatus == UtilityStatus.Deficit ||
+                waterStatus == UtilityStatus.Deficit ||
+                dataStatus == UtilityStatus.Deficit)
+                return UtilityStatus.Deficit;
+
+            if (powerStatus == UtilityStatus.Strained ||
+                waterStatus == UtilityStatus.Strained ||
+                dataStatus == UtilityStatus.Strained)
+                return UtilityStatus.Strained;
+
+            return UtilityStatus.Healthy;
+        }
+
         public static string GetShelfIdForSlot(int slotIndex)
         {
             return $"RackSlot_{slotIndex}";
@@ -511,6 +566,20 @@ namespace Vertigro.Logic
             return demandCapacityRatio >= StrainedDemandCapacityRatio
                 ? UtilityStatus.Strained
                 : UtilityStatus.Healthy;
+        }
+
+        private static float GetUtilityUtilization(float demand, float capacity)
+        {
+            demand = Mathf.Max(0f, demand);
+            capacity = Mathf.Max(0f, capacity);
+
+            if (demand <= 0f)
+                return 0f;
+
+            if (capacity <= 0f)
+                return float.PositiveInfinity;
+
+            return demand / capacity;
         }
 
         private static void CleanupFailedShelfActivation(TableController shelfInstance, TowerManager towerManager, string shelfId)

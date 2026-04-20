@@ -216,6 +216,8 @@ namespace Vertigro.Logic
             builder.Append($"Water: {FormatUtilityComparison(rack.GetTotalWaterDemand(), rack.GetTotalWaterCapacity(), rack.GetWaterSurplus(), rack.GetWaterStatus(), rack.GetBaseWaterDemand(), rack.GetPlantedLoadWaterDemand())}");
             builder.AppendLine();
             builder.Append($"Data: {FormatUtilityComparison(rack.GetTotalDataDemand(), rack.GetTotalDataCapacity(), rack.GetDataSurplus(), rack.GetDataStatus(), rack.GetBaseDataDemand(), rack.GetPlantedLoadDataDemand())}");
+            builder.AppendLine();
+            builder.Append($"Utility Pressure: {rack.GetMostConstrainedUtility()} @ {FormatUtilityUtilization(rack.GetHighestUtilityUtilization())} ({rack.GetOverallUtilityStatus()})");
         }
 
         private static string FormatUtilityComparison(
@@ -228,6 +230,11 @@ namespace Vertigro.Logic
         {
             string sign = surplus > 0f ? "+" : "";
             return $"{demand:0.#}/{capacity:0.#} ({sign}{surplus:0.#}, {status}; {baseDemand:0.#} base + {plantedLoadDemand:0.#} planted)";
+        }
+
+        private static string FormatUtilityUtilization(float utilization)
+        {
+            return float.IsPositiveInfinity(utilization) ? "Inf" : utilization.ToString("0.##");
         }
 
         private static string GetShelfSlotStatus(ShelfSlotRecord slot)
