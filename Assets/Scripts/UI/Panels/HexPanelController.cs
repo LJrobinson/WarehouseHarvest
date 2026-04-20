@@ -211,17 +211,23 @@ namespace Vertigro.Logic
             builder.AppendLine();
             builder.Append($"Total Empty Hexes: {rack.GetTotalEmptyHexCount()}");
             builder.AppendLine();
-            builder.Append($"Power: {FormatUtilityComparison(rack.GetTotalPowerDemand(), rack.GetTotalPowerCapacity(), rack.GetPowerSurplus(), rack.GetPowerStatus())}");
+            builder.Append($"Power: {FormatUtilityComparison(rack.GetTotalPowerDemand(), rack.GetTotalPowerCapacity(), rack.GetPowerSurplus(), rack.GetPowerStatus(), rack.GetBasePowerDemand(), rack.GetPlantedLoadPowerDemand())}");
             builder.AppendLine();
-            builder.Append($"Water: {FormatUtilityComparison(rack.GetTotalWaterDemand(), rack.GetTotalWaterCapacity(), rack.GetWaterSurplus(), rack.GetWaterStatus())}");
+            builder.Append($"Water: {FormatUtilityComparison(rack.GetTotalWaterDemand(), rack.GetTotalWaterCapacity(), rack.GetWaterSurplus(), rack.GetWaterStatus(), rack.GetBaseWaterDemand(), rack.GetPlantedLoadWaterDemand())}");
             builder.AppendLine();
-            builder.Append($"Data: {FormatUtilityComparison(rack.GetTotalDataDemand(), rack.GetTotalDataCapacity(), rack.GetDataSurplus(), rack.GetDataStatus())}");
+            builder.Append($"Data: {FormatUtilityComparison(rack.GetTotalDataDemand(), rack.GetTotalDataCapacity(), rack.GetDataSurplus(), rack.GetDataStatus(), rack.GetBaseDataDemand(), rack.GetPlantedLoadDataDemand())}");
         }
 
-        private static string FormatUtilityComparison(float demand, float capacity, float surplus, UtilityStatus status)
+        private static string FormatUtilityComparison(
+            float demand,
+            float capacity,
+            float surplus,
+            UtilityStatus status,
+            float baseDemand,
+            float plantedLoadDemand)
         {
             string sign = surplus > 0f ? "+" : "";
-            return $"{demand:0.#}/{capacity:0.#} ({sign}{surplus:0.#}, {status})";
+            return $"{demand:0.#}/{capacity:0.#} ({sign}{surplus:0.#}, {status}; {baseDemand:0.#} base + {plantedLoadDemand:0.#} planted)";
         }
 
         private static string GetShelfSlotStatus(ShelfSlotRecord slot)

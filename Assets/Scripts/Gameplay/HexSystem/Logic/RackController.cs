@@ -288,38 +288,92 @@ namespace Vertigro.Logic
 
         public float GetTotalPowerDemand()
         {
-            float total = 0f;
-
-            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
-            {
-                if (slot.shelf != null)
-                    total += slot.shelf.PowerDemand;
-            }
-
-            return total;
+            return GetBasePowerDemand() + GetPlantedLoadPowerDemand();
         }
 
         public float GetTotalWaterDemand()
         {
-            float total = 0f;
-
-            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
-            {
-                if (slot.shelf != null)
-                    total += slot.shelf.WaterDemand;
-            }
-
-            return total;
+            return GetBaseWaterDemand() + GetPlantedLoadWaterDemand();
         }
 
         public float GetTotalDataDemand()
+        {
+            return GetBaseDataDemand() + GetPlantedLoadDataDemand();
+        }
+
+        public float GetBasePowerDemand()
         {
             float total = 0f;
 
             foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
             {
                 if (slot.shelf != null)
-                    total += slot.shelf.DataDemand;
+                    total += slot.shelf.BasePowerDemand;
+            }
+
+            return total;
+        }
+
+        public float GetBaseWaterDemand()
+        {
+            float total = 0f;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                if (slot.shelf != null)
+                    total += slot.shelf.BaseWaterDemand;
+            }
+
+            return total;
+        }
+
+        public float GetBaseDataDemand()
+        {
+            float total = 0f;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                if (slot.shelf != null)
+                    total += slot.shelf.BaseDataDemand;
+            }
+
+            return total;
+        }
+
+        public float GetPlantedLoadPowerDemand()
+        {
+            float total = 0f;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                if (slot.shelf != null)
+                    total += slot.shelf.PlantedLoadPowerDemand;
+            }
+
+            return total;
+        }
+
+        public float GetPlantedLoadWaterDemand()
+        {
+            float total = 0f;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                if (slot.shelf != null)
+                    total += slot.shelf.PlantedLoadWaterDemand;
+            }
+
+            return total;
+        }
+
+        public float GetPlantedLoadDataDemand()
+        {
+            float total = 0f;
+
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+            {
+                if (slot.shelf != null)
+                    total += slot.shelf.PlantedLoadDataDemand;
             }
 
             return total;

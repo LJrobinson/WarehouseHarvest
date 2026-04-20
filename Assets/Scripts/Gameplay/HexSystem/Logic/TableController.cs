@@ -41,9 +41,15 @@ namespace Vertigro.Logic
         public bool IsMaxShelfLevelReached => currentShelfLevel >= maxShelfLevel;
         public int GrowableHexCount => CountGrowableHexes();
         public int PlantedHexCount => CountPlantedHexes();
-        public float PowerDemand => GetScaledDemand(powerDemand, powerDemandPerPlantedHex);
-        public float WaterDemand => GetScaledDemand(waterDemand, waterDemandPerPlantedHex);
-        public float DataDemand => GetScaledDemand(dataDemand, dataDemandPerPlantedHex);
+        public float BasePowerDemand => Mathf.Max(0f, powerDemand);
+        public float BaseWaterDemand => Mathf.Max(0f, waterDemand);
+        public float BaseDataDemand => Mathf.Max(0f, dataDemand);
+        public float PlantedLoadPowerDemand => GetPlantedLoadDemand(powerDemandPerPlantedHex);
+        public float PlantedLoadWaterDemand => GetPlantedLoadDemand(waterDemandPerPlantedHex);
+        public float PlantedLoadDataDemand => GetPlantedLoadDemand(dataDemandPerPlantedHex);
+        public float PowerDemand => BasePowerDemand + PlantedLoadPowerDemand;
+        public float WaterDemand => BaseWaterDemand + PlantedLoadWaterDemand;
+        public float DataDemand => BaseDataDemand + PlantedLoadDataDemand;
         public bool HasSufficientPower => PowerUtilityStatus != UtilityStatus.Deficit;
         public bool HasSufficientWater => WaterUtilityStatus != UtilityStatus.Deficit;
         public bool HasSufficientData => DataUtilityStatus != UtilityStatus.Deficit;
@@ -120,9 +126,9 @@ namespace Vertigro.Logic
                 utilityStateSourceRack = rackController;
         }
 
-        private float GetScaledDemand(float baseDemand, float plantedHexDemand)
+        private float GetPlantedLoadDemand(float plantedHexDemand)
         {
-            return Mathf.Max(0f, baseDemand) + (PlantedHexCount * Mathf.Max(0f, plantedHexDemand));
+            return PlantedHexCount * Mathf.Max(0f, plantedHexDemand);
         }
 
         private int CountGrowableHexes()
