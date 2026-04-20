@@ -31,6 +31,7 @@ namespace Vertigro.Logic
         private void Awake()
         {
             EnsureShelfSlots();
+            AssignUtilityStateSourceToActiveShelves();
         }
 
         private void OnValidate()
@@ -182,6 +183,7 @@ namespace Vertigro.Logic
             }
 
             slot.shelf = shelfInstance;
+            shelfInstance.SetUtilityStateSource(this);
             activatedShelf = shelfInstance;
 
             Debug.Log($"Rack shelf slot {slotIndex} activated as {shelfId}.");
@@ -406,6 +408,12 @@ namespace Vertigro.Logic
 
                 shelfSlots[i].slotIndex = i + 1;
             }
+        }
+
+        private void AssignUtilityStateSourceToActiveShelves()
+        {
+            foreach (ShelfSlotRecord slot in GetUniqueActiveShelfSlots())
+                slot.shelf.SetUtilityStateSource(this);
         }
 
         private IEnumerable<ShelfSlotRecord> GetUniqueActiveShelfSlots()

@@ -10,6 +10,7 @@ namespace Vertigro.Logic
         public TableGenerator generator;
         public TowerManager towerManager;
         public HexSelectionController selectionController;
+        [SerializeField] private RackController utilityStateSourceRack;
 
         [Header("Shelf Identity")]
         [SerializeField] private string shelfId = TowerManager.DefaultShelfId;
@@ -32,6 +33,12 @@ namespace Vertigro.Logic
         public float PowerDemand => Mathf.Max(0f, powerDemand);
         public float WaterDemand => Mathf.Max(0f, waterDemand);
         public float DataDemand => Mathf.Max(0f, dataDemand);
+        public bool HasSufficientPower => PowerUtilityStatus != UtilityStatus.Deficit;
+        public bool HasSufficientWater => WaterUtilityStatus != UtilityStatus.Deficit;
+        public bool HasSufficientData => DataUtilityStatus != UtilityStatus.Deficit;
+        public UtilityStatus PowerUtilityStatus => utilityStateSourceRack != null ? utilityStateSourceRack.GetPowerStatus() : UtilityStatus.Healthy;
+        public UtilityStatus WaterUtilityStatus => utilityStateSourceRack != null ? utilityStateSourceRack.GetWaterStatus() : UtilityStatus.Healthy;
+        public UtilityStatus DataUtilityStatus => utilityStateSourceRack != null ? utilityStateSourceRack.GetDataStatus() : UtilityStatus.Healthy;
 
         private bool wasInitialized;
 
@@ -73,6 +80,12 @@ namespace Vertigro.Logic
         public void InitializeShelf(string newShelfId, bool buildAfterInitialize = true)
         {
             InitializeShelf(newShelfId, generator, towerManager, selectionController, buildAfterInitialize);
+        }
+
+        public void SetUtilityStateSource(RackController rackController)
+        {
+            if (rackController != null)
+                utilityStateSourceRack = rackController;
         }
 
         public void BuildTable()

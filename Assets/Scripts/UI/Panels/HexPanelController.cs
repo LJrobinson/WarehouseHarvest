@@ -145,9 +145,27 @@ namespace Vertigro.Logic
                 SetText(insertText, "None");
 
             SetText(stateText, GetNodeStateText(currentNode));
+            AppendSelectedShelfUtilityText(currentNode);
             
             RefreshSellAllButton();
             RefreshModeButtons();
+        }
+
+        private void AppendSelectedShelfUtilityText(HexNode node)
+        {
+            if (node == null || node.OwningShelf == null || stateText == null)
+                return;
+
+            TableController shelf = node.OwningShelf;
+            stateText.text +=
+                $"\nShelf Utilities: P {FormatShelfUtilitySignal(shelf.HasSufficientPower, shelf.PowerUtilityStatus)}" +
+                $" | W {FormatShelfUtilitySignal(shelf.HasSufficientWater, shelf.WaterUtilityStatus)}" +
+                $" | D {FormatShelfUtilitySignal(shelf.HasSufficientData, shelf.DataUtilityStatus)}";
+        }
+
+        private static string FormatShelfUtilitySignal(bool hasSufficientUtility, UtilityStatus status)
+        {
+            return hasSufficientUtility ? status.ToString() : "Insufficient";
         }
 
         private void RefreshRackSlotSummary()
