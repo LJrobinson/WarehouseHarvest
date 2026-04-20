@@ -31,7 +31,9 @@ namespace Vertigro.Logic
         [SerializeField] private Button upgradeShelfButton;
         [SerializeField] private Button unlockShelf2Button;
         [SerializeField] private Button unlockShelf6Button;
+        [SerializeField] private Button upgradePowerCapacityButton;
         [SerializeField] private Button upgradeWaterCapacityButton;
+        [SerializeField] private Button upgradeDataCapacityButton;
 
         [Header("Gameplay References")]
         [SerializeField] private DiscoveryManager discoveryManager;
@@ -53,8 +55,12 @@ namespace Vertigro.Logic
         [SerializeField] private int shelf6UnlockCost = 250;
 
         [Header("Utility Capacity Upgrade")]
+        [SerializeField] private int powerCapacityUpgradeCost = 500;
+        [SerializeField] private float powerCapacityUpgradeAmount = 50f;
         [SerializeField] private int waterCapacityUpgradeCost = 500;
         [SerializeField] private float waterCapacityUpgradeAmount = 50f;
+        [SerializeField] private int dataCapacityUpgradeCost = 500;
+        [SerializeField] private float dataCapacityUpgradeAmount = 50f;
 
         [Header("Dev Utility Capacity Test")]
         [SerializeField] private bool enableDevUtilityCapacityHotkeys = true;
@@ -89,7 +95,7 @@ namespace Vertigro.Logic
                 SetHarvestButtonInteractable(false);
                 SetUpgradeButtonState();
                 SetUnlockShelfButtonStates();
-                SetUtilityCapacityUpgradeButtonState();
+                SetUtilityCapacityUpgradeButtonStates();
                 RefreshRackSlotSummary();
                 SetText(stateText, "ERROR: No Selection Controller");
                 return;
@@ -129,7 +135,7 @@ namespace Vertigro.Logic
             SetHarvestButtonInteractable(CanHarvest(currentNode));
             SetUpgradeButtonState();
             SetUnlockShelfButtonStates();
-            SetUtilityCapacityUpgradeButtonState();
+            SetUtilityCapacityUpgradeButtonStates();
             RefreshRackSlotSummary();
 
             if (currentNode == null)
@@ -371,31 +377,38 @@ namespace Vertigro.Logic
                 unlockLabel.text = "Activate Shelf 6";
         }
 
-        private void SetUtilityCapacityUpgradeButtonState()
+        private void SetUtilityCapacityUpgradeButtonStates()
         {
-            if (upgradeWaterCapacityButton == null)
+            SetUtilityCapacityUpgradeButtonState(upgradePowerCapacityButton, "Power", powerCapacityUpgradeCost, powerCapacityUpgradeAmount);
+            SetUtilityCapacityUpgradeButtonState(upgradeWaterCapacityButton, "Water", waterCapacityUpgradeCost, waterCapacityUpgradeAmount);
+            SetUtilityCapacityUpgradeButtonState(upgradeDataCapacityButton, "Data", dataCapacityUpgradeCost, dataCapacityUpgradeAmount);
+        }
+
+        private void SetUtilityCapacityUpgradeButtonState(Button upgradeButton, string utilityName, int upgradeCost, float upgradeAmount)
+        {
+            if (upgradeButton == null)
                 return;
 
             bool hasWarehouse = ResolveUtilityCapacitySource() != null;
             bool hasEconomy = economyManager != null;
-            bool hasValidCost = waterCapacityUpgradeCost >= 0;
-            bool hasValidAmount = IsPositiveFinite(waterCapacityUpgradeAmount);
-            bool canAfford = hasEconomy && economyManager.Money >= waterCapacityUpgradeCost;
+            bool hasValidCost = upgradeCost >= 0;
+            bool hasValidAmount = IsPositiveFinite(upgradeAmount);
+            bool canAfford = hasEconomy && economyManager.Money >= upgradeCost;
 
-            upgradeWaterCapacityButton.interactable = hasWarehouse
-                                                      && hasEconomy
-                                                      && hasValidCost
-                                                      && hasValidAmount
-                                                      && canAfford;
+            upgradeButton.interactable = hasWarehouse
+                                         && hasEconomy
+                                         && hasValidCost
+                                         && hasValidAmount
+                                         && canAfford;
 
-            TMP_Text upgradeLabel = upgradeWaterCapacityButton.GetComponentInChildren<TMP_Text>();
+            TMP_Text upgradeLabel = upgradeButton.GetComponentInChildren<TMP_Text>();
             if (upgradeLabel == null)
                 return;
 
             if (!hasWarehouse || !hasValidCost || !hasValidAmount)
-                upgradeLabel.text = "Water Upgrade Unavailable";
+                upgradeLabel.text = $"{utilityName} Upgrade Unavailable";
             else
-                upgradeLabel.text = $"Upgrade Water +{waterCapacityUpgradeAmount:0.#} (${waterCapacityUpgradeCost})";
+                upgradeLabel.text = $"Upgrade {utilityName} +{upgradeAmount:0.#} (${upgradeCost})";
         }
 
         private bool CanActivateShelfSlot(ShelfSlotRecord slot)
@@ -711,36 +724,67 @@ namespace Vertigro.Logic
                 Refresh();
         }
 
+        public void BuyPowerCapacityUpgrade()
+        {
+            BuyUtilityCapacityUpgrade(UtilityCapacityUpgradeTarget.Power, "power", powerCapacityUpgradeCost, powerCapacityUpgradeAmount);
+        }
+
         public void BuyWaterCapacityUpgrade()
+        {
+            BuyUtilityCapacityUpgrade(UtilityCapacityUpgradeTarget.Water, "water", waterCapacityUpgradeCost, waterCapacityUpgradeAmount);
+        }
+
+        public void BuyDataCapacityUpgrade()
+        {
+            BuyUtilityCapacityUpgrade(UtilityCapacityUpgradeTarget.Data, "data", dataCapacityUpgradeCost, dataCapacityUpgradeAmount);
+        }
+
+        private void BuyUtilityCapacityUpgrade(UtilityCapacityUpgradeTarget target, string utilityName, int upgradeCost, float upgradeAmount)
         {
             global::Warehouse warehouse = ResolveUtilityCapacitySource();
 
             if (warehouse == null)
             {
-                Debug.LogWarning("Cannot upgrade water capacity: no Warehouse capacity source assigned.");
+                Debug.LogWarning($"Cannot upgrade {utilityName} capacity: no Warehouse capacity source assigned.");
                 return;
             }
 
             if (economyManager == null)
             {
-                Debug.LogWarning("Cannot upgrade water capacity: no EconomyManager assigned.");
+                Debug.LogWarning($"Cannot upgrade {utilityName} capacity: no EconomyManager assigned.");
                 return;
             }
 
-            if (waterCapacityUpgradeCost < 0 || !IsPositiveFinite(waterCapacityUpgradeAmount))
+            if (upgradeCost < 0 || !IsPositiveFinite(upgradeAmount))
             {
-                Debug.LogWarning("Cannot upgrade water capacity: invalid cost or capacity amount.");
+                Debug.LogWarning($"Cannot upgrade {utilityName} capacity: invalid cost or capacity amount.");
                 return;
             }
 
-            if (!economyManager.SpendMoney(waterCapacityUpgradeCost))
+            if (!economyManager.SpendMoney(upgradeCost))
             {
                 Refresh();
                 return;
             }
 
-            warehouse.AddWaterCapacity(waterCapacityUpgradeAmount);
+            AddUtilityCapacity(warehouse, target, upgradeAmount);
             Refresh();
+        }
+
+        private static void AddUtilityCapacity(global::Warehouse warehouse, UtilityCapacityUpgradeTarget target, float upgradeAmount)
+        {
+            switch (target)
+            {
+                case UtilityCapacityUpgradeTarget.Power:
+                    warehouse.AddPowerCapacity(upgradeAmount);
+                    break;
+                case UtilityCapacityUpgradeTarget.Water:
+                    warehouse.AddWaterCapacity(upgradeAmount);
+                    break;
+                case UtilityCapacityUpgradeTarget.Data:
+                    warehouse.AddDataCapacity(upgradeAmount);
+                    break;
+            }
         }
 
         public void UpgradeShelf()
@@ -901,6 +945,13 @@ namespace Vertigro.Logic
         private static bool IsPositiveFinite(float value)
         {
             return value > 0f && !float.IsNaN(value) && !float.IsInfinity(value);
+        }
+
+        private enum UtilityCapacityUpgradeTarget
+        {
+            Power,
+            Water,
+            Data
         }
 
         private string GetNextSeedText()
