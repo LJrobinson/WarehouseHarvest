@@ -84,7 +84,7 @@ namespace Vertigro.Logic
             }
 
             if (modeText != null)
-                modeText.text = $"Mode: {selectionController.CurrentPlacementMode}";
+                modeText.text = $"Mode: {selectionController.CurrentPlacementMode}\n{BuildUtilityWarningText(rackController)}";
 
             if (economyManager != null)
                 moneyText.text = $"Money: ${economyManager.Money}";
@@ -169,6 +169,20 @@ namespace Vertigro.Logic
         private static string FormatShelfUtilitySignal(bool hasSufficientUtility, UtilityStatus status)
         {
             return hasSufficientUtility ? status.ToString() : "Insufficient";
+        }
+
+        private static string BuildUtilityWarningText(RackController rack)
+        {
+            if (rack == null)
+                return "Utilities: Unknown";
+
+            UtilityStatus status = rack.GetOverallUtilityStatus();
+            UtilityType bottleneck = rack.GetMostConstrainedUtility();
+
+            if (status == UtilityStatus.Healthy || bottleneck == UtilityType.None)
+                return $"Utilities: {status}";
+
+            return $"Utilities: {status} ({bottleneck})";
         }
 
         private void RefreshRackSlotSummary()

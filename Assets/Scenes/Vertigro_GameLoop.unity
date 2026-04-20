@@ -2297,6 +2297,7 @@ MonoBehaviour:
   generator: {fileID: 360913901}
   towerManager: {fileID: 395237099}
   selectionController: {fileID: 21351910}
+  utilityStateSourceRack: {fileID: 0}
   shelfId: RackSlot_1
   autoBuildOnStart: 1
   currentShelfLevel: 1
@@ -2305,6 +2306,9 @@ MonoBehaviour:
   powerDemand: 50
   waterDemand: 25
   dataDemand: 10
+  powerDemandPerPlantedHex: 1
+  waterDemandPerPlantedHex: 0.5
+  dataDemandPerPlantedHex: 0.1
 --- !u!4 &961571847
 Transform:
   m_ObjectHideFlags: 0
@@ -4632,7 +4636,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1822028991
 RectTransform:
   m_ObjectHideFlags: 0
