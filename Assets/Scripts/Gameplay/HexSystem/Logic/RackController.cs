@@ -29,6 +29,7 @@ namespace Vertigro.Logic
         [Header("Shelf Slots")]
         [SerializeField] private List<ShelfSlotRecord> shelfSlots = new List<ShelfSlotRecord>(ShelfSlotCount);
 
+        public global::Warehouse UtilityCapacitySource => utilityCapacitySource;
         public IReadOnlyList<ShelfSlotRecord> ShelfSlots => shelfSlots;
 
         private void Reset()

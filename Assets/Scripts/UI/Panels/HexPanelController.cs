@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Text;
-using UnityEngine;
 using TMPro;
-using UnityEngine.UI;
+using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Vertigro.Logic
 {
@@ -49,6 +50,10 @@ namespace Vertigro.Logic
         [Header("Rack Shelf Unlock")]
         [SerializeField] private int shelf2UnlockCost = 250;
         [SerializeField] private int shelf6UnlockCost = 250;
+
+        [Header("Dev Utility Capacity Test")]
+        [SerializeField] private bool enableDevUtilityCapacityHotkeys = true;
+        [SerializeField] private float devUtilityCapacityIncrease = 50f;
         
         private const int MaxSeedSummaryLines = 4;
         private const int MaxProductSummaryLines = 4;
@@ -68,6 +73,7 @@ namespace Vertigro.Logic
             if (!IsOpen)
                 return;
 
+            HandleDevUtilityCapacityHotkeys();
             Refresh();
         }
 
@@ -653,6 +659,24 @@ namespace Vertigro.Logic
             Refresh();
         }
 
+        public void DevAddPowerCapacity()
+        {
+            if (TryAddPowerCapacity(devUtilityCapacityIncrease))
+                Refresh();
+        }
+
+        public void DevAddWaterCapacity()
+        {
+            if (TryAddWaterCapacity(devUtilityCapacityIncrease))
+                Refresh();
+        }
+
+        public void DevAddDataCapacity()
+        {
+            if (TryAddDataCapacity(devUtilityCapacityIncrease))
+                Refresh();
+        }
+
         public void UpgradeShelf()
         {
             TableController targetShelf = ResolveTargetShelf();
@@ -746,6 +770,66 @@ namespace Vertigro.Logic
 
             TableController targetShelf = ResolveTargetShelf();
             return targetShelf != null ? targetShelf.towerManager : null;
+        }
+
+        private void HandleDevUtilityCapacityHotkeys()
+        {
+            if (!enableDevUtilityCapacityHotkeys)
+                return;
+
+            if (!gameObject.activeInHierarchy)
+                return;
+
+            var keyboard = Keyboard.current;
+            if (keyboard == null)
+                return;
+
+            if (keyboard.digit7Key.wasPressedThisFrame)
+                DevAddPowerCapacity();
+
+            if (keyboard.digit8Key.wasPressedThisFrame)
+                DevAddWaterCapacity();
+
+            if (keyboard.digit9Key.wasPressedThisFrame)
+                DevAddDataCapacity();
+        }
+
+        private bool TryAddPowerCapacity(float amount)
+        {
+            global::Warehouse warehouse = ResolveUtilityCapacitySource();
+
+            if (warehouse == null)
+                return false;
+
+            warehouse.AddPowerCapacity(amount);
+            return true;
+        }
+
+        private bool TryAddWaterCapacity(float amount)
+        {
+            global::Warehouse warehouse = ResolveUtilityCapacitySource();
+
+            if (warehouse == null)
+                return false;
+
+            warehouse.AddWaterCapacity(amount);
+            return true;
+        }
+
+        private bool TryAddDataCapacity(float amount)
+        {
+            global::Warehouse warehouse = ResolveUtilityCapacitySource();
+
+            if (warehouse == null)
+                return false;
+
+            warehouse.AddDataCapacity(amount);
+            return true;
+        }
+
+        private global::Warehouse ResolveUtilityCapacitySource()
+        {
+            return rackController != null ? rackController.UtilityCapacitySource : null;
         }
 
         private string GetNextSeedText()
