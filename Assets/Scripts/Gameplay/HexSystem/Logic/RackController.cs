@@ -103,6 +103,23 @@ namespace Vertigro.Logic
             HexSelectionController sharedSelectionController,
             out TableController activatedShelf)
         {
+            return TryActivateShelfSlot(
+                slotIndex,
+                shelfPrefab,
+                sharedTowerManager,
+                sharedSelectionController,
+                null,
+                out activatedShelf);
+        }
+
+        public bool TryActivateShelfSlot(
+            int slotIndex,
+            TableController shelfPrefab,
+            TowerManager sharedTowerManager,
+            HexSelectionController sharedSelectionController,
+            int? initialShelfLevel,
+            out TableController activatedShelf)
+        {
             activatedShelf = null;
             ShelfSlotRecord slot = GetShelfSlot(slotIndex);
             string shelfId = GetShelfIdForSlot(slotIndex);
@@ -155,6 +172,9 @@ namespace Vertigro.Logic
             shelfInstance.transform.localRotation = Quaternion.identity;
             shelfInstance.transform.localScale = Vector3.one;
 
+            if (initialShelfLevel.HasValue)
+                shelfInstance.currentShelfLevel = Mathf.Clamp(initialShelfLevel.Value, 1, Mathf.Max(1, shelfInstance.maxShelfLevel));
+
             TableGenerator generator = shelfInstance.generator != null
                 ? shelfInstance.generator
                 : shelfInstance.GetComponentInChildren<TableGenerator>(true);
@@ -197,6 +217,19 @@ namespace Vertigro.Logic
 
             Debug.Log($"Rack shelf slot {slotIndex} activated as {shelfId}.");
             return true;
+        }
+
+        public void ClearShelfSlotInstance(int slotIndex, TowerManager towerManager, bool preserveStarterShelf = true)
+        {
+            ShelfSlotRecord slot = GetShelfSlot(slotIndex);
+            if (slot == null || slot.shelf == null)
+                return;
+
+            if (preserveStarterShelf && slotIndex == 1)
+                return;
+
+            CleanupFailedShelfActivation(slot.shelf, towerManager, GetShelfIdForSlot(slotIndex));
+            slot.shelf = null;
         }
 
         public void TickActiveShelves()

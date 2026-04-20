@@ -13,6 +13,7 @@ public class GameSaveData
 
     public List<SeedSaveData> seeds = new List<SeedSaveData>();
     public List<WarehouseSaveData> warehouses = new List<WarehouseSaveData>();
+    public List<RackSaveData> racks = new List<RackSaveData>();
 
     public MarketSaveData marketData;
 }
@@ -51,6 +52,22 @@ public class WarehouseSaveData
     public float waterCapacityBonus;
     public float dataCapacityBonus;
     public List<TableSaveData> tables = new List<TableSaveData>();
+}
+
+[Serializable]
+public class RackSaveData
+{
+    public string rackName;
+    public List<RackShelfSlotSaveData> shelfSlots = new List<RackShelfSlotSaveData>();
+}
+
+[Serializable]
+public class RackShelfSlotSaveData
+{
+    public int slotIndex;
+    public bool isUnlocked;
+    public bool isActive;
+    public int shelfLevel = 1;
 }
 
 [Serializable]
