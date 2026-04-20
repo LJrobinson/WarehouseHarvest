@@ -198,10 +198,31 @@ namespace Vertigro.Logic
             UtilityStatus status = rack.GetOverallUtilityStatus();
             UtilityType bottleneck = rack.GetMostConstrainedUtility();
 
-            if (status == UtilityStatus.Healthy || bottleneck == UtilityType.None)
+            if (!ShouldRecommendUtilityUpgrade(status, bottleneck))
                 return $"Utilities: {status}";
 
-            return $"Utilities: {status} ({bottleneck})";
+            return $"Utilities: {status} ({bottleneck}) - Upgrade {bottleneck}";
+        }
+
+        private static UtilityType GetRecommendedUtilityUpgrade(RackController rack)
+        {
+            if (rack == null)
+                return UtilityType.None;
+
+            UtilityStatus status = rack.GetOverallUtilityStatus();
+            UtilityType bottleneck = rack.GetMostConstrainedUtility();
+
+            return ShouldRecommendUtilityUpgrade(status, bottleneck) ? bottleneck : UtilityType.None;
+        }
+
+        private static bool ShouldRecommendUtilityUpgrade(UtilityStatus status, UtilityType bottleneck)
+        {
+            return status != UtilityStatus.Healthy && bottleneck != UtilityType.None;
+        }
+
+        private static string GetRecommendedUpgradeSuffix(UtilityType utilityType, UtilityType recommendedUpgrade)
+        {
+            return utilityType == recommendedUpgrade ? " (Recommended)" : "";
         }
 
         private void RefreshRackSlotSummary()
@@ -379,12 +400,20 @@ namespace Vertigro.Logic
 
         private void SetUtilityCapacityUpgradeButtonStates()
         {
-            SetUtilityCapacityUpgradeButtonState(upgradePowerCapacityButton, "Power", powerCapacityUpgradeCost, powerCapacityUpgradeAmount);
-            SetUtilityCapacityUpgradeButtonState(upgradeWaterCapacityButton, "Water", waterCapacityUpgradeCost, waterCapacityUpgradeAmount);
-            SetUtilityCapacityUpgradeButtonState(upgradeDataCapacityButton, "Data", dataCapacityUpgradeCost, dataCapacityUpgradeAmount);
+            UtilityType recommendedUpgrade = GetRecommendedUtilityUpgrade(rackController);
+
+            SetUtilityCapacityUpgradeButtonState(upgradePowerCapacityButton, UtilityType.Power, "Power", powerCapacityUpgradeCost, powerCapacityUpgradeAmount, recommendedUpgrade);
+            SetUtilityCapacityUpgradeButtonState(upgradeWaterCapacityButton, UtilityType.Water, "Water", waterCapacityUpgradeCost, waterCapacityUpgradeAmount, recommendedUpgrade);
+            SetUtilityCapacityUpgradeButtonState(upgradeDataCapacityButton, UtilityType.Data, "Data", dataCapacityUpgradeCost, dataCapacityUpgradeAmount, recommendedUpgrade);
         }
 
-        private void SetUtilityCapacityUpgradeButtonState(Button upgradeButton, string utilityName, int upgradeCost, float upgradeAmount)
+        private void SetUtilityCapacityUpgradeButtonState(
+            Button upgradeButton,
+            UtilityType utilityType,
+            string utilityName,
+            int upgradeCost,
+            float upgradeAmount,
+            UtilityType recommendedUpgrade)
         {
             if (upgradeButton == null)
                 return;
@@ -408,7 +437,7 @@ namespace Vertigro.Logic
             if (!hasWarehouse || !hasValidCost || !hasValidAmount)
                 upgradeLabel.text = $"{utilityName} Upgrade Unavailable";
             else
-                upgradeLabel.text = $"Upgrade {utilityName} +{upgradeAmount:0.#} (${upgradeCost})";
+                upgradeLabel.text = $"Upgrade {utilityName} +{upgradeAmount:0.#} (${upgradeCost}){GetRecommendedUpgradeSuffix(utilityType, recommendedUpgrade)}";
         }
 
         private bool CanActivateShelfSlot(ShelfSlotRecord slot)

@@ -71,6 +71,9 @@ public class SaveLoadManager : MonoBehaviour
         {
             WarehouseSaveData whData = new WarehouseSaveData();
             whData.warehouseName = wh.name;
+            whData.powerCapacityBonus = wh.BonusPowerCapacity;
+            whData.waterCapacityBonus = wh.BonusWaterCapacity;
+            whData.dataCapacityBonus = wh.BonusDataCapacity;
 
             foreach (GrowTable table in wh.tables)
             {
@@ -189,6 +192,11 @@ public class SaveLoadManager : MonoBehaviour
             Warehouse warehouse = FindWarehouseByName(whData.warehouseName);
             if (warehouse == null)
                 continue;
+
+            warehouse.SetUtilityCapacityBonuses(
+                whData.powerCapacityBonus,
+                whData.waterCapacityBonus,
+                whData.dataCapacityBonus);
 
             foreach (var tableData in whData.tables)
             {

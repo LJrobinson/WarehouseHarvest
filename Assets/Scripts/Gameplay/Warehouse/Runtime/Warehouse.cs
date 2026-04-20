@@ -133,6 +133,15 @@ public class Warehouse : MonoBehaviour
         ApplyUpgradeCaps();
     }
 
+    public void SetUtilityCapacityBonuses(float powerBonus, float waterBonus, float dataBonus)
+    {
+        powerCapacityBonus = GetSafeUtilityValue(powerBonus);
+        waterCapacityBonus = GetSafeUtilityValue(waterBonus);
+        dataCapacityBonus = GetSafeUtilityValue(dataBonus);
+
+        ApplyUpgradeCaps();
+    }
+
     public float GetTotalDataUsage()
     {
         float total = 0f;

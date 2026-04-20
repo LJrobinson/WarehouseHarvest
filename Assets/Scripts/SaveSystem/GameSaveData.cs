@@ -47,6 +47,9 @@ public class SeedSaveData
 public class WarehouseSaveData
 {
     public string warehouseName;
+    public float powerCapacityBonus;
+    public float waterCapacityBonus;
+    public float dataCapacityBonus;
     public List<TableSaveData> tables = new List<TableSaveData>();
 }
 
