@@ -103,6 +103,24 @@ public class Warehouse : MonoBehaviour
         return true;
     }
 
+    public void AddPowerCapacity(float amount)
+    {
+        maxPower = GetIncreasedCapacity(maxPower, amount);
+        currentPower = ClampCurrentUtility(currentPower, maxPower);
+    }
+
+    public void AddWaterCapacity(float amount)
+    {
+        maxWater = GetIncreasedCapacity(maxWater, amount);
+        currentWater = ClampCurrentUtility(currentWater, maxWater);
+    }
+
+    public void AddDataCapacity(float amount)
+    {
+        maxData = GetIncreasedCapacity(maxData, amount);
+        currentData = ClampCurrentUtility(currentData, maxData);
+    }
+
     public float GetTotalDataUsage()
     {
         float total = 0f;
@@ -295,5 +313,23 @@ public class Warehouse : MonoBehaviour
         }
 
         return score;
+    }
+
+    private static float GetIncreasedCapacity(float currentCapacity, float amount)
+    {
+        return GetSafeUtilityValue(currentCapacity) + GetSafeUtilityValue(amount);
+    }
+
+    private static float ClampCurrentUtility(float currentValue, float maxValue)
+    {
+        return Mathf.Clamp(GetSafeUtilityValue(currentValue), 0f, Mathf.Max(0f, maxValue));
+    }
+
+    private static float GetSafeUtilityValue(float value)
+    {
+        if (float.IsNaN(value) || float.IsInfinity(value))
+            return 0f;
+
+        return Mathf.Max(0f, value);
     }
 }
