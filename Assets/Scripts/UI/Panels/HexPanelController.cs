@@ -55,12 +55,12 @@ namespace Vertigro.Logic
         [SerializeField] private int shelf6UnlockCost = 250;
 
         [Header("Utility Capacity Upgrade")]
-        [SerializeField] private int powerCapacityUpgradeCost = 500;
-        [SerializeField] private float powerCapacityUpgradeAmount = 50f;
-        [SerializeField] private int waterCapacityUpgradeCost = 500;
-        [SerializeField] private float waterCapacityUpgradeAmount = 50f;
-        [SerializeField] private int dataCapacityUpgradeCost = 500;
-        [SerializeField] private float dataCapacityUpgradeAmount = 50f;
+        [SerializeField] private int powerCapacityUpgradeCost = 750;
+        [SerializeField] private float powerCapacityUpgradeAmount = 100f;
+        [SerializeField] private int waterCapacityUpgradeCost = 550;
+        [SerializeField] private float waterCapacityUpgradeAmount = 75f;
+        [SerializeField] private int dataCapacityUpgradeCost = 350;
+        [SerializeField] private float dataCapacityUpgradeAmount = 40f;
 
         [Header("Dev Utility Capacity Test")]
         [SerializeField] private bool enableDevUtilityCapacityHotkeys = true;

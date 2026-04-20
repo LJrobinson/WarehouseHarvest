@@ -4770,12 +4770,12 @@ MonoBehaviour:
   shelfUpgradeCost: 500
   shelf2UnlockCost: 250
   shelf6UnlockCost: 250
-  powerCapacityUpgradeCost: 500
-  powerCapacityUpgradeAmount: 50
-  waterCapacityUpgradeCost: 500
-  waterCapacityUpgradeAmount: 50
-  dataCapacityUpgradeCost: 500
-  dataCapacityUpgradeAmount: 50
+  powerCapacityUpgradeCost: 750
+  powerCapacityUpgradeAmount: 100
+  waterCapacityUpgradeCost: 550
+  waterCapacityUpgradeAmount: 75
+  dataCapacityUpgradeCost: 350
+  dataCapacityUpgradeAmount: 40
   enableDevUtilityCapacityHotkeys: 1
   devUtilityCapacityIncrease: 50
 --- !u!1 &1829791364
