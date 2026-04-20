@@ -6,6 +6,10 @@ namespace Vertigro.Logic
 {
     public class TableController : MonoBehaviour
     {
+        private const float NormalUtilityGrowthMultiplier = 1f;
+        private const float StrainedUtilityGrowthMultiplier = 0.75f;
+        private const float DeficitUtilityGrowthMultiplier = 0.5f;
+
         [Header("References")]
         public TableGenerator generator;
         public TowerManager towerManager;
@@ -39,6 +43,27 @@ namespace Vertigro.Logic
         public UtilityStatus PowerUtilityStatus => utilityStateSourceRack != null ? utilityStateSourceRack.GetPowerStatus() : UtilityStatus.Healthy;
         public UtilityStatus WaterUtilityStatus => utilityStateSourceRack != null ? utilityStateSourceRack.GetWaterStatus() : UtilityStatus.Healthy;
         public UtilityStatus DataUtilityStatus => utilityStateSourceRack != null ? utilityStateSourceRack.GetDataStatus() : UtilityStatus.Healthy;
+        public float UtilityGrowthMultiplier
+        {
+            get
+            {
+                UtilityStatus powerStatus = PowerUtilityStatus;
+                UtilityStatus waterStatus = WaterUtilityStatus;
+                UtilityStatus dataStatus = DataUtilityStatus;
+
+                if (powerStatus == UtilityStatus.Deficit ||
+                    waterStatus == UtilityStatus.Deficit ||
+                    dataStatus == UtilityStatus.Deficit)
+                    return DeficitUtilityGrowthMultiplier;
+
+                if (powerStatus == UtilityStatus.Strained ||
+                    waterStatus == UtilityStatus.Strained ||
+                    dataStatus == UtilityStatus.Strained)
+                    return StrainedUtilityGrowthMultiplier;
+
+                return NormalUtilityGrowthMultiplier;
+            }
+        }
 
         private bool wasInitialized;
 

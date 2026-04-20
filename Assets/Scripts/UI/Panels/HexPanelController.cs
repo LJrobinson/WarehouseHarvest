@@ -160,7 +160,8 @@ namespace Vertigro.Logic
             stateText.text +=
                 $"\nShelf Utilities: P {FormatShelfUtilitySignal(shelf.HasSufficientPower, shelf.PowerUtilityStatus)}" +
                 $" | W {FormatShelfUtilitySignal(shelf.HasSufficientWater, shelf.WaterUtilityStatus)}" +
-                $" | D {FormatShelfUtilitySignal(shelf.HasSufficientData, shelf.DataUtilityStatus)}";
+                $" | D {FormatShelfUtilitySignal(shelf.HasSufficientData, shelf.DataUtilityStatus)}" +
+                $" | Growth x{shelf.UtilityGrowthMultiplier:0.##}";
         }
 
         private static string FormatShelfUtilitySignal(bool hasSufficientUtility, UtilityStatus status)
