@@ -182,12 +182,38 @@ namespace Vertigro.Logic
                 $" | D {FormatShelfUtilitySignal(shelf.HasSufficientData, shelf.DataUtilityStatus)}" +
                 $" | Live Growth x{shelf.UtilityGrowthMultiplier:0.##}" +
                 $"\nShelf Load: {shelf.PlantedHexCount}/{shelf.GrowableHexCount} planted" +
-                $" | Demand P {shelf.PowerDemand:0.#} W {shelf.WaterDemand:0.#} D {shelf.DataDemand:0.#}";
+                $" | Demand P {shelf.PowerDemand:0.#} W {shelf.WaterDemand:0.#} D {shelf.DataDemand:0.#}" +
+                BuildPlantingUtilityPreviewText(node, shelf, rackController);
         }
 
         private static string FormatShelfUtilitySignal(bool hasSufficientUtility, UtilityStatus status)
         {
             return hasSufficientUtility ? status.ToString() : "Insufficient";
+        }
+
+        private static string BuildPlantingUtilityPreviewText(HexNode node, TableController shelf, RackController rack)
+        {
+            if (node == null || shelf == null || rack == null || !node.IsEmpty)
+                return string.Empty;
+
+            float additionalPowerDemand = shelf.PowerDemandPerPlantedHex;
+            float additionalWaterDemand = shelf.WaterDemandPerPlantedHex;
+            float additionalDataDemand = shelf.DataDemandPerPlantedHex;
+
+            UtilityStatus projectedStatus = rack.GetProjectedOverallUtilityStatus(
+                additionalPowerDemand,
+                additionalWaterDemand,
+                additionalDataDemand);
+            UtilityType projectedBottleneck = rack.GetProjectedMostConstrainedUtility(
+                additionalPowerDemand,
+                additionalWaterDemand,
+                additionalDataDemand);
+            string demandText = $"(+P {additionalPowerDemand:0.#} W {additionalWaterDemand:0.#} D {additionalDataDemand:0.#} planted)";
+
+            if (projectedStatus == UtilityStatus.Healthy || projectedBottleneck == UtilityType.None)
+                return $"\nPlanting Preview: No utility issue expected {demandText}";
+
+            return $"\nPlanting Preview: {projectedBottleneck} projected {projectedStatus} {demandText}";
         }
 
         private static string BuildUtilityWarningText(RackController rack)

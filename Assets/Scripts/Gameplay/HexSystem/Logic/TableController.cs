@@ -44,6 +44,9 @@ namespace Vertigro.Logic
         public float BasePowerDemand => Mathf.Max(0f, powerDemand);
         public float BaseWaterDemand => Mathf.Max(0f, waterDemand);
         public float BaseDataDemand => Mathf.Max(0f, dataDemand);
+        public float PowerDemandPerPlantedHex => Mathf.Max(0f, powerDemandPerPlantedHex);
+        public float WaterDemandPerPlantedHex => Mathf.Max(0f, waterDemandPerPlantedHex);
+        public float DataDemandPerPlantedHex => Mathf.Max(0f, dataDemandPerPlantedHex);
         public float PlantedLoadPowerDemand => GetPlantedLoadDemand(powerDemandPerPlantedHex);
         public float PlantedLoadWaterDemand => GetPlantedLoadDemand(waterDemandPerPlantedHex);
         public float PlantedLoadDataDemand => GetPlantedLoadDemand(dataDemandPerPlantedHex);
